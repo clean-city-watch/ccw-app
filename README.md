@@ -58,13 +58,13 @@ Follow these steps to set up and run the Flutter application:
 1. **Clone the Repository:**
 
     ```bash
-    git clone https://github.com/Yash202000/ccw-app.git
+    git clone https://github.com/clean-city-watch/ccw.git
     ```
 
 2. **Navigate to the Project Directory:**
 
     ```bash
-    cd ccw-app/ccw
+    cd ccw
     ```
 
 3. **Install Dependencies:**
