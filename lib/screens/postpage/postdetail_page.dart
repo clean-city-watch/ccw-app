@@ -25,8 +25,8 @@ class PostPageDetails extends StatefulWidget {
 
 class _PostPageDetailsState extends State<PostPageDetails> {
   List commentList = [];
-List<Widget> newsCommentWidgetList=[];
- bool isLoading = false;
+  List<Widget> newsCommentWidgetList=[];
+  bool isLoading = false;
 
   String commentText = '';
 

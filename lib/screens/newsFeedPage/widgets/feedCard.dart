@@ -1,6 +1,7 @@
 import 'package:ccw/screens/newsFeedPage/widgets/ThumsUpReactions.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/postpage/postdetail_page.dart';
+import 'package:ccw/screens/postpage/edit_post.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -83,6 +84,113 @@ Widget feedCard(BuildContext context, GptFeed listFeed) {
 }
 
 
+Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
+  
+
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceAround,
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: <Widget>[
+      GestureDetector(
+          onTap: () async {
+              if (!listFeed.isupvote) {
+                // If the user has not upvoted, perform the upvote action
+                // Here, you can call your API to upvote and handle the response accordingly
+               
+
+                final prefs = await SharedPreferences.getInstance();
+                String? userInfo = prefs.getString('userinfo');
+                if(userInfo != null){
+                    Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                    String accessToken = userInfoMap['access_token'];
+        
+                    var headers = {
+                      "Authorization": "Bearer ${accessToken}",
+                    };
+                    final String apiUrl = '$backendUrl/api/upvote';
+                    
+                    try {
+                      print(listFeed.id);
+                      print(userInfoMap['id'] );
+                        final response = await http.post(
+                        Uri.parse(apiUrl),
+                        body: {
+                                "postId": listFeed.id.toString(),
+                                "userId":  userInfoMap['id'].toString() 
+                            },
+                        headers: headers
+                        );
+                        print('upvote success');
+
+                        if (response.statusCode == 201) {
+                        // Profile updated successfully
+                        print('upvote added successfully');
+                        // listFeed.isupvote =true;
+                        
+                        } else {
+                        // Handle other status codes or errors
+                        print('Failed to update profile');
+                        }
+                    } catch (e) {
+                        // Handle network errors or exceptions
+                        print('Error: $e');
+                    }
+                }
+                
+              }
+
+          },
+          child: Row(
+            children: <Widget>[
+              Icon(
+                FontAwesomeIcons.thumbsUp,
+                size: 18,
+                color: listFeed.isupvote ? Colors.blue : Colors.black, // Change color based on upvote status
+              ),
+              SizedBox(width: 5),
+              Text('${listFeed.count.upvotes}')
+            ],
+          )),
+      Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            GestureDetector(
+                onTap: () => 
+                  
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => PostPageDetails(feed: listFeed)))
+                  
+                  ,
+                child: Row(
+                  children: <Widget>[
+                    Icon(FontAwesomeIcons.comment, size: 18),
+                    SizedBox(width: 5),
+                    Text('${listFeed.count.comments}')
+                  ],
+                ))
+          ]),
+      GestureDetector(
+          onTap: () {
+            print('edit Post');
+            Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => EditPostWidget(feed: listFeed)));
+                  
+          },
+          child: Icon(FontAwesomeIcons.edit, size: 18)),
+      GestureDetector(
+          onTap: () {
+            print('delete Post');
+          },
+          child: Icon(FontAwesomeIcons.trashAlt, size: 18)),
+      GestureDetector(
+          onTap: () {
+            print('share code');
+          },
+          child: Icon(FontAwesomeIcons.shareAlt, size: 18))
+    ],
+  );
+}
 
 
 

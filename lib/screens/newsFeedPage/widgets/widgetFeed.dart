@@ -312,7 +312,7 @@ Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShare(context,feed),
+            likeCommentShareForAuthor(context,feed),
             space15(),
           ],
         ),
