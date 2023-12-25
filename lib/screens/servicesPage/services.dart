@@ -5,6 +5,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:ccw/consts/env.dart' show backendUrl;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServicePage extends StatefulWidget {
   @override
@@ -22,31 +23,43 @@ class _ServicePageState extends State<ServicePage> {
   }
 
   Future<void> fetchLocations() async {
-    final response = await http.get(Uri.parse('$backendUrl/api/post/all-locations'));
-    if (response.statusCode == 200) {
-      final List<dynamic> data = json.decode(response.body);
-      setState(() {
-        print(data);
-        dynamicMarkers = data.map((location) {
-          final double latitude = location[0];
-          final double longitude = location[1];
-          return Marker(
-            width: 50.0,
-            height: 50.0,
-            point: LatLng(latitude, longitude),
-            builder: (ctx) => Container(
-              child: Icon(
-                Icons.location_on,
-                color: Colors.blue, // You can set the marker color here
-              ),
-            ),
-          );
-        }).toList();
-      });
-    } else {
-      // Handle error
-      print('Failed to fetch locations');
-    }
+     final prefs = await SharedPreferences.getInstance();
+      String? userInfo = prefs.getString('userinfo');
+
+      if(userInfo != null) {
+          Map<String, dynamic> userInfoMap = json.decode(userInfo);
+          String accessToken = userInfoMap['access_token'];
+    
+          var headers = {
+            "Authorization": "Bearer ${accessToken}",
+          };
+          final response = await http.get(Uri.parse('$backendUrl/api/post/all-locations'),headers: headers);
+          if (response.statusCode == 200) {
+            final List<dynamic> data = json.decode(response.body);
+            setState(() {
+              print(data);
+              dynamicMarkers = data.map((location) {
+                final double latitude = location[0];
+                final double longitude = location[1];
+                return Marker(
+                  width: 50.0,
+                  height: 50.0,
+                  point: LatLng(latitude, longitude),
+                  builder: (ctx) => Container(
+                    child: Icon(
+                      Icons.location_on,
+                      color: Colors.blue, // You can set the marker color here
+                    ),
+                  ),
+                );
+              }).toList();
+            });
+          } else {
+            // Handle error
+            print('Failed to fetch locations');
+          }
+      }
+    
   }
 
   @override

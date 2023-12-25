@@ -111,7 +111,7 @@ Widget othersCommentWithImageSlider(BuildContext context, GptComment feed) {
 
 Widget imageCarouselSlider() {
   var imageSlider = [
-    'https://cdn.pixabay.com/photo/2015/06/08/15/13/race-801940__340.jpg',
+    'http://192.168.1.34:9000/test/1703495479229-doit.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=b0jA4AKyGCWtrr2plYo6%2F20231225%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20231225T091255Z&X-Amz-Expires=604800&X-Amz-SignedHeaders=host&X-Amz-Signature=bcfd112b2e4722504b784cdd4785737e6d7f6390cbe7d236a560dc038d7ea034',
     'https://images.pexels.com/photos/618612/pexels-photo-618612.jpeg',
     'https://2rdnmg1qbg403gumla1v9i2h-wpengine.netdna-ssl.com/wp-content/uploads/sites/3/2019/05/kidsRaceAge-891544116-770x553-650x428.jpg',
     'https://media.gettyimages.com/photos/working-out-by-the-ocean-picture-id621494554?s=612x612'

@@ -105,6 +105,11 @@ Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
                 String? userInfo = prefs.getString('userinfo');
                 if(userInfo != null){
                     Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                    String accessToken = userInfoMap['access_token'];
+        
+                    var headers = {
+                      "Authorization": "Bearer ${accessToken}",
+                    };
                     final String apiUrl = '$backendUrl/api/upvote';
                     
                     try {
@@ -116,6 +121,7 @@ Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
                                 "postId": listFeed.id.toString(),
                                 "userId":  userInfoMap['id'].toString() 
                             },
+                        headers: headers
                         );
                         print('upvote success');
 

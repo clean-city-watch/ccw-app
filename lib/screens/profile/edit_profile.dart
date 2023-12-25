@@ -60,10 +60,15 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
 
    if(userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
        print('inside the profile page');
         print(userInfo);
         print('$backendUrl/api/profile/${userInfoMap['id']}');
-        final response = await http.get(Uri.parse('$backendUrl/api/profile/${userInfoMap['id']}'));
+        final response = await http.get(Uri.parse('$backendUrl/api/profile/${userInfoMap['id']}'),headers: headers);
         if (response.statusCode == 200) {
           final Map<String, dynamic> userData = json.decode(response.body);
           print(userData);
@@ -99,6 +104,9 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       
       testprofile['userId'] = userInfoMap['id'];
+      String accessToken = userInfoMap['access_token'];
+        
+      
 
       print(testprofile);
 
@@ -109,6 +117,7 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
         final response = await http.post(
           Uri.parse(apiUrl),
           headers: <String, String>{
+            "Authorization": "Bearer ${accessToken}",
             'Content-Type': 'application/json; charset=UTF-8',
           },
           

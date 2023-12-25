@@ -98,10 +98,15 @@ class _LibraryPageState extends State<LibraryPage> {
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       var userid = userInfoMap['id'];
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
       final String apiUrl = "$backendUrl/api/user/count/$userid";
       
         try {
-        final response = await http.get(Uri.parse(apiUrl));
+        final response = await http.get(Uri.parse(apiUrl),headers: headers);
 
         if (response.statusCode == 200) {
             final jsonData = json.decode(response.body);
@@ -138,11 +143,19 @@ class _LibraryPageState extends State<LibraryPage> {
         Map<String, dynamic> userInfoMap = json.decode(userInfo);
     
       String currentUserId = userInfoMap['id'];
+      String accessToken = userInfoMap['access_token'];
+      
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+        "Content-Type": "application/json", // Adjust as per your API requirements
+      };
+      print('this is constructed header....');
+      print(headers);
 
       var url = Uri.parse("$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&self=true");
 
 
-      var response = await http.get(url);
+      var response = await http.get(url,headers: headers);
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);

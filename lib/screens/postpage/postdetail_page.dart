@@ -50,23 +50,23 @@ List<Widget> newsCommentWidgetList=[];
 
     print('before comment status for request is ');
     print(widget.feed.status.name);
-    var url = Uri.parse('$backendUrl/api/comment/${widget.feed.id}');
-
-    var response = await http.get(url);
-     if (response.statusCode == 200) {
-      final jsonResponse = jsonDecode(response.body);
-      final content = jsonResponse['comments'];
-
-      print(content);
-
-
-      
-      if(userInfo != null) {
+     if(userInfo != null) {
           Map<String, dynamic> userInfoMap = json.decode(userInfo);
-          print("userInfo id ");
-          
+           String accessToken = userInfoMap['access_token'];
 
-      
+           var headers = {
+                "Authorization": "Bearer ${accessToken}",
+              };
+
+          print("userInfo id ");
+          var url = Uri.parse('$backendUrl/api/comment/${widget.feed.id}');
+
+          var response = await http.get(url,headers: headers);
+          if (response.statusCode == 200) {
+            final jsonResponse = jsonDecode(response.body);
+            final content = jsonResponse['comments'];
+
+            print(content);
 
           setState(() {
             commentList.addAll(content.map((json) {
@@ -99,6 +99,8 @@ List<Widget> newsCommentWidgetList=[];
       final GptFeed feed = widget.feed;
       print(feed.id);
 
+      //TODO: need refactoring here..
+
 
 
         Future<void> postComment(String text) async {
@@ -108,19 +110,27 @@ List<Widget> newsCommentWidgetList=[];
 
           if(userInfo != null) {
               Map<String, dynamic> userInfoMap = json.decode(userInfo);
+              String accessToken = userInfoMap['access_token'];
+        
+              var headers = {
+                "Authorization": "Bearer ${accessToken}",
+              };
+
+              print(feed.id);
+              print(userInfoMap['id']);
+              print("now adding comment.. for feedid ");
+              print(feed.id);
 
               final url = Uri.parse('$backendUrl/api/comment'); // Replace with your API endpoint
               final body = jsonEncode({
                 'postId': feed.id, // Assuming 'postId' is the field to link the comment to a post
                 'content': text, // The text entered by the user
-                'userId': userInfoMap['id']
+                'userId': int.parse(userInfoMap['id'])
               });
 
               final response = await http.post(
                 url,
-                headers: {
-                  'Content-Type': 'application/json', // Adjust the headers as needed
-                },
+                headers: headers,
                 body: body,
               );
 
@@ -135,6 +145,7 @@ List<Widget> newsCommentWidgetList=[];
                       Navigator.pushNamed(context, WelcomeScreen.id);
                   },
                   title: 'Comment Upload',
+                  
                   desc:
                       'Comment posted successfully!',
                   btnText: 'Feed Now',
@@ -237,6 +248,7 @@ List<Widget> newsCommentWidgetList=[];
                               child: Text(widget.feed.content,
                                   style: TextStyle(fontSize: 14, color: Colors.grey))),
                           space15(),
+                          imageCarouselSlider(),
                           setLocation(context,widget.feed),
                           Divider(thickness: 1),
                           Row(

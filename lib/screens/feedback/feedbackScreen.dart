@@ -76,8 +76,14 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
 
                 final prefs = await SharedPreferences.getInstance();
                 String? userInfo = prefs.getString('userinfo');
+                
                 if(userInfo != null){
                     Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                    String accessToken = userInfoMap['access_token'];
+        
+                    var headers = {
+                      "Authorization": "Bearer ${accessToken}",
+                    };
                     final String apiUrl = '$backendUrl/api/feedback';
                     
                     try {
@@ -85,11 +91,13 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
                         print(feedbackText);
                         final response = await http.post(
                         Uri.parse(apiUrl),
-                        body: {
-                                'rating': rating.toString(),
-                                'feedback': feedbackText,
-                                'authorId': userInfoMap['id'] 
-                            },
+                          body: {
+                                  'rating': rating.toString(),
+                                  'feedback': feedbackText,
+                                  'authorId': userInfoMap['id'] 
+                              },
+                          headers: headers
+                            
                         );
 
                         if (response.statusCode == 201) {

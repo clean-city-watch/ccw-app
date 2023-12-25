@@ -14,6 +14,7 @@ import 'package:ccw/screens/welcome.dart';
 
 
 
+// create issue page.
 
 class CreatePost extends StatefulWidget {
   static String id = 'create_post_screen';
@@ -200,7 +201,12 @@ class _CreatePostState extends State<CreatePost> {
                    
                     if(userInfo != null) {
                       Map<String, dynamic> userInfoMap = json.decode(userInfo);
-                                          print({'title': _titleController.text,
+                      String accessToken = userInfoMap['access_token'];
+        
+                      var headers = {
+                        "Authorization": "Bearer ${accessToken}",
+                      };
+                          print({'title': _titleController.text,
                             'content': _contentController.text,
                             'city': _cityController.text,
                             'published': true,
@@ -221,11 +227,13 @@ class _CreatePostState extends State<CreatePost> {
                             'content': _contentController.text,
                             'city': _cityController.text,
                             'published': 'true',
+                            'type': "ISSUE",
                             'latitude': locationData!.latitude.toString(),
                             'longitude': locationData!.longitude.toString(),
                             'authorId': userInfoMap['id'].toString(),
                             
                           },
+                          headers: headers
                         );
                         print(response.body);
                         print(response.statusCode);
@@ -243,11 +251,7 @@ class _CreatePostState extends State<CreatePost> {
                                   'Post uploaded successfully!',
                               btnText: 'Feed Now',
                               context: context,
-                            ).show();
-                          
-                         
-                          
-                              
+                            ).show();   
                          }
 
 

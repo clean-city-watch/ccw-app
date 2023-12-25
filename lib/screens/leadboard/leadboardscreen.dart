@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:ccw/consts/env.dart' show backendUrl;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LeaderboardWidget extends StatelessWidget {
   final List<Map<String, dynamic>> leaderboardData;
@@ -62,18 +63,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   Future<void> fetchData() async {
     try {
-      print('$backendUrl/api/leadboard');
-      final response = await http.get(Uri.parse('$backendUrl/api/leadboard'));
-      print(response.body);
-      if (response.statusCode == 200) {
-        final jsonData = json.decode(response.body);
-        setState(() {
-          leaderboardData = List<Map<String, dynamic>>.from(jsonData);
-        });
-      } else {
-        // Handle error when API request fails
-        print('Failed to fetch data: ${response.statusCode}');
-      }
+          final prefs = await SharedPreferences.getInstance();
+          String? userInfo = prefs.getString('userinfo');
+
+          if(userInfo != null) {
+              Map<String, dynamic> userInfoMap = json.decode(userInfo);
+              String accessToken = userInfoMap['access_token'];
+        
+              var headers = {
+                "Authorization": "Bearer ${accessToken}",
+              };
+
+              print('$backendUrl/api/leadboard');
+              final response = await http.get(Uri.parse('$backendUrl/api/leadboard'),headers: headers);
+              print(response.body);
+              if (response.statusCode == 200) {
+                final jsonData = json.decode(response.body);
+                setState(() {
+                  leaderboardData = List<Map<String, dynamic>>.from(jsonData);
+                });
+              } else {
+                // Handle error when API request fails
+                print('Failed to fetch data: ${response.statusCode}');
+              }
+          }
+      
     } catch (error) {
       // Handle any exceptions that occur
       print('Error fetching data: $error');

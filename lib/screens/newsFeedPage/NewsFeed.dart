@@ -47,34 +47,41 @@ class _NewsFeedState extends State<NewsFeed> {
     if(userInfo != null) {
         Map<String, dynamic> userInfoMap = json.decode(userInfo);
     
-      String currentUserId = userInfoMap['id'];
+        String currentUserId = userInfoMap['id'];
+        String accessToken = userInfoMap['access_token'];
+        
+        var headers = {
+          "Authorization": "Bearer ${accessToken}",
+          "Content-Type": "application/json", // Adjust as per your API requirements
+        };
+    
 
-      var url = Uri.parse("$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
+        var url = Uri.parse("$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
 
 
-      var response = await http.get(url);
+        var response = await http.get(url,headers: headers);
 
-      if (response.statusCode == 200) {
-        final jsonResponse = jsonDecode(response.body);
-        final content = jsonResponse['content'];
+        if (response.statusCode == 200) {
+          final jsonResponse = jsonDecode(response.body);
+          final content = jsonResponse['content'];
 
 
 
-        setState(() {
-          feedList.addAll(content.map((json) {
-            print('upvotes are: ');
-            print(json['upvotes'].length);
-            newsFeedWidgetList.add(feedNewsCardItem(context, GptFeed.fromJson(json)));
-            newsFeedWidgetList.add(topSpace());
-            return GptFeed.fromJson(json);
-          }).toList());
+          setState(() {
+            feedList.addAll(content.map((json) {
+              print('upvotes are: ');
+              print(json['upvotes'].length);
+              newsFeedWidgetList.add(feedNewsCardItem(context, GptFeed.fromJson(json)));
+              newsFeedWidgetList.add(topSpace());
+              return GptFeed.fromJson(json);
+            }).toList());
 
-          isVisible = true;
-          isLoading = false;
-          pageOffset += 1; // Increment the page offset for the next page
-        });
+            isVisible = true;
+            isLoading = false;
+            pageOffset += 1; // Increment the page offset for the next page
+          });
+        }
       }
-    }
   }
 
 

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'organizationdetailScreen.dart';
 import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Organization {
   final int id;
@@ -31,15 +32,29 @@ class Organization {
 
 
 Future<List<Organization>> fetchOrganizations() async {
-  final response = await http.get(Uri.parse('$backendUrl/api/organization'));
-  print(response.body);
+      final prefs = await SharedPreferences.getInstance();
+      String? userInfo = prefs.getString('userinfo');
 
-  if (response.statusCode == 200) {
-    final List<dynamic> data = json.decode(response.body);
-    return data.map((json) => Organization.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load organizations');
-  }
+      if(userInfo != null) {
+          Map<String, dynamic> userInfoMap = json.decode(userInfo);
+          String accessToken = userInfoMap['access_token'];
+    
+          var headers = {
+            "Authorization": "Bearer ${accessToken}",
+          };
+      
+      
+          final response = await http.get(Uri.parse('$backendUrl/api/organization'),headers: headers);
+          print(response.body);
+
+          if (response.statusCode == 200) {
+            final List<dynamic> data = json.decode(response.body);
+            return data.map((json) => Organization.fromJson(json)).toList();
+          } else {
+            throw Exception('Failed to load organizations');
+          }
+      }
+      return [];
 }
 
 

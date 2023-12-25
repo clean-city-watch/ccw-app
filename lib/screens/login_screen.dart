@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             try {
                                 final response = await http.post(
-                                      Uri.parse('$backendUrl/api/user/signin'),
+                                      Uri.parse('$backendUrl/api/auth/signin'),
                                       body: {
                                         'email': _email,
                                         'password': _password,
