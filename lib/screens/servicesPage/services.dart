@@ -1,5 +1,7 @@
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:http/http.dart' as http;
@@ -14,15 +16,27 @@ class ServicePage extends StatefulWidget {
 
 class _ServicePageState extends State<ServicePage> {
   List<LatLng> routePoints = [LatLng( 18.516726, 73.856255)];
-  List<Marker> dynamicMarkers = []; // List to store dynamic markers
+  List<dynamic> dynamicMarkers = []; // List to store dynamic markers
+  Map<String, dynamic> countData = {"content": [], "all": 0, "open": 0, "inprogress": 0, "resolved": 0};
+  late TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
-    fetchLocations(); // Call the function to fetch locations on init
+    _searchController = TextEditingController(text: '');
+    fetchLocations('$backendUrl/api/post/all-locations'); // Call the function to fetch locations on init
   }
 
-  Future<void> fetchLocations() async {
+  void handleBellIconTap(String city) {
+      // Add your logic here
+      print('Bell icon tapped!');
+      print(city);
+      fetchLocations('$backendUrl/api/post/all-locations?city=$city');
+      // Call any other functions or perform any actions you need
+    }
+
+
+  Future<void> fetchLocations(String url) async {
      final prefs = await SharedPreferences.getInstance();
       String? userInfo = prefs.getString('userinfo');
 
@@ -33,12 +47,12 @@ class _ServicePageState extends State<ServicePage> {
           var headers = {
             "Authorization": "Bearer ${accessToken}",
           };
-          final response = await http.get(Uri.parse('$backendUrl/api/post/all-locations'),headers: headers);
+          final response = await http.get(Uri.parse(url),headers: headers);
           if (response.statusCode == 200) {
-            final List<dynamic> data = json.decode(response.body);
+            final  data = json.decode(response.body);
             setState(() {
-              print(data);
-              dynamicMarkers = data.map((location) {
+             countData = data;
+              dynamicMarkers = data['content'].map((location) {
                 final double latitude = location[0];
                 final double longitude = location[1];
                 return Marker(
@@ -88,8 +102,70 @@ class _ServicePageState extends State<ServicePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: _searchController,
+                        maxLines: 1,
+                        decoration: new InputDecoration(
+                          suffixIcon: Icon(CupertinoIcons.search),
+                          contentPadding: EdgeInsets.all(12),
+                          hintText: 'Search posts and members',
+                          border: OutlineInputBorder(
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(4.0),
+                            ),
+                            borderSide:  BorderSide(color: (Colors.grey[300])!, width: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        // Call your function when the bell icon is tapped
+                        handleBellIconTap(_searchController.text);
+                      },
+                      child: Container(
+                        margin: EdgeInsets.all(15),
+                        child: Icon(FontAwesomeIcons.bell, size: 26),
+                      ),
+                    ),
+                  ],
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    CountCard(
+                      title: 'All',
+                      count: countData['all'] ?? 0,
+                      icon: Icons.description,
+                      color: Colors.blue,
+                    ),
+                    CountCard(
+                      title: 'Open',
+                      count: countData['open'] ?? 0,
+                      icon: Icons.comment,
+                      color: Colors.green,
+                    ),
+                    CountCard(
+                      title: 'InProgress',
+                      count: countData['inprogress'] ?? 0,
+                      icon: Icons.thumb_up,
+                      color: Colors.orange,
+                    ),
+                    CountCard(
+                      title: 'Resolved',
+                      count: countData['resolved'] ?? 0,
+                      icon: Icons.feedback,
+                      color: const Color.fromARGB(255, 137, 136, 136),
+                    ),
+                  ],
+                ),
                 SizedBox(
-                  height: 620,
+                  height: 520,
                   width: 400,
                   child: FlutterMap(
                     options: MapOptions(
@@ -119,6 +195,53 @@ class _ServicePageState extends State<ServicePage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class CountCard extends StatelessWidget {
+  final String title;
+  final int count;
+  final IconData icon;
+  final Color color;
+
+  CountCard({
+    required this.title,
+    required this.count,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3.0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 40,
+              color: color,
+            ),
+            SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 5),
+            Text(
+              count.toString(),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ],
         ),
       ),
     );
