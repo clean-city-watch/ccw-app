@@ -105,9 +105,9 @@ class _NewsFeedState extends State<NewsFeed> {
               margin: EdgeInsets.all(10),
               child: Column(
                 children: <Widget>[
-                  topSpace(),
+                  // topSpace(),
                   searchTextField(),
-                  topSpace(),
+                  // topSpace(),
                   Container(height: 55, child: CategoryList()),
                 ],
               ),

@@ -49,16 +49,18 @@ class CustomButton extends StatelessWidget {
 }
 
 class TopScreenImage extends StatelessWidget {
-  const TopScreenImage({super.key, required this.screenImageName});
+  const TopScreenImage({Key? key, required this.screenImageName}) : super(key: key);
   final String screenImageName;
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return SizedBox(
+      width: 200.0, // Set your desired fixed width
+      height: 300.0, // Set your desired fixed height
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            fit: BoxFit.contain,
+            fit: BoxFit.cover, // You may adjust BoxFit according to your needs
             image: AssetImage('assets/images/$screenImageName'),
           ),
         ),
@@ -66,6 +68,7 @@ class TopScreenImage extends StatelessWidget {
     );
   }
 }
+
 
 class ScreenTitle extends StatelessWidget {
   const ScreenTitle({super.key, required this.title});

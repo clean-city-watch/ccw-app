@@ -41,7 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  const TopScreenImage(screenImageName: 'welcome.png'),
+                  SizedBox(
+                    width: 200.0, // Set your desired fixed width
+                    height: 195.0, // Set your desired fixed height
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover, // You may adjust BoxFit according to your needs
+                          image: AssetImage('assets/images/welcome.png'),
+                        ),
+                      ),
+                    ),
+                  ),
                   Expanded(
                     flex: 2,
                     child: Column(
@@ -82,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             setState(() {
                               _saving = true;
                             });
+                            print('$backendUrl/api/auth/signin');
                             try {
                                 final response = await http.post(
                                       Uri.parse('$backendUrl/api/auth/signin'),

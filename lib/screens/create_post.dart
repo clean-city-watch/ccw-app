@@ -236,6 +236,8 @@ class _CreatePostState extends State<CreatePost> {
                           headers: headers
                         );
                         print(response.body);
+                        final Map<String, dynamic> responseData = json.decode(response.body);
+                        print(responseData);
                         print(response.statusCode);
                         print('success');
                          if (response.statusCode == 201) {
@@ -251,63 +253,17 @@ class _CreatePostState extends State<CreatePost> {
                                   'Post uploaded successfully!',
                               btnText: 'Feed Now',
                               context: context,
-                            ).show();   
+                            ).show();
                          }
 
 
                     }catch(e){
                       print(e);
                     }
-                    // try {
-                    //   var request = http.MultipartRequest('POST', Uri.parse('$backendUrl/api/post'));
-
-
-                    //   print('inside the send after request');
-                    //   // Add file to the request
-                    //   var stream = http.ByteStream(selectedImage!.openRead());
-                    //   var length = await selectedImage!.length();
-                    //   print(stream);
-                    //   print('stream was ');
-                    //   var multipartFile = http.MultipartFile(
-                    //     'file', // Field name expected by your API
-                    //     stream,
-                    //     length,
-                    //     filename: selectedImage!.path.split('/').last,
-                    //     contentType:  MediaType('application', 'octet-stream'), // Specify the content type of the file
-                    //   );
-                    //   request.files.add(multipartFile);
-
-                    //   // Add other form data
-                    //   request.fields['title'] = _titleController.text;
-                    //   request.fields['content'] = _contentController.text;
-                    //   request.fields['city'] = _cityController.text;
-                    //   request.fields['published'] = 'true';
-                    //   request.fields['latitude'] = locationData!.latitude.toString();
-                    //   request.fields['longitude'] = locationData!.longitude.toString();
-                    //   request.fields['authorId'] = userInfoMap['id'].toString();
-
-                    //   // Send the request and get the response
-                    //   var response = await request.send();
-
-                    //   if (response.statusCode == 201) {
-                    //     print('File uploaded successfully');
-                    //     // Handle successful response here
-                    //   } else {
-                    //     print('File upload failed with status code: ${response.statusCode}');
-                    //     // Handle error response here
-                    //   }
-                    // } catch (e) {
-                    //   print('Error uploading file: $e');
-                    //   // Handle any exceptions here
-                    // }
 
                     };
 
 
-
-                    // Submit the form and handle post creation
-                    // You can access _titleController.text, _contentController.text, _cityController.text
-                    // locationData, and selectedImage for your post data
                   }
                 },
                 child: Text('Create Post'),

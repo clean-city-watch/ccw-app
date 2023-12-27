@@ -173,7 +173,7 @@ Widget searchTextField() {
         child: TextField(
           maxLines: 1,
           decoration: new InputDecoration(
-            suffixIcon: Icon(CupertinoIcons.search),
+            // suffixIcon: Icon(CupertinoIcons.search),
             contentPadding: EdgeInsets.all(12),
             hintText: 'Search posts and members',
             border: OutlineInputBorder(
@@ -187,7 +187,7 @@ Widget searchTextField() {
       ),
       Container(
         margin: EdgeInsets.all(15),
-        child: Icon(FontAwesomeIcons.bell, size: 26),
+        child: Icon(CupertinoIcons.search, size: 26,),
       )
     ],
   );

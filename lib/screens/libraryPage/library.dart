@@ -39,12 +39,12 @@ class CountCard extends StatelessWidget {
               size: 40,
               color: color,
             ),
-            SizedBox(height: 10),
+            // SizedBox(height: 10),
             Text(
               title,
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 5),
+            // SizedBox(height: 5),
             Text(
               count.toString(),
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -209,34 +209,42 @@ class _LibraryPageState extends State<LibraryPage> {
             // Count Cards
         
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                CountCard(
-                  title: 'Posts',
-                  count: countData['_count']['posts'] ?? 0,
-                  icon: Icons.description,
-                  color: Colors.blue,
-                ),
-                CountCard(
-                  title: 'Comments',
-                  count: countData['_count']['comments'] ?? 0,
-                  icon: Icons.comment,
-                  color: Colors.green,
-                ),
-                CountCard(
-                  title: 'Upvotes',
-                  count: countData['_count']['upvotes'] ?? 0,
-                  icon: Icons.thumb_up,
-                  color: Colors.orange,
-                ),
-                CountCard(
-                  title: 'Feedback',
-                  count: countData['_count']['feedbacks'] ?? 0,
-                  icon: Icons.feedback,
-                  color: const Color.fromARGB(255, 137, 136, 136),
-                ),
-              ],
-            ),
+  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  children: [
+    Expanded(
+      child: CountCard(
+        title: 'Posts',
+        count: countData['_count']['posts'] ?? 0,
+        icon: Icons.description,
+        color: Colors.blue,
+      ),
+    ),
+    Expanded(
+      child: CountCard(
+        title: 'Comments',
+        count: countData['_count']['comments'] ?? 0,
+        icon: Icons.comment,
+        color: Colors.green,
+      ),
+    ),
+    Expanded(
+      child: CountCard(
+        title: 'Upvotes',
+        count: countData['_count']['upvotes'] ?? 0,
+        icon: Icons.thumb_up,
+        color: Colors.orange,
+      ),
+    ),
+    Expanded(
+      child: CountCard(
+        title: 'Feedback',
+        count: countData['_count']['feedbacks'] ?? 0,
+        icon: Icons.feedback,
+        color: const Color.fromARGB(255, 137, 136, 136),
+      ),
+    ),
+  ],
+),
             SizedBox(height: 10),
             Expanded(
               child: Container(
