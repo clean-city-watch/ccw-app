@@ -21,10 +21,10 @@ class _RouteServicePageState extends State<RouteServicePage> {
   final start = TextEditingController();
   final end = TextEditingController();
   bool isVisible = false;
-  var startv1;
-  var startv2;
-  var endv1;
-  var endv2;
+  var startv1=0.0;
+  var startv2=0.0;
+  var endv1=0.0;
+  var endv2=0.0;
 
   List<LatLng> routpoints = [LatLng(52.05884, -1.345583)];
 
@@ -68,9 +68,7 @@ class _RouteServicePageState extends State<RouteServicePage> {
     locationService.LocationData? locationData = await getLocation();
 
     if (locationData == null) {
-      // Handle the case where locationData is null (permission denied, etc.)
-      print("here location data accessed");
-      print(locationData);
+      // Handle the case where locationData is null (permission denied, etc.) here location data accessed
       return;
     }
 
@@ -82,7 +80,7 @@ class _RouteServicePageState extends State<RouteServicePage> {
     var url = Uri.parse(
         'http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full');
     var response = await http.get(url);
-    print(response.body);
+   
     setState(() {
       routpoints = [];
       var ruter = jsonDecode(response.body)['routes'][0]['geometry']['coordinates'];
@@ -94,12 +92,14 @@ class _RouteServicePageState extends State<RouteServicePage> {
         var long1 = reep.split(",");
         routpoints.add(LatLng(double.parse(lat1[1]), double.parse(long1[0])));
       }
-      isVisible = true;
-      startv1 = v1;
-      startv2 = v2;
-      endv1 = v3;
-      endv2 = v4;
-      print(routpoints);
+      if(v1!=null && v2!=null && v3!=null && v4!=null){
+        isVisible = true;
+        startv1 = v1;
+        startv2 = v2;
+        endv1 = v3;
+        endv2 = v4;
+      }
+      
     });
   }
 
