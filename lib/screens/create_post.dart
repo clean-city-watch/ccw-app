@@ -11,6 +11,8 @@ import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:http_parser/http_parser.dart';
 import 'package:ccw/components/components.dart';
 import 'package:ccw/screens/welcome.dart';
+import 'package:latlong2/latlong.dart'; // Use latlong2 package for LatLng
+import 'package:flutter_map/flutter_map.dart';
 
 
 
@@ -27,14 +29,23 @@ class _CreatePostState extends State<CreatePost> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
+  late TextEditingController latitudeController;
+  late TextEditingController longitudeController;
 
-  bool isPickingLocation = false;
+  LatLng? _selectedLocation;
+
+  List<dynamic> dynamicMarkers = [];
+
+  bool __spanLocationPicker = false;
+  bool isPickingLocation = true;
   LocationData? locationData;
   File? selectedImage;
 
   @override
   void initState() {
     super.initState();
+    latitudeController = TextEditingController(text: "");
+    longitudeController = TextEditingController(text: "");
     getLocation();
   }
 
@@ -62,6 +73,8 @@ class _CreatePostState extends State<CreatePost> {
     final locationData = await location.getLocation();
     setState(() {
       this.locationData = locationData;
+      latitudeController.text = locationData.latitude.toString();
+      longitudeController.text = locationData.longitude.toString();
     });
   }
 
@@ -77,6 +90,7 @@ class _CreatePostState extends State<CreatePost> {
   }
 
   void handleImageRemove() {
+    print("");
     setState(() {
       selectedImage = null;
     });
@@ -88,6 +102,7 @@ class _CreatePostState extends State<CreatePost> {
     }
     setState(() {
       isPickingLocation = !isPickingLocation;
+      __spanLocationPicker = !__spanLocationPicker;
     });
   }
 
@@ -152,6 +167,38 @@ class _CreatePostState extends State<CreatePost> {
                   return null;
                 },
               ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute evenly
+                children: [
+                  Expanded( // Allow each TextField to expand as needed
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: latitudeController,
+                      decoration: InputDecoration(labelText: 'Latitude'),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Latitude is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(width: 20.0), // Adjust spacing as needed
+                  Expanded(
+                    child: TextFormField(
+                      readOnly: true,
+                      controller: longitudeController,
+                      decoration: InputDecoration(labelText: 'Longitude'),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Longitude is required';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                ],
+              ),
               SizedBox(height: 10),
               Row(
                 children: <Widget>[
@@ -163,12 +210,69 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ],
               ),
-              locationData != null
-                  ? Text(
-                      'Current Location: Latitude: ${locationData!.latitude}, Longitude: ${locationData!.longitude}',
+
+              __spanLocationPicker==true? SizedBox(
+                  height: 300,
+                  width: 400,
+                  child: FlutterMap(
+                    options: MapOptions(
+                      center: LatLng( 18.516726, 73.856255),
+                      zoom: 10,
+                      onTap: (point, latlng) {
+                      setState(() {
+                        _selectedLocation = latlng;
+                        latitudeController.text = latlng.latitude.toString();
+                        longitudeController.text = latlng.longitude.toString();
+                      });
+                    },
+                    ),
+                    nonRotatedChildren: [
+                      AttributionWidget.defaultWidget(
+                        source: 'OpenStreetMap contributors',
+                        onSourceTapped: null,
+                      ),
+                    ],
+                    children: [
+                      TileLayer(
+                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.app',
+                      ),
+                      MarkerLayer(
+                        markers: [
+                          // Add your dynamic markers here
+                          if (_selectedLocation != null)
+                          Marker(
+                            width: 80.0,
+                            height: 80.0,
+                            point: _selectedLocation!,
+                            builder: (ctx) => Container(
+                              child: Icon(
+                                Icons.location_on,
+                                color: Colors.red, // You can set the marker color here
+                              ), // Customize marker appearance
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ):Container(),
+                
+              SizedBox(height: 10),
+
+              selectedImage != null
+                  ? 
+                  // Image.asset(
+                  //     'assets/images/garbeg.jpg', // Replace with your image path
+                  //     height: 200,
+                  //   )
+                  Image.file(
+                      selectedImage!,
+                      height: 200,
                     )
                   : SizedBox(),
-              SizedBox(height: 10),
+                  
+                  SizedBox(height: 10),
               Row(
                 children: <Widget>[
                   ElevatedButton(
@@ -182,95 +286,64 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ],
               ),
-              selectedImage != null
-                  ? Image.asset(
-                      'assets/images/garbeg.jpg', // Replace with your image path
-                      height: 200,
-                    )
-                  // Image.file(
-                  //     selectedImage!,
-                  //     height: 200,
-                  //   )
-                  : SizedBox(),
+
+              SizedBox(height: 10),
+
               ElevatedButton(
                 onPressed: () async {
-                  // _formKey.currentState!.validate()
-                  if (true) {
+                  bool isValidated = _formKey.currentState!.validate();
+                  if (isValidated) {
                     final prefs = await SharedPreferences.getInstance();
                     final userInfo = prefs.getString('userinfo');
                    
                     if(userInfo != null) {
                       Map<String, dynamic> userInfoMap = json.decode(userInfo);
                       String accessToken = userInfoMap['access_token'];
+
+                      final url = Uri.parse('$backendUrl/api/post');
+
+                      if(selectedImage==null){
+                        return;
+                      }
         
-                      var headers = {
-                        "Authorization": "Bearer ${accessToken}",
-                      };
-                          print({'title': _titleController.text,
-                            'content': _contentController.text,
-                            'city': _cityController.text,
-                            'published': true,
-                            'latitude': locationData!.latitude.toString(),
-                            'longitude': locationData!.longitude.toString(),
-                            'authorId': userInfoMap['id'].toString(),
-                            'typeof': userInfoMap['id'].runtimeType,
-                            'file':  selectedImage,
-                            });
+                      var request = http.MultipartRequest('POST', url)
+                      ..files.add(await http.MultipartFile.fromPath('file', selectedImage!.path))
+                      ..fields['title'] = _titleController.text
+                      ..fields['content'] = _contentController.text
+                      ..fields['city'] = _cityController.text
+                      ..fields['latitude'] = latitudeController.text
+                      ..fields['longitude'] = longitudeController.text
+                      ..fields['published'] = 'true'
+                      ..fields['type'] = 'ISSUE'
+                      ..fields['authorId'] = userInfoMap['id'].toString()
+                      ..headers.addAll({
+                          "Authorization": "Bearer $accessToken",
+                        });
 
-                    try{
-                    
+                      print('cooked request!');
+                      final response = await request.send();
+                      print('response time....');
 
-                      final response = await http.post(
-                          Uri.parse('$backendUrl/api/post'),
-                          body: {
-                            'title': _titleController.text,
-                            'content': _contentController.text,
-                            'city': _cityController.text,
-                            'published': 'true',
-                            'type': "ISSUE",
-                            'latitude': locationData!.latitude.toString(),
-                            'longitude': locationData!.longitude.toString(),
-                            'authorId': userInfoMap['id'].toString(),
-                            
+                      if (response.statusCode == 201) {
+                      signUpAlert(
+                          onPressed: () async {
+                            print('back to the feeds page');
+                            Navigator.popAndPushNamed(
+                                  context, CreatePost.id);
+                              Navigator.pushNamed(context, WelcomeScreen.id);
                           },
-                          headers: headers
-                        );
-                        print(response.body);
-                        final Map<String, dynamic> responseData = json.decode(response.body);
-                        print(responseData);
-                        print(response.statusCode);
-                        print('success');
-                         if (response.statusCode == 201) {
-                          signUpAlert(
-                              onPressed: () async {
-                               print('back to the feeds page');
-                                Navigator.popAndPushNamed(
-                                      context, CreatePost.id);
-                                 Navigator.pushNamed(context, WelcomeScreen.id);
-                              },
-                              title: 'Post Upload',
-                              desc:
-                                  'Post uploaded successfully!',
-                              btnText: 'Feed Now',
-                              context: context,
-                            ).show();
-                         }
-
-
-                    }catch(e){
-                      print(e);
-                    }
-
+                          title: 'Post Upload',
+                          desc:
+                              'Post uploaded successfully!',
+                          btnText: 'Feed Now',
+                          context: context,
+                        ).show();
+                      }
                     };
-
-
                   }
                 },
                 child: Text('Create Post'),
               ),
-              isPickingLocation
-                  ? Text('Manual Location Picker Widget Goes Here')
-                  : SizedBox(),
             ],
           ),
         ),
