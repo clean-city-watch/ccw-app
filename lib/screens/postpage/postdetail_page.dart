@@ -122,16 +122,15 @@ class _PostPageDetailsState extends State<PostPageDetails> {
               print(feed.id);
 
               final url = Uri.parse('$backendUrl/api/comment'); // Replace with your API endpoint
-              final body = jsonEncode({
-                'postId': feed.id, // Assuming 'postId' is the field to link the comment to a post
-                'content': text, // The text entered by the user
-                'userId': int.parse(userInfoMap['id'])
-              });
-
+              
               final response = await http.post(
                 url,
                 headers: headers,
-                body: body,
+                body: {
+                  'postId': feed.id.toString(),
+                  'content': text,
+                  'userId': userInfoMap['id'].toString()
+                },
               );
 
               if (response.statusCode == 201) {
@@ -191,6 +190,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                   print(commentText);
                   postComment(commentText);
                   // Clear the text field after posting the comment
+                  print('after the comment textcall ');
                   commentText = '';
                 }
 
