@@ -88,7 +88,7 @@ class GptFeed {
   final Count count;
   final bool published;
   final String timestamp;
-  final bool isupvote;
+  bool isupvote;
   final Status status;
 
   GptFeed({

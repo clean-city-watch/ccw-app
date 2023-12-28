@@ -110,9 +110,9 @@ class _ServicePageState extends State<ServicePage> {
                         controller: _searchController,
                         maxLines: 1,
                         decoration: new InputDecoration(
-                          suffixIcon: Icon(CupertinoIcons.search),
+                          // suffixIcon: Icon(CupertinoIcons.search),
                           contentPadding: EdgeInsets.all(12),
-                          hintText: 'Search posts and members',
+                          hintText: 'Search City',
                           border: OutlineInputBorder(
                             borderRadius: const BorderRadius.all(
                               Radius.circular(4.0),
@@ -129,7 +129,7 @@ class _ServicePageState extends State<ServicePage> {
                       },
                       child: Container(
                         margin: EdgeInsets.all(15),
-                        child: Icon(FontAwesomeIcons.bell, size: 26),
+                        child: Icon(CupertinoIcons.search, size: 26),
                       ),
                     ),
                   ],
@@ -173,7 +173,7 @@ class _ServicePageState extends State<ServicePage> {
                   ],
                 ),
                 SizedBox(
-                  height: 520,
+                  height: 460,
                   width: 400,
                   child: FlutterMap(
                     options: MapOptions(
