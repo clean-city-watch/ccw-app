@@ -109,10 +109,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 prefs.setString('userinfo', response.body);
                                 setState(() {
                                   _saving = false;
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
+                                  Navigator.pushReplacementNamed(
+                                    context,
+                                    WelcomeScreen.id,
+                                  );
                                 });
-                                Navigator.pushNamed(context, WelcomeScreen.id);
+                                // Navigator.pushNamed(context, WelcomeScreen.id);
                               }
                             } catch (e) {
                               signUpAlert(
