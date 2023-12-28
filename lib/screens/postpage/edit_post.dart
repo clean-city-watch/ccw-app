@@ -29,6 +29,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
   late TextEditingController cityController;
   String selectedCity = '';
   String imageUrl = '';
+  String imageUrlResponse = '';
   File? _pickedFile;
   bool _saving = false;
 
@@ -41,6 +42,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
     latitudeController = TextEditingController(text: widget.feed.latitude.toString());
     longitudeController = TextEditingController(text: widget.feed.longitude.toString());
     cityController = TextEditingController(text: widget.feed.city);
+    imageUrl = widget.feed.imageUrl;
     _getImage(widget.feed.imageUrl);
    
   }
@@ -95,6 +97,13 @@ class _EditPostWidgetState extends State<EditPostWidget> {
     }
   }
 
+  
+  void handleImageRemove() {
+    setState(() {
+      _pickedFile = null;
+    });
+  }
+
 
 
   Future<void> _pickFile() async {
@@ -103,6 +112,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
     if (result != null) {
       setState(() {
         _pickedFile = File(result.files.single.path!);
+        imageUrl = result.files.single.path!;
       });
     }
   }
@@ -128,7 +138,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
       final Map<String, dynamic> responseData = json.decode(response.body);
       
        setState(() {
-                imageUrl = responseData['imageUrl'];
+                imageUrlResponse = responseData['imageUrl'];
         });
       
       }
@@ -141,6 +151,12 @@ class _EditPostWidgetState extends State<EditPostWidget> {
   }
 
   Future<void> _editPost(Post post) async {
+    print(post.toJson());
+    print('inside teh edit image ');
+     
+
+
+
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
@@ -148,25 +164,97 @@ class _EditPostWidgetState extends State<EditPostWidget> {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       String accessToken = userInfoMap['access_token'];
         
-      var headers = {
-        "Authorization": "Bearer ${accessToken}",
-      };
+      // var headers = {
+      //   "Authorization": "Bearer $accessToken",
+      // };
 
         print('I am here..');
-     final response = await http.put(Uri.parse('$backendUrl/api/post'),headers: headers,body: post.toJson());
+        final url = Uri.parse('$backendUrl/api/post');
+
+        if (_pickedFile == null) {
+           var request = http.MultipartRequest('PUT', url)
+          // ..files.add(await http.MultipartFile.fromPath('file', _pickedFile!.path))
+          ..fields['id'] = post.id
+          ..fields['title'] = post.title
+          ..fields['content'] = post.content
+          ..fields['city'] = post.city
+          ..fields['imageUrl'] = post.imageUrl
+          ..fields['latitude'] = post.latitude
+          ..fields['longitude'] = post.longitude
+          ..headers.addAll({
+              "Authorization": "Bearer $accessToken",
+            });
+
+             print('cooked inside the not pick file request!');
+              final response = await request.send();
+              print('response time.... inside the not pickedd...');
+
+            
+            if (response.statusCode == 202) {
+              signUpAlert(
+                  context: context,
+                  onPressed: () {
+                    setState(() {
+                      _saving = false;
+                    });
+                    
+                    
+                    Navigator.pop(context);
+                  },
+                  title: 'File Upload',
+                  desc:
+                      'File Uploaded Successfully!',
+                  btnText: 'continue',
+                ).show();
+            
+              print('Post updated successfully');
+              // Navigator.pop(context); // Close the edit post screen
+            
+            }
+        }else{
+          var request = http.MultipartRequest('PUT', url)
+          ..files.add(await http.MultipartFile.fromPath('file', _pickedFile!.path))
+          ..fields['id'] = post.id
+          ..fields['title'] = post.title
+          ..fields['content'] = post.content
+          ..fields['city'] = post.city
+          ..fields['imageUrl'] = post.imageUrl
+          ..fields['latitude'] = post.latitude
+          ..fields['longitude'] = post.longitude
+          ..headers.addAll({
+              "Authorization": "Bearer $accessToken",
+            });
+
+          print('cooked request!');
+          final response = await request.send();
+          print('response time....');
+
       
-      if (response.statusCode == 202) {
-      
-        print('Post updated successfully');
-        Navigator.pop(context); // Close the edit post screen
-      
-      }
-   
+          if (response.statusCode == 202) {
+            signUpAlert(
+                context: context,
+                onPressed: () {
+                  setState(() {
+                    _saving = false;
+                  });
+                  
+                  
+                  Navigator.pop(context);
+                },
+                title: 'File Upload',
+                desc:
+                    'File Uploaded Successfully!',
+                btnText: 'continue',
+              ).show();
+          
+            print('Post updated successfully');
+            // Navigator.pop(context); // Close the edit post screen
+          
+          }
+
+
+        }  
    }
-   
-
-
-
   }
 
   @override
@@ -192,14 +280,23 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                 decoration: InputDecoration(labelText: 'Content'),
               ),
               SizedBox(height: 20.0),
-              TextField(
-                controller: latitudeController,
-                decoration: InputDecoration(labelText: 'Latitude'),
-              ),
-              SizedBox(height: 20.0),
-              TextField(
-                controller: longitudeController,
-                decoration: InputDecoration(labelText: 'Longitude'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute evenly
+                children: [
+                  Expanded( // Allow each TextField to expand as needed
+                    child: TextField(
+                      controller: latitudeController,
+                      decoration: InputDecoration(labelText: 'Latitude'),
+                    ),
+                  ),
+                  SizedBox(width: 20.0), // Adjust spacing as needed
+                  Expanded(
+                    child: TextField(
+                      controller: longitudeController,
+                      decoration: InputDecoration(labelText: 'Longitude'),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20.0),
               TextField(
@@ -207,28 +304,34 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                 decoration: InputDecoration(labelText: 'City'),
               ),
               SizedBox(height: 20.0),
-              _pickedFile != null
+             _pickedFile != null
                 ? Image.file(
                     _pickedFile!,
                     height: 100,
                     width: 100,
                     fit: BoxFit.cover,
                   )
-                : Container(),
+                : imageUrl != "null"
+                    ? Image.network(
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                        imageUrlResponse,
+                      )
+                    : Container(),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _pickFile,
-                child: Text('Pick a File'),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _uploadFile,
-                child: Text('Upload File'),
-              ),
-              
-              Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
+             Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute buttons evenly
+                children: [
+                  ElevatedButton(
+                    onPressed: _pickFile,
+                    child: Text('Pick a File'),
+                  ),
+                  ElevatedButton(
+                    onPressed: handleImageRemove,
+                    child: Text('Remove File'),
+                  ),
+                ],
               ),
               ElevatedButton(
                 onPressed: () {
@@ -237,6 +340,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                     title: titleController.text,
                     content: contentController.text,
                     city: cityController.text,
+                    imageUrl: imageUrl,
                     latitude: latitudeController.text,
                     longitude: longitudeController.text,
                   );
@@ -260,6 +364,7 @@ class Post {
   String title;
   String content;
   String city;
+  String imageUrl;
   String latitude;
   String longitude;
 
@@ -268,6 +373,7 @@ class Post {
     required this.title,
     required this.content,
     required this.city,
+    required this.imageUrl,
     required this.latitude,
     required this.longitude,
 
@@ -279,6 +385,7 @@ class Post {
       'title': title,
       'content': content,
       'city': city,
+      'imageUrl': imageUrl,
       'latitude': latitude,
       'longitude': longitude
     };
