@@ -147,7 +147,7 @@ class _EditPostWidgetState extends State<EditPostWidget> {
    
 
 
-
+   
   }
 
   Future<void> _editPost(Post post) async {

@@ -29,10 +29,14 @@ class _PostPageDetailsState extends State<PostPageDetails> {
   bool isLoading = false;
 
   String commentText = '';
+  String imageUrl = '';
+  String imageUrlResponse = '';
 
   @override
   void initState()  {
     super.initState();
+    imageUrl = widget.feed.imageUrl;
+    _getImage(widget.feed.imageUrl);
     _getCommentsforPosts();
   }
 
@@ -89,6 +93,35 @@ class _PostPageDetailsState extends State<PostPageDetails> {
       }
     }
 
+  }
+
+  Future<void> _getImage(String fileName) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+   if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+
+        
+        final response = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
+      
+      if (response.statusCode == 200) {
+        
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      
+       setState(() {
+                imageUrlResponse = responseData['imageUrl'];
+        });
+      
+      }
+   
+   }
+   
   }
 
 
@@ -248,7 +281,15 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                               child: Text(widget.feed.content,
                                   style: TextStyle(fontSize: 14, color: Colors.grey))),
                           space15(),
-                          imageCarouselSlider(),
+                          imageUrl != "null"
+                          ? Image.network(
+                              height: 100,
+                              width: 100,
+                              fit: BoxFit.cover,
+                              imageUrlResponse,
+                            )
+                          : Container(),
+                          // imageCarouselSlider(),
                           setLocation(context,widget.feed),
                           Divider(thickness: 1),
                           Row(

@@ -132,7 +132,7 @@ class CustomBottomScreen extends StatelessWidget {
           alignment: Alignment.centerLeft,
           child: Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 30,
+              horizontal: 25,
             ),
             child: GestureDetector(
               onTap: () {
