@@ -162,7 +162,6 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                 body: {
                   'postId': feed.id.toString(),
                   'content': text,
-                  'userId': userInfoMap['id'].toString()
                 },
               );
 

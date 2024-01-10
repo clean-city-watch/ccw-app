@@ -44,13 +44,12 @@ Future<List<dynamic>> fetchMessages() async {
   String? userInfo = prefs.getString('userinfo');
   if (userInfo != null) {
     Map<String, dynamic> userInfoMap = json.decode(userInfo);
-    var userid = userInfoMap['id'];
     String accessToken = userInfoMap['access_token'];
         
     var headers = {
       "Authorization": "Bearer ${accessToken}",
     };
-    final String apiUrl = "$backendUrl/api/log/$userid";
+    final String apiUrl = "$backendUrl/api/user/log";
 
     final response = await http.get(Uri.parse(apiUrl),headers: headers);
 

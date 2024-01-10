@@ -97,13 +97,13 @@ class _LibraryPageState extends State<LibraryPage> {
     String? userInfo = prefs.getString('userinfo');
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      var userid = userInfoMap['id'];
+
       String accessToken = userInfoMap['access_token'];
         
       var headers = {
         "Authorization": "Bearer ${accessToken}",
       };
-      final String apiUrl = "$backendUrl/api/user/count/$userid";
+      final String apiUrl = "$backendUrl/api/user/activity/count";
       
         try {
         final response = await http.get(Uri.parse(apiUrl),headers: headers);

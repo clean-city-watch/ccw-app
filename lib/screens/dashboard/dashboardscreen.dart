@@ -122,8 +122,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     String? userInfo = prefs.getString('userinfo');
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      var userid = userInfoMap['id'];
-      final String apiUrl = "$backendUrl/api/user/count/$userid";
+      
+      final String apiUrl = "$backendUrl/api/user/activity/count";
       
         try {
         final response = await http.get(Uri.parse(apiUrl));

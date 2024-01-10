@@ -116,7 +116,6 @@ Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
                         Uri.parse(apiUrl),
                         body: {
                                 "postId": listFeed.id.toString(),
-                                "userId":  userInfoMap['id'].toString() 
                             },
                         headers: headers
                         );
@@ -227,7 +226,6 @@ Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
                         Uri.parse(apiUrl),
                         body: {
                                 "postId": listFeed.id.toString(),
-                                "userId":  userInfoMap['id'].toString() 
                             },
                         headers: headers
                         );
