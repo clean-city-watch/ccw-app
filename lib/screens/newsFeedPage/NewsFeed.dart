@@ -69,11 +69,15 @@ class _NewsFeedState extends State<NewsFeed> {
 
           setState(() {
             feedList.addAll(content.map((json) {
-              print('upvotes are: ');
-              print(json['upvotes'].length);
-              newsFeedWidgetList.add(feedNewsCardItem(context, GptFeed.fromJson(json)));
-              newsFeedWidgetList.add(topSpace());
-              return GptFeed.fromJson(json);
+              if(json['type']=='QUESTION'){
+                print("call the Question addition item here...");
+              }
+              if(json['type']=='ISSUE'){
+                newsFeedWidgetList.add(feedNewsCardItem(context, GptFeed.fromJson(json)));
+                newsFeedWidgetList.add(topSpace());
+                return GptFeed.fromJson(json);
+              }
+             
             }).toList());
 
             isVisible = true;

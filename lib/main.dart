@@ -1,3 +1,4 @@
+import 'package:ccw/screens/ask_question.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/screens/home_screen.dart';
 import 'package:ccw/screens/login_screen.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         SignUpScreen.id: (context) => SignUpScreen(),
         WelcomeScreen.id: (context) => HomePage(),
         CreatePost.id: (context) => CreatePost(),
+        FirstPage.id: (context) => FirstPage(),
         EditProfileWidget.id: (context) => EditProfileWidget(),
         HelpAndSupport.id: (context) => HelpAndSupport(),
       },

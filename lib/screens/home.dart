@@ -1,4 +1,5 @@
 import 'package:ccw/screens/custom/fab_bottom_app_bar.dart';
+import 'package:ccw/screens/ask_question.dart';
 import 'package:ccw/screens/libraryPage/library.dart';
 import 'package:ccw/screens/messagePage/messages.dart';
 import 'package:ccw/screens/newsFeedPage/NewsFeed.dart';
@@ -145,7 +146,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               case 0:
                                  Navigator.pushNamed(context, CreatePost.id);
                               case 1:
-                                debugPrint(bottomMenuItems[index].title);
+                                Navigator.pushNamed(context, FirstPage.id);
                               case 2:
                                debugPrint(bottomMenuItems[index].title);
                               case 3:
