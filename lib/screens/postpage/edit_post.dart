@@ -9,8 +9,8 @@ import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:shared_preferences/shared_preferences.dart';
-
-
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class EditPostWidget extends StatefulWidget {
   final GptFeed feed;
@@ -33,27 +33,25 @@ class _EditPostWidgetState extends State<EditPostWidget> {
   File? _pickedFile;
   bool _saving = false;
 
-
   @override
   void initState() {
     super.initState();
     titleController = TextEditingController(text: widget.feed.title);
     contentController = TextEditingController(text: widget.feed.content);
-    latitudeController = TextEditingController(text: widget.feed.latitude.toString());
-    longitudeController = TextEditingController(text: widget.feed.longitude.toString());
+    latitudeController =
+        TextEditingController(text: widget.feed.latitude.toString());
+    longitudeController =
+        TextEditingController(text: widget.feed.longitude.toString());
     cityController = TextEditingController(text: widget.feed.city);
     imageUrl = widget.feed.imageUrl;
     _getImage(widget.feed.imageUrl);
-   
   }
-
 
   Future<void> _uploadFile() async {
     if (_pickedFile == null) {
       return;
     }
 
-    
     final postId = widget.feed.id;
     final url = Uri.parse('$backendUrl/api/post/$postId/upload');
     print(url);
@@ -70,22 +68,20 @@ class _EditPostWidgetState extends State<EditPostWidget> {
 
       if (response.statusCode == 201) {
         // File uploaded successfully, handle accordingly
-                
+
         signUpAlert(
-            context: context,
-            onPressed: () {
-              setState(() {
-                _saving = false;
-              });
-              
-              
-              Navigator.pop(context);
-            },
-            title: 'File Upload',
-            desc:
-                'File Uploaded Successfully!',
-            btnText: 'continue',
-          ).show();
+          context: context,
+          onPressed: () {
+            setState(() {
+              _saving = false;
+            });
+
+            Navigator.pop(context);
+          },
+          title: 'File Upload',
+          desc: 'File Uploaded Successfully!',
+          btnText: 'continue',
+        ).show();
         print('File uploaded successfully');
       } else {
         // Handle the error case
@@ -97,14 +93,11 @@ class _EditPostWidgetState extends State<EditPostWidget> {
     }
   }
 
-  
   void handleImageRemove() {
     setState(() {
       _pickedFile = null;
     });
   }
-
-
 
   Future<void> _pickFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -117,62 +110,52 @@ class _EditPostWidgetState extends State<EditPostWidget> {
     }
   }
 
-
   Future<void> _getImage(String fileName) async {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
-   if(userInfo != null) {
+    if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       String accessToken = userInfoMap['access_token'];
-        
+
       var headers = {
         "Authorization": "Bearer ${accessToken}",
       };
 
-        
-        final response = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
-      
+      final response = await http.get(
+          Uri.parse('$backendUrl/api/minio/covers/$fileName'),
+          headers: headers);
+
       if (response.statusCode == 200) {
-        
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      
-       setState(() {
-                imageUrlResponse = responseData['imageUrl'];
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        setState(() {
+          imageUrlResponse = responseData['imageUrl'];
         });
-      
       }
-   
-   }
-   
-
-
-   
+    }
   }
 
   Future<void> _editPost(Post post) async {
     print(post.toJson());
     print('inside teh edit image ');
-     
-
-
 
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
-   if(userInfo != null) {
+    if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       String accessToken = userInfoMap['access_token'];
-        
+
       // var headers = {
       //   "Authorization": "Bearer $accessToken",
       // };
 
-        print('I am here..');
-        final url = Uri.parse('$backendUrl/api/post');
+      print('I am here..');
+      final url = Uri.parse('$backendUrl/api/post');
 
-        if (_pickedFile == null) {
-           var request = http.MultipartRequest('PUT', url)
+      if (_pickedFile == null) {
+        var request = http.MultipartRequest('PUT', url)
           // ..files.add(await http.MultipartFile.fromPath('file', _pickedFile!.path))
           ..fields['id'] = post.id
           ..fields['title'] = post.title
@@ -182,38 +165,35 @@ class _EditPostWidgetState extends State<EditPostWidget> {
           ..fields['latitude'] = post.latitude
           ..fields['longitude'] = post.longitude
           ..headers.addAll({
-              "Authorization": "Bearer $accessToken",
-            });
+            "Authorization": "Bearer $accessToken",
+          });
 
-             print('cooked inside the not pick file request!');
-              final response = await request.send();
-              print('response time.... inside the not pickedd...');
+        print('cooked inside the not pick file request!');
+        final response = await request.send();
+        print('response time.... inside the not pickedd...');
 
-            
-            if (response.statusCode == 202) {
-              signUpAlert(
-                  context: context,
-                  onPressed: () {
-                    setState(() {
-                      _saving = false;
-                    });
-                    
-                    
-                    Navigator.pop(context);
-                  },
-                  title: 'File Upload',
-                  desc:
-                      'File Uploaded Successfully!',
-                  btnText: 'continue',
-                ).show();
-            
-              print('Post updated successfully');
-              // Navigator.pop(context); // Close the edit post screen
-            
-            }
-        }else{
-          var request = http.MultipartRequest('PUT', url)
-          ..files.add(await http.MultipartFile.fromPath('file', _pickedFile!.path))
+        if (response.statusCode == 202) {
+          signUpAlert(
+            context: context,
+            onPressed: () {
+              setState(() {
+                _saving = false;
+              });
+
+              Navigator.pop(context);
+            },
+            title: 'File Upload',
+            desc: 'File Uploaded Successfully!',
+            btnText: 'continue',
+          ).show();
+
+          print('Post updated successfully');
+          // Navigator.pop(context); // Close the edit post screen
+        }
+      } else {
+        var request = http.MultipartRequest('PUT', url)
+          ..files
+              .add(await http.MultipartFile.fromPath('file', _pickedFile!.path))
           ..fields['id'] = post.id
           ..fields['title'] = post.title
           ..fields['content'] = post.content
@@ -222,39 +202,33 @@ class _EditPostWidgetState extends State<EditPostWidget> {
           ..fields['latitude'] = post.latitude
           ..fields['longitude'] = post.longitude
           ..headers.addAll({
-              "Authorization": "Bearer $accessToken",
-            });
+            "Authorization": "Bearer $accessToken",
+          });
 
-          print('cooked request!');
-          final response = await request.send();
-          print('response time....');
+        print('cooked request!');
+        final response = await request.send();
+        print('response time....');
 
-      
-          if (response.statusCode == 202) {
-            signUpAlert(
-                context: context,
-                onPressed: () {
-                  setState(() {
-                    _saving = false;
-                  });
-                  
-                  
-                  Navigator.pop(context);
-                },
-                title: 'File Upload',
-                desc:
-                    'File Uploaded Successfully!',
-                btnText: 'continue',
-              ).show();
-          
-            print('Post updated successfully');
-            // Navigator.pop(context); // Close the edit post screen
-          
-          }
+        if (response.statusCode == 202) {
+          signUpAlert(
+            context: context,
+            onPressed: () {
+              setState(() {
+                _saving = false;
+              });
 
+              Navigator.pop(context);
+            },
+            title: 'File Upload',
+            desc: 'File Uploaded Successfully!',
+            btnText: 'continue',
+          ).show();
 
-        }  
-   }
+          print('Post updated successfully');
+          // Navigator.pop(context); // Close the edit post screen
+        }
+      }
+    }
   }
 
   @override
@@ -281,9 +255,11 @@ class _EditPostWidgetState extends State<EditPostWidget> {
               ),
               SizedBox(height: 20.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute evenly
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween, // Distribute evenly
                 children: [
-                  Expanded( // Allow each TextField to expand as needed
+                  Expanded(
+                    // Allow each TextField to expand as needed
                     child: TextField(
                       controller: latitudeController,
                       decoration: InputDecoration(labelText: 'Latitude'),
@@ -304,24 +280,84 @@ class _EditPostWidgetState extends State<EditPostWidget> {
                 decoration: InputDecoration(labelText: 'City'),
               ),
               SizedBox(height: 20.0),
-             _pickedFile != null
-                ? Image.file(
-                    _pickedFile!,
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  )
-                : imageUrl != "null"
-                    ? Image.network(
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Dialog(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.8,
+                          child: _pickedFile != null
+                              ? PhotoViewGallery.builder(
+                                  itemCount: 1,
+                                  builder: (context, index) {
+                                    return PhotoViewGalleryPageOptions(
+                                      imageProvider: FileImage(_pickedFile!),
+                                      minScale:
+                                          PhotoViewComputedScale.contained,
+                                      maxScale:
+                                          PhotoViewComputedScale.covered * 2,
+                                      heroAttributes: PhotoViewHeroAttributes(
+                                          tag: 'imageTag'),
+                                    );
+                                  },
+                                  scrollPhysics: BouncingScrollPhysics(),
+                                  backgroundDecoration: BoxDecoration(
+                                    color: Colors.black,
+                                  ),
+                                )
+                              : imageUrl != "null"
+                                  ? PhotoViewGallery.builder(
+                                      itemCount: 1,
+                                      builder: (context, index) {
+                                        return PhotoViewGalleryPageOptions(
+                                          imageProvider:
+                                              NetworkImage(imageUrlResponse),
+                                          minScale:
+                                              PhotoViewComputedScale.contained,
+                                          maxScale:
+                                              PhotoViewComputedScale.covered *
+                                                  2,
+                                          heroAttributes:
+                                              PhotoViewHeroAttributes(
+                                                  tag: 'imageTag'),
+                                        );
+                                      },
+                                      scrollPhysics: BouncingScrollPhysics(),
+                                      backgroundDecoration: BoxDecoration(
+                                        color: Colors.black,
+                                      ),
+                                    )
+                                  : Center(
+                                      child: Text('No image available'),
+                                    ),
+                        ),
+                      );
+                    },
+                  );
+                },
+                child: _pickedFile != null
+                    ? Image.file(
+                        _pickedFile!,
                         height: 100,
                         width: 100,
                         fit: BoxFit.cover,
-                        imageUrlResponse,
                       )
-                    : Container(),
+                    : imageUrl != "null"
+                        ? Image.network(
+                            imageUrlResponse,
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(),
+              ),
               SizedBox(height: 20),
-             Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute buttons evenly
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween, // Distribute buttons evenly
                 children: [
                   ElevatedButton(
                     onPressed: _pickFile,
@@ -355,7 +391,6 @@ class _EditPostWidgetState extends State<EditPostWidget> {
         ),
       ),
     );
-
   }
 }
 
@@ -376,7 +411,6 @@ class Post {
     required this.imageUrl,
     required this.latitude,
     required this.longitude,
-
   });
 
   Map<String, dynamic> toJson() {

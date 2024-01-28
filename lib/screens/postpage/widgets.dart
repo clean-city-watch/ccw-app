@@ -1,8 +1,13 @@
+import 'dart:convert';
+
+import 'package:ccw/consts/env.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedCard.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 Widget linearProgressIndicator() {
   return LinearProgressIndicator(
@@ -10,54 +15,80 @@ Widget linearProgressIndicator() {
   );
 }
 
+Future<String> getPublicUrlForUsersAvatar(String fileName) async {
+   final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+
+    if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
+      if (avatarUrl.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+        return responseData['imageUrl'];
+      }
+    }
+
+    return "https://www.w3schools.com/w3images/avatar3.png";
+}
+
 Widget othersComment(BuildContext context, GptComment comment) {
-  return Container(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        CircleAvatar(
-            backgroundColor: Colors.grey,
-            child: ClipOval(
-                child: Image.network(
-                    comment.author.profile.avatar)),
-            radius: 20),
-        SizedBox(width: 20),
-        Expanded(
-            child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              border: Border.all(
-                  style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
-          child: Card(
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: <Widget>[
-                  usernameSectionWithoutAvatar(context,comment),
-                  space15(),
-                  Text(
-                      comment.content,
-                      softWrap: true,
-                      maxLines: 3,
-                      style: TextStyle(fontSize: 14)),
-                  // space15(),
-                  // Divider(thickness: 1),
-                  // SizedBox(height: 10),
-                  // // menuReply(feed),
-                  // space15(),
-                ],
+  return FutureBuilder<String>(
+    future: getPublicUrlForUsersAvatar(comment.author.profile.avatar),
+    builder: (context, snapshot) {
+      String avatarUrl = snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
+
+      return Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            CircleAvatar(
+              backgroundColor: Colors.grey,
+              child: ClipOval(
+                child: Image.network(avatarUrl),
+              ),
+              radius: 20,
+            ),
+            SizedBox(width: 20),
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5),
+                ),
+                child: Card(
+                  elevation: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: <Widget>[
+                        usernameSectionWithoutAvatar(context, comment),
+                        space15(),
+                        Text(
+                          comment.content,
+                          softWrap: true,
+                          maxLines: 3,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        )
-            //commentReply(context, FeedBloc().feedList[2]),
-            )
-      ],
-    ),
+          ],
+        ),
+      );
+    },
   );
 }
+
 
 Widget othersCommentWithImageSlider(BuildContext context, GptComment feed) {
   return Container(
@@ -249,48 +280,76 @@ Widget usernameSectionWithoutAvatar(BuildContext context,GptComment comment) {
   );
 }
 
+
+Future<String> getPublicUrlForAvatar() async {
+   final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+
+    if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),headers: headers);
+      if (avatarUrl.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+        return responseData['imageUrl'];
+      }
+    }
+
+    return "https://www.w3schools.com/w3images/avatar3.png";
+}
+
 Widget commentReply(BuildContext context, GptComment comment) {
-  return Container(
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Expanded(
-            child: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.all(Radius.circular(8)),
-              border: Border.all(
-                  style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
-          child: Container(
-            color: Colors.grey[300],
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                children: <Widget>[
-                  //usernameSectionWithoutAvatar(context),
-                  //space15(),
-                  Text(
-                      comment.content,
-                      softWrap: true,
-                      maxLines: 3,
-                      style: TextStyle(fontSize: 14)),
-                  
-                ],
+  return FutureBuilder<String>(
+    future: getPublicUrlForAvatar(),
+    builder: (context, snapshot) {
+      String avatarUrl = snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
+
+      return Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.all(Radius.circular(8)),
+                  border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5),
+                ),
+                child: Container(
+                  color: Colors.grey[300],
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      children: <Widget>[
+                        Text(
+                          comment.content,
+                          softWrap: true,
+                          maxLines: 3,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        )
-            //commentReply(context, FeedBloc().feedList[2]),
+            SizedBox(width: 20),
+            CircleAvatar(
+              backgroundColor: Colors.grey,
+              child: ClipOval(
+                child: Image.network(avatarUrl),
+              ),
+              radius: 20,
             ),
-        SizedBox(width: 20),
-        CircleAvatar(
-            backgroundColor: Colors.grey,
-            child: ClipOval(
-                child: Image.network(
-                    'https://www.w3schools.com/w3images/avatar4.png')),
-            radius: 20),
-      ],
-    ),
+          ],
+        ),
+      );
+    },
   );
 }
 

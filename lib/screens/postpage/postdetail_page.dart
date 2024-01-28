@@ -12,10 +12,11 @@ import 'package:ccw/consts/env.dart' show backendUrl;
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:photo_view/photo_view.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 
 class PostPageDetails extends StatefulWidget {
-   final GptFeed feed;
+  final GptFeed feed;
 
   PostPageDetails({required this.feed});
 
@@ -25,7 +26,7 @@ class PostPageDetails extends StatefulWidget {
 
 class _PostPageDetailsState extends State<PostPageDetails> {
   List commentList = [];
-  List<Widget> newsCommentWidgetList=[];
+  List<Widget> newsCommentWidgetList = [];
   bool isLoading = false;
 
   String commentText = '';
@@ -33,7 +34,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
   String imageUrlResponse = '';
 
   @override
-  void initState()  {
+  void initState() {
     super.initState();
     imageUrl = widget.feed.imageUrl;
     _getImage(widget.feed.imageUrl);
@@ -54,141 +55,129 @@ class _PostPageDetailsState extends State<PostPageDetails> {
 
     print('before comment status for request is ');
     print(widget.feed.status.name);
-     if(userInfo != null) {
-          Map<String, dynamic> userInfoMap = json.decode(userInfo);
-           String accessToken = userInfoMap['access_token'];
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
 
-           var headers = {
-                "Authorization": "Bearer ${accessToken}",
-              };
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
 
-          print("userInfo id ");
-          var url = Uri.parse('$backendUrl/api/comment/${widget.feed.id}');
+      print("userInfo id ");
+      var url = Uri.parse('$backendUrl/api/comment/${widget.feed.id}');
 
-          var response = await http.get(url,headers: headers);
-          if (response.statusCode == 200) {
-            final jsonResponse = jsonDecode(response.body);
-            final content = jsonResponse['comments'];
+      var response = await http.get(url, headers: headers);
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['comments'];
 
-            print(content);
+        print(content);
 
-          setState(() {
-            commentList.addAll(content.map((json) {
-              
+        setState(() {
+          commentList.addAll(content.map((json) {
+            if (json['user']['id'].toString() == userInfoMap['id'].toString()) {
+              newsCommentWidgetList
+                  .add(commentReply(context, GptComment.fromJson(json)));
+              newsCommentWidgetList.add(topSpace());
+            } else {
+              newsCommentWidgetList
+                  .add(othersComment(context, GptComment.fromJson(json)));
+              newsCommentWidgetList.add(topSpace());
+            }
 
-              if(json['user']['id'].toString()== userInfoMap['id'].toString()){
-                newsCommentWidgetList.add(commentReply(context, GptComment.fromJson(json)));
-                newsCommentWidgetList.add(topSpace());
-              }else{
-                newsCommentWidgetList.add(othersComment(context, GptComment.fromJson(json)));
-                newsCommentWidgetList.add(topSpace());
-              }
-             
-              return GptComment.fromJson(json);
-            }).toList());
+            return GptComment.fromJson(json);
+          }).toList());
 
-            isLoading = false;
-          
-          });
+          isLoading = false;
+        });
       }
     }
-
   }
 
   Future<void> _getImage(String fileName) async {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
-   if(userInfo != null) {
+    if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       String accessToken = userInfoMap['access_token'];
-        
+
       var headers = {
         "Authorization": "Bearer ${accessToken}",
       };
 
-        
-        final response = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
-      
-      if (response.statusCode == 200) {
-        
-      final Map<String, dynamic> responseData = json.decode(response.body);
-      
-       setState(() {
-                imageUrlResponse = responseData['imageUrl'];
-        });
-      
-      }
-   
-   }
-   
-  }
+      final response = await http.get(
+          Uri.parse('$backendUrl/api/minio/covers/$fileName'),
+          headers: headers);
 
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(response.body);
+
+        setState(() {
+          imageUrlResponse = responseData['imageUrl'];
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     Widget _buildMessageComposer() {
-
       final GptFeed feed = widget.feed;
       print(feed.id);
 
       //TODO: need refactoring here..
 
+      Future<void> postComment(String text) async {
+        final prefs = await SharedPreferences.getInstance();
+        String? userInfo = prefs.getString('userinfo');
 
+        if (userInfo != null) {
+          Map<String, dynamic> userInfoMap = json.decode(userInfo);
+          String accessToken = userInfoMap['access_token'];
 
-        Future<void> postComment(String text) async {
+          var headers = {
+            "Authorization": "Bearer ${accessToken}",
+          };
 
-          final prefs = await SharedPreferences.getInstance();
-          String? userInfo = prefs.getString('userinfo');
+          print(feed.id);
+          print(userInfoMap['id']);
+          print("now adding comment.. for feedid ");
+          print(feed.id);
 
-          if(userInfo != null) {
-              Map<String, dynamic> userInfoMap = json.decode(userInfo);
-              String accessToken = userInfoMap['access_token'];
-        
-              var headers = {
-                "Authorization": "Bearer ${accessToken}",
-              };
+          final url = Uri.parse(
+              '$backendUrl/api/comment'); // Replace with your API endpoint
 
-              print(feed.id);
-              print(userInfoMap['id']);
-              print("now adding comment.. for feedid ");
-              print(feed.id);
+          final response = await http.post(
+            url,
+            headers: headers,
+            body: {
+              'postId': feed.id.toString(),
+              'content': text,
+            },
+          );
 
-              final url = Uri.parse('$backendUrl/api/comment'); // Replace with your API endpoint
-              
-              final response = await http.post(
-                url,
-                headers: headers,
-                body: {
-                  'postId': feed.id.toString(),
-                  'content': text,
-                },
-              );
-
-              if (response.statusCode == 201) {
-                // Comment successfully posted, you can handle the response accordingly
-                print('Comment posted successfully');
-                signUpAlert(
-                  onPressed: () async {
-                  print('back to the feeds page');
-                  Navigator.popAndPushNamed(
-                          context, EditProfileWidget.id);
-                      Navigator.pushNamed(context, WelcomeScreen.id);
-                  },
-                  title: 'Comment Upload',
-                  
-                  desc:
-                      'Comment posted successfully!',
-                  btnText: 'Feed Now',
-                  context: context,
-              ).show();
-              } else {
-                // Handle the error if the request fails
-                print('Failed to post comment');
-              }
+          if (response.statusCode == 201) {
+            // Comment successfully posted, you can handle the response accordingly
+            print('Comment posted successfully');
+            signUpAlert(
+              onPressed: () async {
+                print('back to the feeds page');
+                Navigator.popAndPushNamed(context, EditProfileWidget.id);
+                Navigator.pushNamed(context, WelcomeScreen.id);
+              },
+              title: 'Comment Upload',
+              desc: 'Comment posted successfully!',
+              btnText: 'Feed Now',
+              context: context,
+            ).show();
+          } else {
+            // Handle the error if the request fails
+            print('Failed to post comment');
           }
-
         }
+      }
+
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         height: 70.0,
@@ -203,15 +192,15 @@ class _PostPageDetailsState extends State<PostPageDetails> {
             ),
             Expanded(
                 child: TextField(
-                  textCapitalization: TextCapitalization.sentences,
-                  onChanged: (value) {
-                    setState(() {
-                      commentText = value;
-                    }); // Update the comment text as the user types
-                  },
-                  decoration:
-                      InputDecoration.collapsed(hintText: 'Add a cheerful comment'),
-                )),
+              textCapitalization: TextCapitalization.sentences,
+              onChanged: (value) {
+                setState(() {
+                  commentText = value;
+                }); // Update the comment text as the user types
+              },
+              decoration:
+                  InputDecoration.collapsed(hintText: 'Add a cheerful comment'),
+            )),
             IconButton(
               icon: Icon(Icons.send),
               iconSize: 25.0,
@@ -225,7 +214,6 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                   print('after the comment textcall ');
                   commentText = '';
                 }
-
               },
             ),
           ],
@@ -234,7 +222,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
     }
 
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
@@ -250,13 +238,14 @@ class _PostPageDetailsState extends State<PostPageDetails> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-
                 // feedNewsCardItem(context,widget.feed),
                 Container(
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(8)),
-                      border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-                  ),
+                      border: Border.all(
+                          style: BorderStyle.solid,
+                          color: Colors.grey,
+                          width: 0.5)),
                   child: Card(
                     elevation: 0,
                     child: Padding(
@@ -268,28 +257,81 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                           userAvatarSection(context, widget.feed),
                           space15(),
                           Visibility(
-                              visible: widget.feed.title.isEmpty == true ? false : true,
+                              visible: widget.feed.title.isEmpty == true
+                                  ? false
+                                  : true,
                               child: Text(widget.feed.title,
                                   softWrap: true,
                                   maxLines: 2,
-                                  style:
-                                  TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold))),
                           space15(),
                           Visibility(
-                              visible: widget.feed.content.isEmpty == true ? false : true,
+                              visible: widget.feed.content.isEmpty == true
+                                  ? false
+                                  : true,
                               child: Text(widget.feed.content,
-                                  style: TextStyle(fontSize: 14, color: Colors.grey))),
+                                  style: TextStyle(
+                                      fontSize: 14, color: Colors.grey))),
                           space15(),
-                          imageUrl != "null"
-                          ? Image.network(
-                              height: 100,
-                              width: 100,
-                              fit: BoxFit.cover,
-                              imageUrlResponse,
-                            )
-                          : Container(),
+                          GestureDetector(
+                            onTap: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.8,
+                                      child: imageUrl != "null"
+                                          ? PhotoViewGallery.builder(
+                                              itemCount: 1,
+                                              builder: (context, index) {
+                                                return PhotoViewGalleryPageOptions(
+                                                  imageProvider: NetworkImage(
+                                                      imageUrlResponse),
+                                                  minScale:
+                                                      PhotoViewComputedScale
+                                                          .contained,
+                                                  maxScale:
+                                                      PhotoViewComputedScale
+                                                              .covered *
+                                                          2,
+                                                  heroAttributes:
+                                                      PhotoViewHeroAttributes(
+                                                          tag: 'imageTag'),
+                                                );
+                                              },
+                                              scrollPhysics:
+                                                  BouncingScrollPhysics(),
+                                              backgroundDecoration:
+                                                  BoxDecoration(
+                                                color: Colors.black,
+                                              ),
+                                            )
+                                          : Center(
+                                              child: Text('No image available'),
+                                            ),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                            child: imageUrl != "null"
+                                ? Image.network(
+                                    imageUrlResponse,
+                                    height: 100,
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(),
+                          ),
                           // imageCarouselSlider(),
-                          setLocation(context,widget.feed),
+                          setLocation(context, widget.feed),
                           Divider(thickness: 1),
                           Row(
                             children: <Widget>[
@@ -298,7 +340,8 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                               Text(
                                 '${widget.feed.count.upvotes} Members supported the post',
                                 style: TextStyle(
-                                    fontSize: 14, color: Theme.of(context).primaryColor),
+                                    fontSize: 14,
+                                    color: Theme.of(context).primaryColor),
                               ),
                             ],
                           ),
@@ -324,17 +367,20 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                                     ],
                                   )),
                               Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: <Widget>[
                                     GestureDetector(
-                                        onTap: () =>print("comment section printed..")
-                                          ,
+                                        onTap: () =>
+                                            print("comment section printed.."),
                                         child: Row(
                                           children: <Widget>[
-                                            Icon(FontAwesomeIcons.comment, size: 18),
+                                            Icon(FontAwesomeIcons.comment,
+                                                size: 18),
                                             SizedBox(width: 5),
-                                            Text('${widget.feed.count.comments}')
+                                            Text(
+                                                '${widget.feed.count.comments}')
                                           ],
                                         ))
                                   ]),
@@ -343,7 +389,8 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                                   onTap: () {
                                     print('share code');
                                   },
-                                  child: Icon(FontAwesomeIcons.shareAlt, size: 18))
+                                  child:
+                                      Icon(FontAwesomeIcons.shareAlt, size: 18))
                             ],
                           ),
                           space15(),
@@ -363,7 +410,6 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                     );
                   }).toList(),
                 ),
-
 
                 Divider(thickness: 1),
                 _buildMessageComposer(),
