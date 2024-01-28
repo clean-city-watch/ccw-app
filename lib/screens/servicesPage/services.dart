@@ -23,7 +23,7 @@ class _ServicePageState extends State<ServicePage> {
   @override
   void initState() {
     super.initState();
-    _searchController = TextEditingController(text: '');
+    _searchController = TextEditingController(text: 'Pune');
     fetchLocations('$backendUrl/api/post/all-locations'); // Call the function to fetch locations on init
   }
 
@@ -108,6 +108,7 @@ class _ServicePageState extends State<ServicePage> {
                     Expanded(
                       child: TextField(
                         controller: _searchController,
+                        readOnly: true,
                         maxLines: 1,
                         decoration: new InputDecoration(
                           // suffixIcon: Icon(CupertinoIcons.search),

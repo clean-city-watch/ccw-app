@@ -39,6 +39,28 @@ String formatTimestamp(String timestamp) {
   }
 }
 
+Future<String> getPublicUrlForFile(String fileName) async {
+   final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+
+    if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
+      if (avatarUrl.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+        return responseData['imageUrl'];
+      }
+    }
+
+    return "https://www.w3schools.com/w3images/avatar3.png";
+}
+
 
 Widget feedCard(BuildContext context, GptFeed listFeed) {
   return Card(
@@ -317,47 +339,80 @@ Widget setLocation(BuildContext context,GptFeed listFeed) {
 }
 
 Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
-  return Row(
-    children: <Widget>[
-      Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  return FutureBuilder<String>(
+    future: getPublicUrlForFile(listFeed.author.profile.avatar),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // Display a loading indicator while waiting for the result
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        // Display an error message if there's an error
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData) {
+        // Use the public URL to display the image
+        return Row(
           children: <Widget>[
-            Row(
-              children: <Widget>[
-                CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: ClipOval(child: Image.network(listFeed.author.profile.avatar)),
-                    radius: 20),
-                SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text(listFeed.author.profile.firstName+' '+listFeed.author.profile.lastName,
-                            style: TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
-                        SizedBox(
-                          width: 10,
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Colors.grey,
+                        child: ClipOval(
+                          child: Image.network(snapshot.data!), // Use the public URL here
                         ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text('User Description',
-                        style: TextStyle(fontSize: 12, color: Colors.teal)),
-                  ],
-                )
-              ],
+                        radius: 20,
+                      ),
+                      SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text(
+                                listFeed.author.profile.firstName +
+                                    ' ' +
+                                    listFeed.author.profile.lastName,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'User Description',
+                            style: TextStyle(fontSize: 12, color: Colors.teal),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  moreOptions3Dots(context),
+                ],
+              ),
             ),
-            moreOptions3Dots(context),
           ],
-        ),
-      )
-    ],
+        );
+      } else {
+        // Display a placeholder or default image
+        return CircleAvatar(
+          backgroundColor: Colors.grey,
+          radius: 20,
+          child: Icon(Icons.person, color: Colors.white),
+        );
+      }
+    },
   );
 }
+
 
 Widget moreOptions3Dots(BuildContext context) {
   return GestureDetector(

@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:ccw/consts/env.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedCard.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,6 +12,9 @@ import 'package:ccw/screens/servicesPage/routeservice.dart';
 import 'package:ccw/screens/servicesPage/helpandsupport.dart';
 import 'package:ccw/screens/feedback/feedbackScreen.dart';
 import 'package:ccw/screens/servicesPage/about.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
+
 
 
 
@@ -22,56 +28,96 @@ class MenuModel {
 }
 
 
+Future<String> getPublicUrlForAvatar() async {
+   final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+
+    if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+        
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),headers: headers);
+      if (avatarUrl.statusCode == 200) {
+        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+        return responseData['imageUrl'];
+      }
+    }
+
+    return "https://www.w3schools.com/w3images/avatar3.png";
+}
+
 
 
 Widget actionBarRow(BuildContext context) {
-  
-  return Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: <Widget>[
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text('COMMUNITY',
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.normal,
-                  color: Colors.grey)),
-          Row(
-            children: <Widget>[
-              Text('All Communities',
-                  style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.teal)),
-              SizedBox(width: 6),
-              Icon(
-                Icons.arrow_drop_down,
-                color: Colors.teal,
-              )
-            ],
-          )
-        ],
-      ),
-      
-      GestureDetector(
-        onTap: () {
-          _modalSideSheetMenu(context);
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => EditProfileWidget()),
-          // );
-        },
-        child: CircleAvatar(
-          child: ClipOval(child: Image.network('https://www.w3schools.com/w3images/avatar3.png')),
-          radius: 20,
-          backgroundColor: Colors.grey,
-        ),
-      )
+  return FutureBuilder<String>(
+    future: getPublicUrlForAvatar(), // Replace 'avatarFileName' with the actual file name
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // Display a loading indicator while waiting for the result
+        return CircularProgressIndicator();
+      } else if (snapshot.hasError) {
+        // Display an error message if there's an error
+        return Text('Error: ${snapshot.error}');
+      } else if (snapshot.hasData) {
+        // Use the public URL to display the image
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text('COMMUNITY',
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.normal,
+                        color: Colors.grey)),
+                Row(
+                  children: <Widget>[
+                    Text('All Communities',
+                        style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal)),
+                    SizedBox(width: 6),
+                    Icon(
+                      Icons.arrow_drop_down,
+                      color: Colors.teal,
+                    )
+                  ],
+                )
+              ],
+            ),
+            GestureDetector(
+              onTap: () {
+                _modalSideSheetMenu(context);
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(builder: (context) => EditProfileWidget()),
+                // );
+              },
+              child: CircleAvatar(
+                child: ClipOval(
+                  child: Image.network(snapshot.data!),
+                ),
+                radius: 20,
+                backgroundColor: Colors.grey,
+              ),
+            )
+          ],
+        );
+      } else {
+        // Display a placeholder or default image
+        return CircularProgressIndicator();
+      }
+    },
+  );
+}
 
-    ],
-  );}
 
   _modalSideSheetMenu(BuildContext context) {
   int _selectedDrawerIndex = 0;

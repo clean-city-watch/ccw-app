@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -6,6 +7,7 @@ import 'package:ccw/components/components.dart';
 import 'package:ccw/screens/welcome.dart';
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:image_picker/image_picker.dart';
 
 class Profile {
   String firstName;
@@ -46,12 +48,55 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
   final phoneNumberController = TextEditingController();
   final addressLine1Controller = TextEditingController();
   final addressLine2Controller = TextEditingController();
+  final avatarController = TextEditingController(); // Add this controller for the avatar
+
+  File? selectedImage;
   
 
   @override
   void initState() {
     super.initState();
     fetchUserProfile();
+  }
+
+  Future<void> handleImagePicker() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        selectedImage = File(pickedFile.path);
+      });
+    }
+
+    // call api to save the picked image
+    final prefs = await SharedPreferences.getInstance();
+    final userInfo = prefs.getString('userinfo');
+
+     if(userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+
+      final url = Uri.parse('$backendUrl/api/profile/pic/edit');
+      var request = http.MultipartRequest('PUT', url)
+          ..files.add(await http.MultipartFile.fromPath('file', selectedImage!.path))
+          ..fields['id'] = userInfoMap['id']
+          ..fields['fileName'] = selectedImage!.path
+          ..headers.addAll({
+              "Authorization": "Bearer $accessToken",
+            });
+     
+       print('cooked request!');
+       final response = await request.send();
+       print('response time....');
+
+       print(response.statusCode);
+
+     
+     }
+
+
+
   }
 
   Future<void> fetchUserProfile() async {
@@ -80,6 +125,25 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             addressLine1Controller.text = userData['addressLine1'] ?? '';
             addressLine2Controller.text = userData['addressLine2'] ?? '';
           });
+
+          if(userData['avatar']!=null){
+            final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/${userData['avatar']}'),headers: headers);
+            if (avatarUrl.statusCode == 200) {
+        
+              final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+              setState(() {
+                avatarController.text = responseData['imageUrl'];
+              });
+
+            }
+          }
+          else{
+              setState(() {
+                avatarController.text = 'https://www.w3schools.com/w3images/avatar3.png';
+              });
+          }
+
+          
         } else {
           throw Exception('Failed to load user profile');
         }
@@ -169,6 +233,39 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
         padding: EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Circular profile picture with InkWell for selecting an image
+            // Stack to position CircleAvatar and IconButton
+            selectedImage != null ?
+             CircleAvatar(
+                radius: 80.0,
+                backgroundImage: FileImage(
+                  selectedImage!,
+                ),
+              ):
+           
+  
+               CircleAvatar(
+                  radius: 80.0, // Increase the radius for a bigger image
+                  backgroundImage: NetworkImage(
+                    avatarController.text ??
+                        'https://www.w3schools.com/w3images/avatar3.png',
+                  ),
+                ),
+   
+              // Icon for editing profile (replace with camera or gallery icon)
+              IconButton(
+                icon: Icon(
+                  Icons.photo_library_rounded, // Change to your preferred icon
+                  color: const Color.fromARGB(255, 14, 13, 13), // Icon color
+                  size: 30.0, // Icon size
+                ),
+                onPressed: () {
+                  print('on press event called for edit profile icon.');
+                  handleImagePicker();
+                  // Add logic for editing the profile picture
+                },
+              ),
+          
             TextField(
               controller: firstNameController,
               decoration: InputDecoration(labelText: 'First Name'),
