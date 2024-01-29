@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:ccw/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/components/components.dart';
 import 'package:ccw/constants.dart';
@@ -7,20 +10,18 @@ import 'package:ccw/screens/home_screen.dart';
 import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
 // import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
   static String id = 'login_screen';
-  
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  // final _auth = FirebaseAuth.instance;
   late String _email;
   late String _password;
   bool _saving = false;
@@ -41,15 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.all(20.0),
               child: Column(
                 children: [
-                  SizedBox(
-                    width: 200.0, // Set your desired fixed width
-                    height: 195.0, // Set your desired fixed height
-                    child: Container(
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover, // You may adjust BoxFit according to your needs
-                          image: AssetImage('assets/images/welcome.png'),
-                        ),
+                  Container(
+                    width: 150.0,
+                    height: 150.0,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/welcome.png'),
                       ),
                     ),
                   ),
@@ -62,14 +62,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         const ScreenTitle(title: 'Login'),
                         CustomTextField(
                           textField: TextField(
-                              onChanged: (value) {
-                                _email = value;
-                              },
-                              style: const TextStyle(
-                                fontSize: 20,
-                              ),
-                              decoration: kTextInputDecoration.copyWith(
-                                  hintText: 'Email')),
+                            onChanged: (value) {
+                              _email = value;
+                            },
+                            style: const TextStyle(
+                              fontSize: 18,
+                            ),
+                            decoration: kTextInputDecoration.copyWith(
+                              hintText: 'Email',
+                              prefixIcon: Icon(Icons.mail, color: Colors.grey),
+                            ),
+                          ),
                         ),
                         CustomTextField(
                           textField: TextField(
@@ -78,10 +81,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               _password = value;
                             },
                             style: const TextStyle(
-                              fontSize: 20,
+                              fontSize: 18,
                             ),
                             decoration: kTextInputDecoration.copyWith(
-                                hintText: 'Password'),
+                              hintText: 'Password',
+                              prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                            ),
                           ),
                         ),
                         CustomBottomScreen(
@@ -105,8 +110,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               if (response.statusCode == 201) {
                                 print(response.body);
-                                 final prefs = await SharedPreferences.getInstance();
+                                final prefs = await SharedPreferences.getInstance();
                                 prefs.setString('userinfo', response.body);
+                                final  data = json.decode(response.body);                                
+                                // check manager loggin and userloggin...
+                                print(data);
+
+                                print(data['userLogin']);
+                                print(data["orgManagerLogin"]);
+
+                                print(data['userLogin'].runtimeType);
+                                
+
+                                Provider.of<UserProvider>(context, listen: false).setLoggedInStatus(data['userLogin'],data["orgManagerLogin"]);
+                                
                                 setState(() {
                                   _saving = false;
                                   Navigator.pushReplacementNamed(

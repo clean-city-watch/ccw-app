@@ -78,16 +78,16 @@ Widget actionBarRow(BuildContext context) {
                         color: Colors.grey)),
                 Row(
                   children: <Widget>[
-                    Text('All Communities',
+                    Text('CCW',
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
                             color: Colors.teal)),
                     SizedBox(width: 6),
-                    Icon(
-                      Icons.arrow_drop_down,
-                      color: Colors.teal,
-                    )
+                    // Icon(
+                    //   Icons.arrow_drop_down,
+                    //   color: Colors.teal,
+                    // )
                   ],
                 )
               ],

@@ -8,6 +8,8 @@ import 'package:ccw/screens/home.dart';
 import 'package:ccw/screens/create_post.dart';
 import 'package:ccw/screens/profile/edit_profile.dart';
 import 'package:ccw/screens/servicesPage/helpandsupport.dart';
+import 'package:provider/provider.dart';
+import 'user_provider.dart';
 
 
 
@@ -16,7 +18,12 @@ import 'package:ccw/screens/servicesPage/helpandsupport.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await Firebase.initializeApp();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => UserProvider(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
