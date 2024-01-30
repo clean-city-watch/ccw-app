@@ -10,6 +10,51 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+class CountCard extends StatelessWidget {
+  final String title;
+  final int count;
+  final IconData icon;
+  final Color color;
+
+  CountCard({
+    required this.title,
+    required this.count,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 3.0,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 40,
+              color: color,
+            ),
+            // SizedBox(height: 10),
+            Text(
+              title,
+              style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+            ),
+            // SizedBox(height: 5),
+            Text(
+              count.toString(),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class Organization {
   final int id;
   final String name;
@@ -23,6 +68,14 @@ class Organization {
   final String stateCode;
   final String countryCode;
   final String logo;
+  final int open;
+  final int inprogress;
+  final int inreview;
+  final int resolved;
+  final int reopen;
+  final int onhold;
+  final int invalid;
+  final int blocked;
   final bool isOrganizationUser;
   final List<User>? users; // Make the List of users optional
 
@@ -39,6 +92,14 @@ class Organization {
     required this.stateCode,
     required this.countryCode,
     required this.logo,
+    required this.open,
+    required this.inprogress,
+    required this.inreview,
+    required this.resolved,
+    required this.reopen,
+    required this.onhold,
+    required this.invalid,
+    required this.blocked,
     required this.isOrganizationUser,
     this.users, // Mark the List of users as optional
   });
@@ -64,6 +125,14 @@ class Organization {
       stateCode: json['stateCode'] as String,
       countryCode: json['countryCode'] as String,
       logo: json['logo'] as String,
+      open: json['open'] as int,
+      inprogress: json['inprogress'] as int,
+      inreview: json['inreview'] as int,
+      resolved: json['resolved'] as int,
+      reopen: json['reopen'] as int,
+      onhold: json['onhold'] as int,
+      invalid: json['invalid'] as int,
+      blocked: json['blocked'] as int,
       isOrganizationUser: json['isOrganizationUser'] as bool,
       users: usersList, // Assign the extracted users list
     );
@@ -320,68 +389,82 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                   height: 10, thickness: 1, color: Colors.grey),
                               Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        FontAwesomeIcons.users,
-                                        size: 20,
-                                        color: Colors
-                                            .blue, // Customize the color as needed
-                                      ),
-                                      SizedBox(
-                                          width:
-                                              8), // Add spacing between icon and text
-                                      Text(
-                                        'Users: ${organization.users!.length}',
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          // fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Open',
+                                      count: organization.open ?? 0,
+                                      icon: Icons.description,
+                                      color: Colors.blue,
+                                    ),
                                   ),
-                                  organization.isOrganizationUser
-                                      ? ElevatedButton(
-                                          onPressed: () async {
-                                            print('add user clicked..!');
-                                            final result = await showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return AddUserPopup(
-                                                    organizationId:
-                                                        widget.organizationId);
-                                              },
-                                            );
-
-                                            // Perform the refresh logic here
-                                            organizationFuture =
-                                                fetchOrganization(
-                                                    widget.organizationId);
-                                            setState(() {
-                                              organizationFuture =
-                                                  organizationFuture;
-                                            });
-                                            print('Refreshing...');
-                                          },
-                                          child: Text('Add User'),
-                                        )
-                                      : Container(),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Active',
+                                      count: organization.inprogress ?? 0,
+                                      icon: Icons
+                                          .timer, // Assuming timer icon represents in progress
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'On Hold',
+                                      count: organization.onhold ?? 0,
+                                      icon: Icons.pause_circle_filled,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Resolved',
+                                      count: organization.resolved ?? 0,
+                                      icon: Icons.check_circle,
+                                      color: const Color.fromARGB(
+                                          255, 137, 136, 136),
+                                    ),
+                                  ),
                                 ],
                               ),
-                              SizedBox(height: 8),
-                              Column(
-                                children: organization.users!.map((user) {
-                                  return Row(
-                                    children: [
-                                      Icon(Icons.person),
-                                      SizedBox(width: 8),
-                                      Text(
-                                          '${user.profile.firstName} ${user.profile.lastName}'),
-                                    ],
-                                  );
-                                }).toList(),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'In Review',
+                                      count: organization.inreview ?? 0,
+                                      icon: Icons.rate_review,
+                                      color: Colors.blue,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Reopen',
+                                      count: organization.reopen ?? 0,
+                                      icon: Icons.refresh,
+                                      color: Colors.green,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Invalid',
+                                      count: organization.invalid ?? 0,
+                                      icon: Icons.thumb_down,
+                                      color: Colors.orange,
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: CountCard(
+                                      title: 'Blocked',
+                                      count: organization.blocked ?? 0,
+                                      icon: Icons.block,
+                                      color: const Color.fromARGB(
+                                          255, 137, 136, 136),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           )

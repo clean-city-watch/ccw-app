@@ -1,6 +1,7 @@
 import 'package:ccw/screens/leadboard/leadboardscreen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:ccw/screens/organization/listorganizationscreen.dart';
+import 'package:ccw/screens/organization/selectorganizationNavigateState.dart';
 import 'package:flutter/material.dart';
 
 
@@ -35,7 +36,7 @@ class _CategoryListState extends State<CategoryList> {
                       MaterialPageRoute(builder: (context) => LeaderboardScreen()));
                 }else if (listCategory[index]=='Organizations'){
                    Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => OrganizationListScreen())); 
+                      MaterialPageRoute(builder: (context) => OrganizationState())); 
                 }
               },
               child: Container(

@@ -50,21 +50,21 @@ class _AddUserPopupState extends State<AddUserPopup> {
       };
 
       final response = await http.post(
-          Uri.parse('$backendUrl/api/organization/${widget.organizationId}/users'),
-          body: {
-            "userEmail": selectedUser?.email,
-            "role": selectedRole
-          },
-          headers: headers);
-    
+        Uri.parse(
+            '$backendUrl/api/organization/${widget.organizationId}/users'),
+        body: {
+          "userEmail": selectedUser?.email,
+          "role": selectedRole,
+        },
+        headers: headers,
+      );
+
       print(response);
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         print(data);
         return true;
-      
       }
-    
     }
 
     return false;
@@ -83,8 +83,9 @@ class _AddUserPopupState extends State<AddUserPopup> {
       };
 
       final response = await http.get(
-          Uri.parse('$backendUrl/api/organization/$id/users?inroledUser=false'),
-          headers: headers);
+        Uri.parse('$backendUrl/api/organization/$id/users?inroledUser=false'),
+        headers: headers,
+      );
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -111,62 +112,75 @@ class _AddUserPopupState extends State<AddUserPopup> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text('Add User'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // User List Dropdown
-          Text('add user popupp'),
-          DropdownButton<User>(
-            value: selectedUser,
-            onChanged: (User? newValue) {
-              setState(() {
-                selectedUser = newValue;
-              });
-            },
-            items: users.map((User user) {
-              return DropdownMenuItem<User>(
-                value: user,
-                child: Text(user.email),
-              );
-            }).toList(),
-          ),
-          Text('role'),
-          DropdownButton<String>(
-            value: selectedRole,
-            onChanged: (String? newValue) {
-              setState(() {
-                selectedRole = newValue;
-              });
-            },
-            items: roles.map((String role) {
-              return DropdownMenuItem<String>(
-                value: role,
-                child: Text(role),
-              );
-            }).toList(),
-          ),
+      content: Container(
+        width: double.maxFinite,
+        child: ListView(
+          shrinkWrap: true,
+          children: [
+            // User List Dropdown
+            Container(
+              width: 200, // Adjust width as needed
+              child: DropdownButtonFormField<User>(
+                value: selectedUser,
+                onChanged: (User? newValue) {
+                  setState(() {
+                    selectedUser = newValue;
+                  });
+                },
+                items: users.map((User user) {
+                  return DropdownMenuItem<User>(
+                    value: user,
+                    child: Text(user.email),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Select User',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 10, horizontal: 5), // Adjust padding if needed
+                ),
+              ),
+            ),
 
-          SizedBox(height: 16),
-
-          // Role Dropdown
-        ],
+            SizedBox(height: 16),
+            // Role Dropdown
+            Container(
+              width: 200, // Adjust width as needed
+              child: DropdownButtonFormField<String>(
+                value: selectedRole,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    selectedRole = newValue;
+                  });
+                },
+                items: roles.map((String role) {
+                  return DropdownMenuItem<String>(
+                    value: role,
+                    child: Text(role),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'Select Role',
+                  border: OutlineInputBorder(),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 10, horizontal: 12), // Adjust padding if needed
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
       actions: [
-        ElevatedButton(
+        TextButton(
           onPressed: () {
-            Navigator.of(context).pop(true); // Close the dialog
+            Navigator.of(context).pop(); // Close the dialog
           },
-          child: Text('Cancle'),
+          child: Text('Cancel'),
         ),
         ElevatedButton(
           onPressed: () async {
-            // Add your logic to handle the selected user and role
-            print(selectedRole);
-            print(selectedUser);
-
             bool result = await addUserOrganizationRelation();
             print(result);
-
             Navigator.of(context).pop(result); // Close the dialog
           },
           child: Text('Add User'),

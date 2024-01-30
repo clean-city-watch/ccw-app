@@ -9,8 +9,6 @@ import 'package:ccw/consts/env.dart' show backendUrl;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
-
 class CountCard extends StatelessWidget {
   final String title;
   final int count;
@@ -57,15 +55,12 @@ class CountCard extends StatelessWidget {
 }
 
 class LibraryPage extends StatefulWidget {
-
- 
-
   @override
   _LibraryPageState createState() => _LibraryPageState();
 }
 
 class _LibraryPageState extends State<LibraryPage> {
-   Map<String, dynamic> countData = {
+  Map<String, dynamic> countData = {
     '_count': {
       'posts': 0,
       'comments': 0,
@@ -73,16 +68,14 @@ class _LibraryPageState extends State<LibraryPage> {
       'feedbacks': 0,
     }
   };
-   List feedList = [];
+  List feedList = [];
   bool isVisible = false;
-  List<Widget> newsFeedWidgetList=[];
+  List<Widget> newsFeedWidgetList = [];
   int pageSize = 4; // Set your desired page size
   int pageOffset = 0; // Initialize the page offset
   bool isLoading = false; // Variable to track if new data is loading
 
-
-
- @override
+  @override
   void initState() {
     super.initState();
     // Call the routing function when the widget is initialized
@@ -90,43 +83,39 @@ class _LibraryPageState extends State<LibraryPage> {
     _getPosts();
   }
 
-
-
-   Future<void> fetchData() async {
+  Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
 
       String accessToken = userInfoMap['access_token'];
-        
+
       var headers = {
         "Authorization": "Bearer ${accessToken}",
       };
       final String apiUrl = "$backendUrl/api/user/activity/count";
-      
-        try {
-        final response = await http.get(Uri.parse(apiUrl),headers: headers);
+
+      try {
+        final response = await http.get(Uri.parse(apiUrl), headers: headers);
 
         if (response.statusCode == 200) {
-            final jsonData = json.decode(response.body);
-            print(jsonData);
-            setState(() {
+          final jsonData = json.decode(response.body);
+          print(jsonData);
+          setState(() {
             countData = jsonData;
-            });
+          });
         } else {
-            // Handle error when API request fails
-            print('Failed to fetch data: ${response.statusCode}');
+          // Handle error when API request fails
+          print('Failed to fetch data: ${response.statusCode}');
         }
-        } catch (error) {
+      } catch (error) {
         // Handle any exceptions that occur
         print('Error fetching data: $error');
-        }
+      }
     }
-
-    
   }
-  
+
   Future<void> _getPosts() async {
     if (isLoading) {
       return; // Prevent multiple simultaneous requests
@@ -139,35 +128,35 @@ class _LibraryPageState extends State<LibraryPage> {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
-    if(userInfo != null) {
-        Map<String, dynamic> userInfoMap = json.decode(userInfo);
-    
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+
       String currentUserId = userInfoMap['id'];
       String accessToken = userInfoMap['access_token'];
-      
+
       var headers = {
         "Authorization": "Bearer ${accessToken}",
-        "Content-Type": "application/json", // Adjust as per your API requirements
+        "Content-Type":
+            "application/json", // Adjust as per your API requirements
       };
       print('this is constructed header....');
       print(headers);
 
-      var url = Uri.parse("$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&self=true");
+      var url = Uri.parse(
+          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&self=true");
 
-
-      var response = await http.get(url,headers: headers);
+      var response = await http.get(url, headers: headers);
 
       if (response.statusCode == 200) {
         final jsonResponse = jsonDecode(response.body);
         final content = jsonResponse['content'];
 
-
-
         setState(() {
           feedList.addAll(content.map((json) {
             print('upvotes are: ');
             print(json['upvotes'].length);
-            newsFeedWidgetList.add(feedLibraryCardItem(context, GptFeed.fromJson(json)));
+            newsFeedWidgetList
+                .add(feedLibraryCardItem(context, GptFeed.fromJson(json)));
             newsFeedWidgetList.add(topSpace());
             return GptFeed.fromJson(json);
           }).toList());
@@ -180,12 +169,10 @@ class _LibraryPageState extends State<LibraryPage> {
     }
   }
 
-  
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
@@ -193,12 +180,9 @@ class _LibraryPageState extends State<LibraryPage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
       ),
-
       body: SafeArea(
-        
         child: Column(
           children: <Widget>[
-           
             // Text(
             //   'All Activities',
             //   style: TextStyle(
@@ -207,44 +191,44 @@ class _LibraryPageState extends State<LibraryPage> {
             //   ),
             // ),
             // Count Cards
-        
+
             Row(
-  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  children: [
-    Expanded(
-      child: CountCard(
-        title: 'Posts',
-        count: countData['_count']['posts'] ?? 0,
-        icon: Icons.description,
-        color: Colors.blue,
-      ),
-    ),
-    Expanded(
-      child: CountCard(
-        title: 'Comments',
-        count: countData['_count']['comments'] ?? 0,
-        icon: Icons.comment,
-        color: Colors.green,
-      ),
-    ),
-    Expanded(
-      child: CountCard(
-        title: 'Upvotes',
-        count: countData['_count']['upvotes'] ?? 0,
-        icon: Icons.thumb_up,
-        color: Colors.orange,
-      ),
-    ),
-    Expanded(
-      child: CountCard(
-        title: 'Feedback',
-        count: countData['_count']['feedbacks'] ?? 0,
-        icon: Icons.feedback,
-        color: const Color.fromARGB(255, 137, 136, 136),
-      ),
-    ),
-  ],
-),
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: CountCard(
+                    title: 'Posts',
+                    count: countData['_count']['posts'] ?? 0,
+                    icon: Icons.description,
+                    color: Colors.blue,
+                  ),
+                ),
+                Expanded(
+                  child: CountCard(
+                    title: 'Comments',
+                    count: countData['_count']['comments'] ?? 0,
+                    icon: Icons.comment,
+                    color: Colors.green,
+                  ),
+                ),
+                Expanded(
+                  child: CountCard(
+                    title: 'Upvotes',
+                    count: countData['_count']['upvotes'] ?? 0,
+                    icon: Icons.thumb_up,
+                    color: Colors.orange,
+                  ),
+                ),
+                Expanded(
+                  child: CountCard(
+                    title: 'Feedback',
+                    count: countData['_count']['feedbacks'] ?? 0,
+                    icon: Icons.feedback,
+                    color: const Color.fromARGB(255, 137, 136, 136),
+                  ),
+                ),
+              ],
+            ),
             SizedBox(height: 10),
             Expanded(
               child: Container(
@@ -260,7 +244,8 @@ class _LibraryPageState extends State<LibraryPage> {
                     return true;
                   },
                   child: ListView.builder(
-                    itemCount: newsFeedWidgetList.length + 1, // +1 for loading indicator
+                    itemCount: newsFeedWidgetList.length +
+                        1, // +1 for loading indicator
                     itemBuilder: (BuildContext context, int index) {
                       if (index < newsFeedWidgetList.length) {
                         return newsFeedWidgetList[index];

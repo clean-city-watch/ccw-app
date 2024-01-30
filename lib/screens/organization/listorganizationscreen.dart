@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
+import 'package:ccw/screens/organization/organizationNavigation.dart';
 import 'package:ccw/user_provider.dart';
 import 'package:flutter/material.dart';
-import 'organizationdetailScreen.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-
 
 class Organization {
   final int id;
@@ -57,36 +57,6 @@ class Organization {
   }
 }
 
-
-Future<List<Organization>> fetchOrganizations(bool isUserLoggedIn, bool isOrgManagerLoggedIn) async {
-
-      final prefs = await SharedPreferences.getInstance();
-      String? userInfo = prefs.getString('userinfo');
-
-      if(userInfo != null) {
-          Map<String, dynamic> userInfoMap = json.decode(userInfo);
-          String accessToken = userInfoMap['access_token'];
-    
-          var headers = {
-            "Authorization": "Bearer ${accessToken}",
-          };
-      
-      
-          final response = await http.get(Uri.parse('$backendUrl/api/organization'),headers: headers);
-          print(response.body);
-
-          if (response.statusCode == 200) {
-            final List<dynamic> data = json.decode(response.body);
-            return data.map((json) => Organization.fromJson(json)).toList();
-          } else {
-            throw Exception('Failed to load organizations');
-          }
-      }
-      return [];
-}
-
-
-
 class OrganizationCard extends StatelessWidget {
   final Organization organization;
 
@@ -101,7 +71,8 @@ class OrganizationCard extends StatelessWidget {
         onTap: () {
           Navigator.of(context).push(
             MaterialPageRoute(
-              builder: (context) => OrganizationDetailScreen(organizationId: organization.id),
+              builder: (context) =>
+                  OrganizationNavigation(organizationId: organization.id),
             ),
           );
         },
@@ -131,10 +102,44 @@ class OrganizationCard extends StatelessWidget {
 }
 
 class OrganizationListScreen extends StatelessWidget {
+  final bool myOrganization;
+
+  const OrganizationListScreen({required this.myOrganization});
+
+  Future<List<Organization>> fetchOrganizations(
+      bool isUserLoggedIn, bool isOrgManagerLoggedIn) async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+
+      final response = await http.get(
+          Uri.parse(
+              '$backendUrl/api/organization?myOrganization=${myOrganization}'),
+          headers: headers);
+      print(response.body);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> data = json.decode(response.body);
+        return data.map((json) => Organization.fromJson(json)).toList();
+      } else {
+        throw Exception('Failed to load organizations');
+      }
+    }
+    return [];
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isUserLoggedIn = Provider.of<UserProvider>(context).isUserLoggedIn;
-    bool isOrgManagerLoggedIn = Provider.of<UserProvider>(context).isOrgManagerLoggedIn;
+    bool isOrgManagerLoggedIn =
+        Provider.of<UserProvider>(context).isOrgManagerLoggedIn;
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -164,7 +169,10 @@ class OrganizationListScreen extends StatelessWidget {
             final organizations = snapshot.data!;
             return GridView.count(
               crossAxisCount: 2,
-              children: organizations.map((organization) => OrganizationCard(organization: organization)).toList(),
+              children: organizations
+                  .map((organization) =>
+                      OrganizationCard(organization: organization))
+                  .toList(),
             );
           }
         },
