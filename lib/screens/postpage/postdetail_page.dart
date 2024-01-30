@@ -72,6 +72,10 @@ class _PostPageDetailsState extends State<PostPageDetails> {
         final content = jsonResponse['comments'];
 
         print(content);
+        setState(() {
+          commentList = [];
+          newsCommentWidgetList=[];
+        });
 
         setState(() {
           commentList.addAll(content.map((json) {
@@ -89,6 +93,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
           }).toList());
 
           isLoading = false;
+          commentText='';
         });
       }
     }
@@ -163,8 +168,10 @@ class _PostPageDetailsState extends State<PostPageDetails> {
             signUpAlert(
               onPressed: () async {
                 print('back to the feeds page');
-                Navigator.popAndPushNamed(context, EditProfileWidget.id);
-                Navigator.pushNamed(context, WelcomeScreen.id);
+                _getCommentsforPosts();
+                Navigator.pop(context);
+                // Navigator.popAndPushNamed(context, EditProfileWidget.id);
+                // Navigator.pushNamed(context, WelcomeScreen.id);
               },
               title: 'Comment Upload',
               desc: 'Comment posted successfully!',
