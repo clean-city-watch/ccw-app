@@ -293,7 +293,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                                   FontAwesomeIcons.solidBuilding,
                                   size: 20,
                                   color: Colors
-                                      .blue, // Customize the color as needed
+                                      .teal, // Customize the color as needed
                                 ),
                                 SizedBox(width: 8),
                                 Text(
@@ -312,7 +312,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                                   FontAwesomeIcons.solidUser,
                                   size: 16,
                                   color: Colors
-                                      .green, // Customize the color as needed
+                                      .teal, // Customize the color as needed
                                 ),
                                 SizedBox(width: 8),
                                 Text(
@@ -329,7 +329,10 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                           children: [
                             Row(
                               children: [
-                                Icon(Icons.email),
+                                Icon(
+                                  Icons.email,
+                                  color: Colors.teal,
+                                ),
                                 SizedBox(width: 8),
                                 InkWell(
                                   onTap: () {
@@ -344,7 +347,10 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                             SizedBox(height: 8),
                             Row(
                               children: [
-                                Icon(Icons.phone),
+                                Icon(
+                                  Icons.phone,
+                                  color: Colors.teal,
+                                ),
                                 SizedBox(width: 8),
                                 Text(organization.phoneNumber),
                               ],
@@ -375,7 +381,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                                   FontAwesomeIcons.users,
                                   size: 20,
                                   color: Colors
-                                      .blue, // Customize the color as needed
+                                      .teal, // Customize the color as needed
                                 ),
                                 SizedBox(
                                     width:
@@ -430,7 +436,8 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                                   // Handle errors
                                   return Text('Error loading image');
                                 } else {
-                                  String imageUrl = snapshot.data ?? 'https://www.w3schools.com/w3images/avatar3.png';
+                                  String imageUrl = snapshot.data ??
+                                      'https://www.w3schools.com/w3images/avatar3.png';
 
                                   return Card(
                                     // margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),

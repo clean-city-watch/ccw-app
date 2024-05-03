@@ -118,40 +118,40 @@ class _ServicePageState extends State<ServicePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: _searchController,
-                        readOnly: true,
-                        maxLines: 1,
-                        decoration: new InputDecoration(
-                          // suffixIcon: Icon(CupertinoIcons.search),
-                          contentPadding: EdgeInsets.all(12),
-                          hintText: 'Search City',
-                          border: OutlineInputBorder(
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(4.0),
-                            ),
-                            borderSide: BorderSide(
-                                color: (Colors.grey[300])!, width: 0.5),
-                          ),
-                        ),
-                      ),
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        // Call your function when the bell icon is tapped
-                        handleBellIconTap(_searchController.text);
-                      },
-                      child: Container(
-                        margin: EdgeInsets.all(15),
-                        child: Icon(CupertinoIcons.search, size: 26),
-                      ),
-                    ),
-                  ],
-                ),
+                // Row(
+                //   mainAxisAlignment: MainAxisAlignment.end,
+                //   children: <Widget>[
+                //     Expanded(
+                //       child: TextField(
+                //         controller: _searchController,
+                //         readOnly: true,
+                //         maxLines: 1,
+                //         decoration: new InputDecoration(
+                //           // suffixIcon: Icon(CupertinoIcons.search),
+                //           contentPadding: EdgeInsets.all(12),
+                //           hintText: 'Search City',
+                //           border: OutlineInputBorder(
+                //             borderRadius: const BorderRadius.all(
+                //               Radius.circular(4.0),
+                //             ),
+                //             borderSide: BorderSide(
+                //                 color: (Colors.grey[300])!, width: 0.5),
+                //           ),
+                //         ),
+                //       ),
+                //     ),
+                //     GestureDetector(
+                //       onTap: () {
+                //         // Call your function when the bell icon is tapped
+                //         handleBellIconTap(_searchController.text);
+                //       },
+                //       child: Container(
+                //         margin: EdgeInsets.all(15),
+                //         child: Icon(CupertinoIcons.search, size: 26),
+                //       ),
+                //     ),
+                //   ],
+                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -160,7 +160,7 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'All',
                         count: countData['all'] ?? 0,
                         icon: Icons.description,
-                        color: Colors.blue,
+                        color: Colors.teal,
                       ),
                     ),
                     Expanded(
@@ -168,29 +168,31 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'Open',
                         count: countData['open'] ?? 0,
                         icon: Icons.comment,
-                        color: Colors.green,
+                        color: Colors.teal,
                       ),
                     ),
                     Expanded(
                       child: CountCard(
-                        title: 'Active',
-                        count: countData['inprogress'] ?? 0,
-                        icon: Icons.thumb_up,
-                        color: Colors.orange,
-                      ),
+                          title: 'Active',
+                          count: countData['inprogress'] ?? 0,
+                          icon: Icons.thumb_up,
+                          color: Colors.teal),
                     ),
                     Expanded(
                       child: CountCard(
                         title: 'Resolved',
                         count: countData['resolved'] ?? 0,
                         icon: Icons.feedback,
-                        color: const Color.fromARGB(255, 137, 136, 136),
+                        color: Colors.teal,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(
-                  height: 460,
+                  height: 10.0,
+                ),
+                SizedBox(
+                  height: 480,
                   width: 400,
                   child: FlutterMap(
                     options: MapOptions(

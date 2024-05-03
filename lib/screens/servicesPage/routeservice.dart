@@ -21,10 +21,10 @@ class _RouteServicePageState extends State<RouteServicePage> {
   final start = TextEditingController();
   final end = TextEditingController();
   bool isVisible = false;
-  var startv1=0.0;
-  var startv2=0.0;
-  var endv1=0.0;
-  var endv2=0.0;
+  var startv1 = 0.0;
+  var startv2 = 0.0;
+  var endv1 = 0.0;
+  var endv2 = 0.0;
 
   List<LatLng> routpoints = [LatLng(52.05884, -1.345583)];
 
@@ -80,10 +80,11 @@ class _RouteServicePageState extends State<RouteServicePage> {
     var url = Uri.parse(
         'http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full');
     var response = await http.get(url);
-   
+
     setState(() {
       routpoints = [];
-      var ruter = jsonDecode(response.body)['routes'][0]['geometry']['coordinates'];
+      var ruter =
+          jsonDecode(response.body)['routes'][0]['geometry']['coordinates'];
       for (int i = 0; i < ruter.length; i++) {
         var reep = ruter[i].toString();
         reep = reep.replaceAll("[", "");
@@ -92,14 +93,13 @@ class _RouteServicePageState extends State<RouteServicePage> {
         var long1 = reep.split(",");
         routpoints.add(LatLng(double.parse(lat1[1]), double.parse(long1[0])));
       }
-      if(v1!=null && v2!=null && v3!=null && v4!=null){
+      if (v1 != null && v2 != null && v3 != null && v4 != null) {
         isVisible = true;
         startv1 = v1;
         startv2 = v2;
         endv1 = v3;
         endv2 = v4;
       }
-      
     });
   }
 
@@ -143,13 +143,17 @@ class _RouteServicePageState extends State<RouteServicePage> {
                       ],
                       children: [
                         TileLayer(
-                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                          urlTemplate:
+                              'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                           userAgentPackageName: 'com.example.app',
                         ),
                         PolylineLayer(
                           polylineCulling: false,
                           polylines: [
-                            Polyline(points: routpoints, color: Colors.blue, strokeWidth: 9),
+                            Polyline(
+                                points: routpoints,
+                                color: Colors.blue,
+                                strokeWidth: 9),
                           ],
                         ),
                         MarkerLayer(
@@ -157,10 +161,12 @@ class _RouteServicePageState extends State<RouteServicePage> {
                             Marker(
                               width: 50.0,
                               height: 50.0,
-                              point: LatLng(startv1, startv2), // Start location coordinates
+                              point: LatLng(startv1,
+                                  startv2), // Start location coordinates
                               builder: (ctx) => Container(
                                 child: Icon(
-                                  Icons.location_on, // Use the location icon for start
+                                  Icons
+                                      .location_on, // Use the location icon for start
                                   color: Colors.green,
                                 ),
                               ),
@@ -168,7 +174,8 @@ class _RouteServicePageState extends State<RouteServicePage> {
                             Marker(
                               width: 50.0,
                               height: 50.0,
-                              point: LatLng(endv1, endv2), // End location coordinates
+                              point: LatLng(
+                                  endv1, endv2), // End location coordinates
                               builder: (ctx) => Container(
                                 child: Icon(
                                   Icons.flag, // Use the flag icon for end
