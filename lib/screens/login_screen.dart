@@ -116,12 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 prefs.setString('userinfo', response.body);
                                 final data = json.decode(response.body);
                                 // check manager loggin and userloggin...
-                                print(data);
-
-                                print(data['userLogin']);
-                                print(data["orgManagerLogin"]);
-
-                                print(data['userLogin'].runtimeType);
 
                                 Provider.of<UserProvider>(context,
                                         listen: false)

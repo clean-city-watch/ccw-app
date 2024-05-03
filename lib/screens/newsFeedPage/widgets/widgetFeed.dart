@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ccw/consts/env.dart';
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedCard.dart';
 import 'package:flutter/cupertino.dart';
@@ -166,7 +167,7 @@ _modalSideSheetMenu(BuildContext context) {
                           style: TextStyle(color: Colors.teal, fontSize: 18),
                         ),
                         subtitle: Text(bottomMenuItems[index].subtitle),
-                        onTap: () {
+                        onTap: () async {
                           Navigator.pop(context);
                           debugPrint(bottomMenuItems[index].title);
                           debugPrint('$index');
@@ -193,6 +194,15 @@ _modalSideSheetMenu(BuildContext context) {
                                   context,
                                   MaterialPageRoute(
                                       builder: (context) => AboutPage()));
+                            case 4:
+                              final prefs =
+                                  await SharedPreferences.getInstance();
+                              await prefs.remove('userinfo');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => LoginScreen()));
+
                             default:
                               debugPrint(bottomMenuItems[index].title);
                           }
