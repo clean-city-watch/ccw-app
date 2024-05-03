@@ -327,17 +327,28 @@ class _CreatePostState extends State<CreatePost> {
                       print('response time....');
 
                       if (response.statusCode == 201) {
-                        signUpAlert(
-                          onPressed: () async {
-                            print('back to the feeds page');
-                            Navigator.popAndPushNamed(context, CreatePost.id);
-                            Navigator.pushNamed(context, WelcomeScreen.id);
-                          },
-                          title: 'Post Upload',
-                          desc: 'Post uploaded successfully!',
-                          btnText: 'Feed Now',
+                        showDialog(
                           context: context,
-                        ).show();
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: const Text('Post Uploaded'),
+                              content: const Text(
+                                  'Your post has been uploaded successfully!'),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Add logic to delete the post
+                                    Navigator.popAndPushNamed(
+                                        context, CreatePost.id);
+                                    Navigator.pushNamed(
+                                        context, WelcomeScreen.id);
+                                  },
+                                  child: const Text('View Feed'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       } else if (response.statusCode == 401 ||
                           response.statusCode == 403) {
                         Navigator.pushReplacement(
@@ -347,16 +358,26 @@ class _CreatePostState extends State<CreatePost> {
                           ),
                         );
                       } else {
-                        signUpAlert(
-                          onPressed: () async {
-                            // print(response.toString());
-                            Navigator.popAndPushNamed(context, CreatePost.id);
-                          },
-                          title: 'Post Upload',
-                          desc: "Please complete your profile first",
-                          btnText: 'Feed Now',
+                        showDialog(
                           context: context,
-                        ).show();
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Post Uploaded'),
+                              content:
+                                  Text('Please complete your profile first'),
+                              actions: <Widget>[
+                                ElevatedButton(
+                                  onPressed: () {
+                                    // Add logic to delete the post
+                                    Navigator.popAndPushNamed(
+                                        context, CreatePost.id);
+                                  },
+                                  child: Text('View Feed'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                     }
                     ;

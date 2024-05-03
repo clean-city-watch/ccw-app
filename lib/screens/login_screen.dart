@@ -141,34 +141,78 @@ class _LoginScreenState extends State<LoginScreen> {
                                 // Navigator.pushNamed(context, WelcomeScreen.id);
                               }
                             } catch (e) {
-                              signUpAlert(
+                              showDialog(
                                 context: context,
-                                onPressed: () {
-                                  setState(() {
-                                    _saving = false;
-                                  });
-                                  Navigator.popAndPushNamed(
-                                      context, LoginScreen.id);
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: const Text(
+                                        'Incorrect Email or Password'),
+                                    content: const Text(
+                                        'Please check your email and password and try again.'),
+                                    actions: <Widget>[
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          // Add logic to delete the post
+                                          setState(() {
+                                            _saving = false;
+                                          });
+                                          Navigator.popAndPushNamed(
+                                              context, LoginScreen.id);
+                                        },
+                                        child: const Text('Try Again'),
+                                      ),
+                                    ],
+                                  );
                                 },
-                                title: 'WRONG PASSWORD OR EMAIL',
-                                desc:
-                                    'Confirm your email and password and try again',
-                                btnText: 'Try Now',
-                              ).show();
+                              );
+                              // signUpAlert(
+                              //   context: context,
+                              //   onPressed: () {
+                              //     setState(() {
+                              //       _saving = false;
+                              //     });
+                              //     Navigator.popAndPushNamed(
+                              //         context, LoginScreen.id);
+                              //   },
+                              //   title: 'WRONG PASSWORD OR EMAIL',
+                              //   desc:
+                              //       'Confirm your email and password and try again',
+                              //   btnText: 'Try Now',
+                              // ).show();
                             }
                           },
                           questionPressed: () {
-                            signUpAlert(
-                              onPressed: () async {
-                                print(
-                                    'This will be logged to the console in the browser.');
-                              },
-                              title: 'RESET YOUR PASSWORD',
-                              desc:
-                                  'Click on the button to reset your password',
-                              btnText: 'Reset Now',
+                            showDialog(
                               context: context,
-                            ).show();
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Reset Your Password'),
+                                  content: const Text(
+                                      'Click the button below to reset your password.'),
+                                  actions: <Widget>[
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        // Add logic to delete the post
+                                        print(
+                                            'This will be logged to the console in the browser.');
+                                      },
+                                      child: const Text('Reset Now'),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            // signUpAlert(
+                            //   onPressed: () async {
+                            //     print(
+                            //         'This will be logged to the console in the browser.');
+                            //   },
+                            //   title: 'RESET YOUR PASSWORD',
+                            //   desc:
+                            //       'Click on the button to reset your password',
+                            //   btnText: 'Reset Now',
+                            //   context: context,
+                            // ).show();
                           },
                         ),
                       ],

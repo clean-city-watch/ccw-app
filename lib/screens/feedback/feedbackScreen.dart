@@ -101,15 +101,25 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
                     if (response.statusCode == 201) {
                       // Profile updated successfully
                       print('Feedback Sent successfully');
-                      signUpAlert(
-                        onPressed: () async {
-                          print('back to the feeds page');
-                        },
-                        title: 'Feedback Upload',
-                        desc: 'Feedback sent successfully!',
-                        btnText: 'ok',
+                      showDialog(
                         context: context,
-                      ).show();
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Feedback Sent'),
+                            content: const Text(
+                                "Your feedback has been sent successfully!"),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                onPressed: () {
+                                  // Add logic to delete the post
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('Close Now'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
                     } else if (response.statusCode == 401 ||
                         response.statusCode == 403) {
                       final jsonResponse = jsonDecode(response.body);

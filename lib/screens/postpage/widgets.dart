@@ -16,6 +16,10 @@ Widget linearProgressIndicator() {
 }
 
 Future<String> getPublicUrlForUsersAvatar(String fileName) async {
+  if (fileName == null) {
+    return "https://www.w3schools.com/w3images/avatar3.png";
+  }
+  print(fileName);
   final prefs = await SharedPreferences.getInstance();
   String? userInfo = prefs.getString('userinfo');
 
@@ -303,6 +307,7 @@ Future<String> getPublicUrlForAvatar() async {
       final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
       return responseData['imageUrl'];
     }
+    return "https://www.w3schools.com/w3images/avatar3.png";
   }
 
   return "https://www.w3schools.com/w3images/avatar3.png";

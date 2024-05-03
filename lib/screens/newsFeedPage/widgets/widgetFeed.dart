@@ -15,10 +15,6 @@ import 'package:ccw/screens/servicesPage/about.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 
-
-
-
-
 class MenuModel {
   String title;
   String subtitle;
@@ -27,34 +23,39 @@ class MenuModel {
   MenuModel(this.title, this.subtitle, this.icon);
 }
 
-
 Future<String> getPublicUrlForAvatar() async {
-   final prefs = await SharedPreferences.getInstance();
-    String? userInfo = prefs.getString('userinfo');
+  final prefs = await SharedPreferences.getInstance();
+  String? userInfo = prefs.getString('userinfo');
 
+  print("get public url for avatar called..");
+  if (userInfo != null) {
+    Map<String, dynamic> userInfoMap = json.decode(userInfo);
+    String accessToken = userInfoMap['access_token'];
 
-    if(userInfo != null) {
-      Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      String accessToken = userInfoMap['access_token'];
-        
-      var headers = {
-        "Authorization": "Bearer ${accessToken}",
-      };
-      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),headers: headers);
-      if (avatarUrl.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
-        return responseData['imageUrl'];
-      }
+    if (userInfoMap['avatar'] == null) {
+      return "https://www.w3schools.com/w3images/avatar3.png";
     }
+    ;
 
-    return "https://www.w3schools.com/w3images/avatar3.png";
+    var headers = {
+      "Authorization": "Bearer ${accessToken}",
+    };
+    final avatarUrl = await http.get(
+        Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),
+        headers: headers);
+    if (avatarUrl.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+      return responseData['imageUrl'];
+    }
+  }
+
+  return "https://www.w3schools.com/w3images/avatar3.png";
 }
-
-
 
 Widget actionBarRow(BuildContext context) {
   return FutureBuilder<String>(
-    future: getPublicUrlForAvatar(), // Replace 'avatarFileName' with the actual file name
+    future:
+        getPublicUrlForAvatar(), // Replace 'avatarFileName' with the actual file name
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         // Display a loading indicator while waiting for the result
@@ -118,8 +119,7 @@ Widget actionBarRow(BuildContext context) {
   );
 }
 
-
-  _modalSideSheetMenu(BuildContext context) {
+_modalSideSheetMenu(BuildContext context) {
   int _selectedDrawerIndex = 0;
   List<MenuModel> bottomMenuItems = <MenuModel>[
     MenuModel('Profile', 'Edit your profile information', Icons.person),
@@ -127,89 +127,98 @@ Widget actionBarRow(BuildContext context) {
     MenuModel('RateUs', 'Rate our app on the store', Icons.star),
     MenuModel('About', 'Learn more about our app', Icons.info),
     MenuModel('SignOut', 'Sign out of your account', Icons.exit_to_app),
-        
-
-        
-        
-        ];
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext context) {
-          return Container(
-            height: 440.0,
-            color: Color(0xFF737373),
-            child: Column(
-              children: <Widget>[
-                Container(
-                  height: 320.0,
-                  margin: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: new BoxDecoration(
-                      color: Colors.white, //Color(0xFF737373),
-                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                  child: ListView.builder(
-                      itemCount: bottomMenuItems.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          leading: Container(
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(30)),
-                              color: Colors.teal[100],
-                            ),
-                            child: Icon(
-                              bottomMenuItems[index].icon,
-                              color: Colors.teal,
-                            ),
+  ];
+  showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 440.0,
+          color: Color(0xFF737373),
+          child: Column(
+            children: <Widget>[
+              Container(
+                height: 320.0,
+                margin: EdgeInsets.symmetric(horizontal: 15),
+                decoration: new BoxDecoration(
+                    color: Colors.white, //Color(0xFF737373),
+                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                child: ListView.builder(
+                    itemCount: bottomMenuItems.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Container(
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(30)),
+                            color: Colors.teal[100],
                           ),
-                          trailing: Icon(
-                            Icons.arrow_forward_ios,
-                            size: 15,
+                          child: Icon(
+                            bottomMenuItems[index].icon,
+                            color: Colors.teal,
                           ),
-                          title: Text(
-                            bottomMenuItems[index].title,
-                            style: TextStyle(color: Colors.teal, fontSize: 18),
-                          ),
-                          subtitle: Text(bottomMenuItems[index].subtitle),
-                          onTap: () {
-                            Navigator.pop(context);
-                            debugPrint(bottomMenuItems[index].title);
-                            debugPrint('$index');
-                            switch (index) {
-                              case 0:
-                              Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileWidget()) );
-                              case 1:
-                                  Navigator.push(context,MaterialPageRoute(builder: (context) => HelpAndSupport()));
-                              case 2:
-                                  Navigator.push(context,MaterialPageRoute(builder: (context) => UserFeedbackWidget()));
-                              case 3:
-                                  Navigator.push(context,MaterialPageRoute(builder: (context) => AboutPage()));
-                              default:
-                                debugPrint(bottomMenuItems[index].title);
-                            }
-                            
-                          },
-                        );
-                      }),
-                ),
+                        ),
+                        trailing: Icon(
+                          Icons.arrow_forward_ios,
+                          size: 15,
+                        ),
+                        title: Text(
+                          bottomMenuItems[index].title,
+                          style: TextStyle(color: Colors.teal, fontSize: 18),
+                        ),
+                        subtitle: Text(bottomMenuItems[index].subtitle),
+                        onTap: () {
+                          Navigator.pop(context);
+                          debugPrint(bottomMenuItems[index].title);
+                          debugPrint('$index');
+                          switch (index) {
+                            case 0:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          EditProfileWidget()));
+                            case 1:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => HelpAndSupport()));
+                            case 2:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          UserFeedbackWidget()));
+                            case 3:
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AboutPage()));
+                            default:
+                              debugPrint(bottomMenuItems[index].title);
+                          }
+                        },
+                      );
+                    }),
+              ),
 
-                //SizedBox(height: 10),
+              //SizedBox(height: 10),
 
-                Container(
-                    height: 60, width: 60,
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(30))),
-                    margin: EdgeInsets.symmetric(vertical: 30),
-                    child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Icon(Icons.close,
-                            size: 25, color: Colors.grey[900]))),
-              ],
-            ),
-          );
-        });
-  }
+              Container(
+                  height: 60,
+                  width: 60,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(30))),
+                  margin: EdgeInsets.symmetric(vertical: 30),
+                  child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close,
+                          size: 25, color: Colors.grey[900]))),
+            ],
+          ),
+        );
+      });
+}
 
 Widget searchTextField() {
   return Row(
@@ -226,14 +235,17 @@ Widget searchTextField() {
               borderRadius: const BorderRadius.all(
                 Radius.circular(4.0),
               ),
-              borderSide:  BorderSide(color: (Colors.grey[300])!, width: 0.5),
+              borderSide: BorderSide(color: (Colors.grey[300])!, width: 0.5),
             ),
           ),
         ),
       ),
       Container(
         margin: EdgeInsets.all(15),
-        child: Icon(CupertinoIcons.search, size: 26,),
+        child: Icon(
+          CupertinoIcons.search,
+          size: 26,
+        ),
       )
     ],
   );
@@ -262,8 +274,8 @@ Widget feedNewsCardItem(BuildContext context, GptFeed feed) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-    ),
+        border: Border.all(
+            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -280,14 +292,14 @@ Widget feedNewsCardItem(BuildContext context, GptFeed feed) {
                     softWrap: true,
                     maxLines: 2,
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
             space15(),
             Visibility(
                 visible: feed.content.isEmpty == true ? false : true,
                 child: Text(feed.content,
                     style: TextStyle(fontSize: 14, color: Colors.grey))),
             space15(),
-            setLocation(context,feed),
+            setLocation(context, feed),
             Divider(thickness: 1),
             Row(
               children: <Widget>[
@@ -302,7 +314,7 @@ Widget feedNewsCardItem(BuildContext context, GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShare(context,feed),
+            likeCommentShare(context, feed),
             space15(),
           ],
         ),
@@ -311,15 +323,12 @@ Widget feedNewsCardItem(BuildContext context, GptFeed feed) {
   );
 }
 
-
-
-
 Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-    ),
+        border: Border.all(
+            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -336,14 +345,14 @@ Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
                     softWrap: true,
                     maxLines: 2,
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
             space15(),
             // Visibility(
             //     visible: feed.content.isEmpty == true ? false : true,
             //     child: Text(feed.content,
             //         style: TextStyle(fontSize: 14, color: Colors.grey))),
             space15(),
-            setLocation(context,feed),
+            setLocation(context, feed),
             Divider(thickness: 1),
             Row(
               children: <Widget>[
@@ -358,7 +367,7 @@ Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShareForAuthor(context,feed),
+            likeCommentShareForAuthor(context, feed),
             space15(),
           ],
         ),
@@ -371,8 +380,8 @@ Widget feedNewsCardItemQuestion(BuildContext context, GptFeed feed) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-    ),
+        border: Border.all(
+            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -389,9 +398,9 @@ Widget feedNewsCardItemQuestion(BuildContext context, GptFeed feed) {
                     softWrap: true,
                     maxLines: 2,
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
             space15(),
-            setLocation(context,feed),
+            setLocation(context, feed),
             space15(),
             questionPallet(),
             space15(),
@@ -409,7 +418,7 @@ Widget feedNewsCardItemQuestion(BuildContext context, GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShare(context,feed),
+            likeCommentShare(context, feed),
             space15(),
           ],
         ),
@@ -420,12 +429,12 @@ Widget feedNewsCardItemQuestion(BuildContext context, GptFeed feed) {
 
 //important card code to render
 
-Widget feedNewsCardWithImageItem(BuildContext context,GptFeed feed) {
+Widget feedNewsCardWithImageItem(BuildContext context, GptFeed feed) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-    ),
+        border: Border.all(
+            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -447,11 +456,12 @@ Widget feedNewsCardWithImageItem(BuildContext context,GptFeed feed) {
             space15(),
             // show Image Preview
 
-            Image.asset('assets/images/running_girl.jpeg', fit: BoxFit.cover, height: 180, width: double.infinity),
+            Image.asset('assets/images/running_girl.jpeg',
+                fit: BoxFit.cover, height: 180, width: double.infinity),
 
             space15(),
             // shows location
-            setLocation(context,feed),
+            setLocation(context, feed),
             Divider(thickness: 1),
             Row(
               children: <Widget>[
@@ -466,7 +476,7 @@ Widget feedNewsCardWithImageItem(BuildContext context,GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShare(context,feed),
+            likeCommentShare(context, feed),
             space15(),
           ],
         ),
@@ -524,12 +534,12 @@ Widget questionPallet() {
   );
 }
 
-Widget pollingCard(BuildContext context,GptFeed feed) {
+Widget pollingCard(BuildContext context, GptFeed feed) {
   return Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
-        border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-    ),
+        border: Border.all(
+            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -547,11 +557,11 @@ Widget pollingCard(BuildContext context,GptFeed feed) {
                     softWrap: true,
                     maxLines: 2,
                     style:
-                    TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
             space15(),
             pollCartSection(),
             space15(),
-            setLocation(context,feed),
+            setLocation(context, feed),
             Divider(thickness: 1),
             Row(
               children: <Widget>[
@@ -566,7 +576,7 @@ Widget pollingCard(BuildContext context,GptFeed feed) {
             ),
             Divider(thickness: 1),
             SizedBox(height: 10),
-            likeCommentShare(context,feed),
+            likeCommentShare(context, feed),
             space15(),
           ],
         ),
@@ -607,7 +617,7 @@ Widget pollQuestion(String question) {
   return Container(
     padding: EdgeInsets.all(10),
     decoration:
-    BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
+        BoxDecoration(borderRadius: BorderRadius.all(Radius.circular(8))),
     child: Text(question),
   );
 }

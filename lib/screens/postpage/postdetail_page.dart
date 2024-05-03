@@ -166,19 +166,33 @@ class _PostPageDetailsState extends State<PostPageDetails> {
           if (response.statusCode == 201) {
             // Comment successfully posted, you can handle the response accordingly
             print('Comment posted successfully');
-            signUpAlert(
-              onPressed: () async {
-                print('back to the feeds page');
-                _getCommentsforPosts();
-                Navigator.pop(context);
-                // Navigator.popAndPushNamed(context, EditProfileWidget.id);
-                // Navigator.pushNamed(context, WelcomeScreen.id);
-              },
-              title: 'Comment Upload',
-              desc: 'Comment posted successfully!',
-              btnText: 'Feed Now',
+            showDialog(
               context: context,
-            ).show();
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Text('Comment Upload'),
+                  content: Text('Comment posted successfully!'),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        _getCommentsforPosts();
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('Cancel'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add logic to delete the post
+                        print('call delete post api here...');
+                        _getCommentsforPosts();
+                        Navigator.of(context).pop(); // Close the dialog
+                      },
+                      child: Text('View'),
+                    ),
+                  ],
+                );
+              },
+            );
           } else if (response.statusCode == 401 || response.statusCode == 403) {
             final jsonResponse = jsonDecode(response.body);
             final content = jsonResponse['content'];

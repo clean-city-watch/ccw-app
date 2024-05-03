@@ -115,41 +115,75 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   );
 
                                   if (response.statusCode == 201) {
-                                    signUpAlert(
+                                    showDialog(
                                       context: context,
-                                      title: 'GOOD JOB',
-                                      desc: 'Go login now',
-                                      btnText: 'Login Now',
-                                      onPressed: () {
-                                        setState(() {
-                                          _saving = false;
-                                          Navigator.popAndPushNamed(
-                                              context, SignUpScreen.id);
-                                        });
-                                        Navigator.pushNamed(
-                                            context, LoginScreen.id);
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: const Text('Good Job!'),
+                                          content: const Text(
+                                              "You've done a great job! Proceed to login."),
+                                          actions: <Widget>[
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                // Add logic to delete the post
+                                                setState(() {
+                                                  _saving = false;
+                                                });
+                                                Navigator.pushNamed(
+                                                    context, LoginScreen.id);
+                                              },
+                                              child: const Text('Login Now'),
+                                            ),
+                                          ],
+                                        );
                                       },
-                                    ).show();
+                                    );
                                   }
                                 } catch (e) {
-                                  signUpAlert(
-                                      context: context,
-                                      onPressed: () {
-                                        SystemNavigator.pop();
-                                      },
-                                      title: 'SOMETHING WRONG',
-                                      desc: 'Close the app and try again',
-                                      btnText: 'Close Now');
+                                  showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title:
+                                            const Text('Something Went Wrong'),
+                                        content: const Text(
+                                            "Please close the app and try again."),
+                                        actions: <Widget>[
+                                          ElevatedButton(
+                                            onPressed: () {
+                                              // Add logic to delete the post
+                                              SystemNavigator.pop();
+                                            },
+                                            child: const Text('Close Now'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
                                 }
                               } else {
-                                showAlert(
-                                    context: context,
-                                    title: 'WRONG PASSWORD',
-                                    desc:
-                                        'Make sure that you write the same password twice',
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    }).show();
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title:
+                                          const Text('Passwords Do Not Match'),
+                                      content: const Text(
+                                          "Please make sure that you enter the same password twice."),
+                                      actions: <Widget>[
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            // Add logic to delete the post
+                                            // Navigator.pop(context);
+                                            Navigator.popAndPushNamed(
+                                                context, SignUpScreen.id);
+                                          },
+                                          child: const Text('Cancle'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
                               }
                             },
                             questionPressed: () async {

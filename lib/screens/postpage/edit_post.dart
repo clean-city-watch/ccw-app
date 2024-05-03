@@ -69,19 +69,28 @@ class _EditPostWidgetState extends State<EditPostWidget> {
       if (response.statusCode == 201) {
         // File uploaded successfully, handle accordingly
 
-        signUpAlert(
+        showDialog(
           context: context,
-          onPressed: () {
-            setState(() {
-              _saving = false;
-            });
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('File Uploaded'),
+              content: const Text("Your file has been uploaded successfully!"),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    // Add logic to delete the post
+                    setState(() {
+                      _saving = false;
+                    });
 
-            Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Continue'),
+                ),
+              ],
+            );
           },
-          title: 'File Upload',
-          desc: 'File Uploaded Successfully!',
-          btnText: 'continue',
-        ).show();
+        );
         print('File uploaded successfully');
       } else {
         // Handle the error case
@@ -173,19 +182,43 @@ class _EditPostWidgetState extends State<EditPostWidget> {
         print('response time.... inside the not pickedd...');
 
         if (response.statusCode == 202) {
-          signUpAlert(
+          showDialog(
             context: context,
-            onPressed: () {
-              setState(() {
-                _saving = false;
-              });
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('File Uploaded'),
+                content:
+                    const Text("Your file has been uploaded successfully!"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add logic to delete the post
+                      setState(() {
+                        _saving = false;
+                      });
 
-              Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Continue'),
+                  ),
+                ],
+              );
             },
-            title: 'File Upload',
-            desc: 'File Uploaded Successfully!',
-            btnText: 'continue',
-          ).show();
+          );
+
+          // signUpAlert(
+          //   context: context,
+          //   onPressed: () {
+          //     setState(() {
+          //       _saving = false;
+          //     });
+
+          //     Navigator.pop(context);
+          //   },
+          //   title: 'File Upload',
+          //   desc: 'File Uploaded Successfully!',
+          //   btnText: 'continue',
+          // ).show();
 
           print('Post updated successfully');
           // Navigator.pop(context); // Close the edit post screen
@@ -210,20 +243,29 @@ class _EditPostWidgetState extends State<EditPostWidget> {
         print('response time....');
 
         if (response.statusCode == 202) {
-          signUpAlert(
+          showDialog(
             context: context,
-            onPressed: () {
-              setState(() {
-                _saving = false;
-              });
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('File Uploaded'),
+                content:
+                    const Text("Your file has been uploaded successfully!"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add logic to delete the post
+                      setState(() {
+                        _saving = false;
+                      });
 
-              Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Continue'),
+                  ),
+                ],
+              );
             },
-            title: 'File Upload',
-            desc: 'File Uploaded Successfully!',
-            btnText: 'continue',
-          ).show();
-
+          );
           print('Post updated successfully');
           // Navigator.pop(context); // Close the edit post screen
         }

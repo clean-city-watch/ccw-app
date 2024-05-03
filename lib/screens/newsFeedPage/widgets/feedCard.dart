@@ -1,3 +1,4 @@
+import 'package:ccw/components/components.dart';
 import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/ThumsUpReactions.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
@@ -7,7 +8,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:intl/intl.dart';
 import 'package:ccw/screens/servicesPage/routeservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ccw/consts/env.dart' show backendUrl;
@@ -110,6 +110,35 @@ Widget feedCard(BuildContext context, GptFeed listFeed) {
   );
 }
 
+void showDeletePostDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Delete Post'),
+        content: Text(
+            'Are you sure you want to delete this post? This action cannot be undone.'),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Add logic to delete the post
+              print('call delete post api here...');
+              Navigator.of(context).pop(); // Close the dialog
+            },
+            child: Text('Delete'),
+          ),
+        ],
+      );
+    },
+  );
+}
+
 Widget likeCommentShareForAuthor(BuildContext context, GptFeed listFeed) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -198,7 +227,7 @@ Widget likeCommentShareForAuthor(BuildContext context, GptFeed listFeed) {
           child: Icon(FontAwesomeIcons.edit, size: 18)),
       GestureDetector(
           onTap: () {
-            print('delete Post');
+            showDeletePostDialog(context);
           },
           child: Icon(FontAwesomeIcons.trashAlt, size: 18)),
       GestureDetector(

@@ -192,17 +192,25 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
         if (response.statusCode == 202) {
           // Profile updated successfully
           print('Profile updated successfully');
-          signUpAlert(
-            onPressed: () async {
-              print('back to the feeds page');
-              Navigator.popAndPushNamed(context, EditProfileWidget.id);
-              Navigator.pushNamed(context, WelcomeScreen.id);
-            },
-            title: 'Profile Upload',
-            desc: 'Profile uploaded successfully!',
-            btnText: 'Feed Now',
+          showDialog(
             context: context,
-          ).show();
+            builder: (BuildContext context) {
+              return AlertDialog(
+                title: const Text('Profile Upload'),
+                content: const Text("Profile uploaded successfully!"),
+                actions: <Widget>[
+                  ElevatedButton(
+                    onPressed: () {
+                      // Add logic to delete the post
+                      Navigator.popAndPushNamed(context, EditProfileWidget.id);
+                      Navigator.pushNamed(context, WelcomeScreen.id);
+                    },
+                    child: const Text('Continue'),
+                  ),
+                ],
+              );
+            },
+          );
         } else if (response.statusCode == 401 || response.statusCode == 403) {
           final jsonResponse = jsonDecode(response.body);
           final content = jsonResponse['content'];

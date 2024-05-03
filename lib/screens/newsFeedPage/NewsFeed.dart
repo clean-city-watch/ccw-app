@@ -55,7 +55,7 @@ class _NewsFeedState extends State<NewsFeed> {
       };
 
       var url = Uri.parse(
-          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
+          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&type=ISSUE");
 
       var response = await http.get(url, headers: headers);
 
