@@ -1,4 +1,4 @@
-
+import 'package:ccw/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -6,10 +6,6 @@ import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'package:carousel_slider/carousel_slider.dart';
-
-
-
-
 
 String formatTimestamp(String timestamp) {
   final DateTime dateTime = DateTime.parse(timestamp);
@@ -38,7 +34,6 @@ String formatTimestamp(String timestamp) {
     }
   }
 }
-
 
 class CountCard extends StatelessWidget {
   final String title;
@@ -85,7 +80,6 @@ class CountCard extends StatelessWidget {
   }
 }
 
-
 class DashboardWidget extends StatefulWidget {
   @override
   _DashboardWidgetState createState() => _DashboardWidgetState();
@@ -100,7 +94,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
       'feedbacks': 0,
     }
   };
-  
 
   final List<String> carouselImages = [
     'data:image/jpeg;base64,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',
@@ -109,7 +102,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     // Add more image URLs here
   ];
 
-  int _currentIndex = 0;    
+  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -117,40 +110,48 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     fetchData(); // Fetch data when the widget is initialized
   }
 
-    Future<void> fetchData() async {
+  Future<void> fetchData() async {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      
+
       final String apiUrl = "$backendUrl/api/user/activity/count";
-      
-        try {
+
+      try {
         final response = await http.get(Uri.parse(apiUrl));
 
         if (response.statusCode == 200) {
-            final jsonData = json.decode(response.body);
-            print(jsonData);
-            setState(() {
+          final jsonData = json.decode(response.body);
+          print(jsonData);
+          setState(() {
             countData = jsonData;
-            });
+          });
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          final jsonResponse = jsonDecode(response.body);
+          final content = jsonResponse['content'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => LoginScreen(),
+            ),
+          );
         } else {
-            // Handle error when API request fails
-            print('Failed to fetch data: ${response.statusCode}');
+          // Handle error when API request fails
+          print('Failed to fetch data: ${response.statusCode}');
         }
-        } catch (error) {
+      } catch (error) {
         // Handle any exceptions that occur
         print('Error fetching data: $error');
-        }
+      }
     }
-
-    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:  AppBar(
+      appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
         elevation: 0,
@@ -171,8 +172,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
             // Divider(height: 1, thickness: 1, color: Colors.grey),
             SizedBox(height: 10),
 
-            
-
             // Image Carousel Slider
             CarouselSlider(
               items: carouselImages.map((url) {
@@ -185,7 +184,8 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                 height: 200, // Adjust the height as needed
                 viewportFraction: 1.0,
                 autoPlay: true, // Enable auto-play
-                autoPlayInterval: Duration(seconds: 3), // Set auto-play interval
+                autoPlayInterval:
+                    Duration(seconds: 3), // Set auto-play interval
                 onPageChanged: (index, reason) {
                   setState(() {
                     _currentIndex = index;
@@ -194,8 +194,6 @@ class _DashboardWidgetState extends State<DashboardWidget> {
               ),
             ),
             // Divider and space below app bar
-           
-            
 
             SizedBox(height: 10),
             // Indicator for the current image
@@ -258,5 +256,3 @@ class _DashboardWidgetState extends State<DashboardWidget> {
     );
   }
 }
-
-

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -19,7 +20,7 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
@@ -76,52 +77,58 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
 
                 final prefs = await SharedPreferences.getInstance();
                 String? userInfo = prefs.getString('userinfo');
-                
-                if(userInfo != null){
-                    Map<String, dynamic> userInfoMap = json.decode(userInfo);
-                    String accessToken = userInfoMap['access_token'];
-        
-                    var headers = {
-                      "Authorization": "Bearer ${accessToken}",
-                    };
-                    final String apiUrl = '$backendUrl/api/feedback';
-                    
-                    try {
-                        print(rating);
-                        print(feedbackText);
-                        final response = await http.post(
-                        Uri.parse(apiUrl),
-                          body: {
-                                  'rating': rating.toString(),
-                                  'feedback': feedbackText,
-                                  'authorId': userInfoMap['id'] 
-                              },
-                          headers: headers
-                            
-                        );
 
-                        if (response.statusCode == 201) {
-                        // Profile updated successfully
-                        print('Feedback Sent successfully');
-                        signUpAlert(
-                            onPressed: () async {
-                            print('back to the feeds page');
-                            
-                            },
-                            title: 'Feedback Upload',
-                            desc:
-                                'Feedback sent successfully!',
-                            btnText: 'ok',
-                            context: context,
-                        ).show();
-                        } else {
-                        // Handle other status codes or errors
-                        print('Failed to update profile');
-                        }
-                    } catch (e) {
-                        // Handle network errors or exceptions
-                        print('Error: $e');
+                if (userInfo != null) {
+                  Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                  String accessToken = userInfoMap['access_token'];
+
+                  var headers = {
+                    "Authorization": "Bearer ${accessToken}",
+                  };
+                  final String apiUrl = '$backendUrl/api/feedback';
+
+                  try {
+                    print(rating);
+                    print(feedbackText);
+                    final response = await http.post(Uri.parse(apiUrl),
+                        body: {
+                          'rating': rating.toString(),
+                          'feedback': feedbackText,
+                          'authorId': userInfoMap['id']
+                        },
+                        headers: headers);
+
+                    if (response.statusCode == 201) {
+                      // Profile updated successfully
+                      print('Feedback Sent successfully');
+                      signUpAlert(
+                        onPressed: () async {
+                          print('back to the feeds page');
+                        },
+                        title: 'Feedback Upload',
+                        desc: 'Feedback sent successfully!',
+                        btnText: 'ok',
+                        context: context,
+                      ).show();
+                    } else if (response.statusCode == 401 ||
+                        response.statusCode == 403) {
+                      final jsonResponse = jsonDecode(response.body);
+                      final content = jsonResponse['content'];
+
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute<void>(
+                          builder: (BuildContext context) => LoginScreen(),
+                        ),
+                      );
+                    } else {
+                      // Handle other status codes or errors
+                      print('Failed to update profile');
                     }
+                  } catch (e) {
+                    // Handle network errors or exceptions
+                    print('Error: $e');
+                  }
                 }
 
                 // You can now send the rating and feedback to your backend or process it as needed
@@ -151,5 +158,3 @@ class _UserFeedbackWidgetState extends State<UserFeedbackWidget> {
     super.dispose();
   }
 }
-
-

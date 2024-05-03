@@ -1,7 +1,10 @@
+import 'package:ccw/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/components/components.dart';
 import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/signup_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -42,8 +45,25 @@ class HomeScreen extends StatelessWidget {
                         tag: 'login_btn',
                         child: CustomButton(
                           buttonText: 'Login',
-                          onPressed: () {
-                            Navigator.pushNamed(context, LoginScreen.id);
+                          onPressed: () async {
+                            final prefs = await SharedPreferences.getInstance();
+                            final userInfo = prefs.getString('userinfo');
+
+                            print("printitng user info");
+                            print(userInfo);
+
+                            if (userInfo != null) {
+                              Map<String, dynamic> userInfoMap =
+                                  json.decode(userInfo);
+                              String accessToken = userInfoMap['access_token'];
+                              print(accessToken);
+                            }
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute<void>(
+                                builder: (BuildContext context) => HomePage(),
+                              ),
+                            );
                           },
                         ),
                       ),

@@ -1,4 +1,5 @@
 import 'package:ccw/components/components.dart';
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/profile/edit_profile.dart';
 import 'package:ccw/screens/welcome.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +75,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
         print(content);
         setState(() {
           commentList = [];
-          newsCommentWidgetList=[];
+          newsCommentWidgetList = [];
         });
 
         setState(() {
@@ -93,7 +94,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
           }).toList());
 
           isLoading = false;
-          commentText='';
+          commentText = '';
         });
       }
     }
@@ -178,6 +179,16 @@ class _PostPageDetailsState extends State<PostPageDetails> {
               btnText: 'Feed Now',
               context: context,
             ).show();
+          } else if (response.statusCode == 401 || response.statusCode == 403) {
+            final jsonResponse = jsonDecode(response.body);
+            final content = jsonResponse['content'];
+
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute<void>(
+                builder: (BuildContext context) => LoginScreen(),
+              ),
+            );
           } else {
             // Handle the error if the request fails
             print('Failed to post comment');

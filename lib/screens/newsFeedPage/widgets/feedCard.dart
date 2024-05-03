@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/ThumsUpReactions.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/postpage/postdetail_page.dart';
@@ -40,33 +41,35 @@ String formatTimestamp(String timestamp) {
 }
 
 Future<String> getPublicUrlForFile(String fileName) async {
-   final prefs = await SharedPreferences.getInstance();
-    String? userInfo = prefs.getString('userinfo');
+  final prefs = await SharedPreferences.getInstance();
+  String? userInfo = prefs.getString('userinfo');
 
+  if (userInfo != null) {
+    Map<String, dynamic> userInfoMap = json.decode(userInfo);
+    String accessToken = userInfoMap['access_token'];
 
-    if(userInfo != null) {
-      Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      String accessToken = userInfoMap['access_token'];
-        
-      var headers = {
-        "Authorization": "Bearer ${accessToken}",
-      };
-      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
-      if (avatarUrl.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
-        return responseData['imageUrl'];
-      }
+    var headers = {
+      "Authorization": "Bearer ${accessToken}",
+    };
+    final avatarUrl = await http.get(
+        Uri.parse('$backendUrl/api/minio/covers/$fileName'),
+        headers: headers);
+    if (avatarUrl.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+      return responseData['imageUrl'];
     }
+  }
 
-    return "https://www.w3schools.com/w3images/avatar3.png";
+  return "https://www.w3schools.com/w3images/avatar3.png";
 }
-
 
 Widget feedCard(BuildContext context, GptFeed listFeed) {
   return Card(
     child: GestureDetector(
       onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => PostPageDetails(feed: listFeed))),
+          context,
+          MaterialPageRoute(
+              builder: (context) => PostPageDetails(feed: listFeed))),
       child: Container(
           padding: EdgeInsets.all(8),
           child: Column(
@@ -81,9 +84,10 @@ Widget feedCard(BuildContext context, GptFeed listFeed) {
                   maxLines: 2,
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               space15(),
-              Text(listFeed.content, style: TextStyle(fontSize: 14, color: Colors.grey)),
+              Text(listFeed.content,
+                  style: TextStyle(fontSize: 14, color: Colors.grey)),
               space15(),
-              setLocation(context,listFeed),
+              setLocation(context, listFeed),
               Divider(thickness: 1),
               Row(
                 children: <Widget>[
@@ -91,13 +95,14 @@ Widget feedCard(BuildContext context, GptFeed listFeed) {
                   SizedBox(width: 10),
                   Text(
                     '${listFeed.count.upvotes} Members supported the post',
-                    style: TextStyle(fontSize: 14, color: Theme.of(context).primaryColor),
+                    style: TextStyle(
+                        fontSize: 14, color: Theme.of(context).primaryColor),
                   ),
                 ],
               ),
               Divider(thickness: 1),
               SizedBox(height: 10),
-              likeCommentShare(context,listFeed),
+              likeCommentShare(context, listFeed),
               space15(),
             ],
           )),
@@ -105,68 +110,61 @@ Widget feedCard(BuildContext context, GptFeed listFeed) {
   );
 }
 
-
-Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
-  
-
+Widget likeCommentShareForAuthor(BuildContext context, GptFeed listFeed) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
       GestureDetector(
           onTap: () async {
-              if (!listFeed.isupvote) {
-                // If the user has not upvoted, perform the upvote action
-                // Here, you can call your API to upvote and handle the response accordingly
-               
+            if (!listFeed.isupvote) {
+              // If the user has not upvoted, perform the upvote action
+              // Here, you can call your API to upvote and handle the response accordingly
 
-                final prefs = await SharedPreferences.getInstance();
-                String? userInfo = prefs.getString('userinfo');
-                if(userInfo != null){
-                    Map<String, dynamic> userInfoMap = json.decode(userInfo);
-                    String accessToken = userInfoMap['access_token'];
-        
-                    var headers = {
-                      "Authorization": "Bearer ${accessToken}",
-                    };
-                    final String apiUrl = '$backendUrl/api/upvote';
-                    
-                    try {
-                      print(listFeed.id);
-                      print(userInfoMap['id'] );
-                        final response = await http.post(
-                        Uri.parse(apiUrl),
-                        body: {
-                                "postId": listFeed.id.toString(),
-                            },
-                        headers: headers
-                        );
-                        print('upvote success');
+              final prefs = await SharedPreferences.getInstance();
+              String? userInfo = prefs.getString('userinfo');
+              if (userInfo != null) {
+                Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                String accessToken = userInfoMap['access_token'];
 
-                        if (response.statusCode == 201) {
-                        // Profile updated successfully
-                        print('upvote added successfully');
-                        // listFeed.isupvote =true;
-                        
-                        } else {
-                        // Handle other status codes or errors
-                        print('Failed to update profile');
-                        }
-                    } catch (e) {
-                        // Handle network errors or exceptions
-                        print('Error: $e');
-                    }
+                var headers = {
+                  "Authorization": "Bearer ${accessToken}",
+                };
+                final String apiUrl = '$backendUrl/api/upvote';
+
+                try {
+                  print(listFeed.id);
+                  print(userInfoMap['id']);
+                  final response = await http.post(Uri.parse(apiUrl),
+                      body: {
+                        "postId": listFeed.id.toString(),
+                      },
+                      headers: headers);
+                  print('upvote success');
+
+                  if (response.statusCode == 201) {
+                    // Profile updated successfully
+                    print('upvote added successfully');
+                    // listFeed.isupvote =true;
+                  } else {
+                    // Handle other status codes or errors
+                    print('Failed to update profile');
+                  }
+                } catch (e) {
+                  // Handle network errors or exceptions
+                  print('Error: $e');
                 }
-                
               }
-
+            }
           },
           child: Row(
             children: <Widget>[
               Icon(
                 FontAwesomeIcons.thumbsUp,
                 size: 18,
-                color: listFeed.isupvote ? Colors.blue : Colors.black, // Change color based on upvote status
+                color: listFeed.isupvote
+                    ? Colors.blue
+                    : Colors.black, // Change color based on upvote status
               ),
               SizedBox(width: 5),
               Text('${listFeed.count.upvotes}')
@@ -177,12 +175,10 @@ Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             GestureDetector(
-                onTap: () => 
-                  
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PostPageDetails(feed: listFeed)))
-                  
-                  ,
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostPageDetails(feed: listFeed))),
                 child: Row(
                   children: <Widget>[
                     Icon(FontAwesomeIcons.comment, size: 18),
@@ -194,9 +190,10 @@ Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
       GestureDetector(
           onTap: () {
             print('edit Post');
-            Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => EditPostWidget(feed: listFeed)));
-                  
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => EditPostWidget(feed: listFeed)));
           },
           child: Icon(FontAwesomeIcons.edit, size: 18)),
       GestureDetector(
@@ -213,70 +210,72 @@ Widget likeCommentShareForAuthor(BuildContext context,GptFeed listFeed) {
   );
 }
 
-
-
-
-Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
-  
-
+Widget likeCommentShare(BuildContext context, GptFeed listFeed) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceAround,
     crossAxisAlignment: CrossAxisAlignment.center,
     children: <Widget>[
       GestureDetector(
           onTap: () async {
-              if (!listFeed.isupvote) {
-                // If the user has not upvoted, perform the upvote action
-                // Here, you can call your API to upvote and handle the response accordingly
-               
+            if (!listFeed.isupvote) {
+              // If the user has not upvoted, perform the upvote action
+              // Here, you can call your API to upvote and handle the response accordingly
 
-                final prefs = await SharedPreferences.getInstance();
-                String? userInfo = prefs.getString('userinfo');
-                if(userInfo != null){
-                    Map<String, dynamic> userInfoMap = json.decode(userInfo);
-                    String accessToken = userInfoMap['access_token'];
-        
-                    var headers = {
-                      "Authorization": "Bearer ${accessToken}",
-                    };
-                    final String apiUrl = '$backendUrl/api/upvote';
-                    
-                    try {
-                      print(listFeed.id);
-                      print(userInfoMap['id'] );
-                        final response = await http.post(
-                        Uri.parse(apiUrl),
-                        body: {
-                                "postId": listFeed.id.toString(),
-                            },
-                        headers: headers
-                        );
-                        print('upvote success');
+              final prefs = await SharedPreferences.getInstance();
+              String? userInfo = prefs.getString('userinfo');
+              if (userInfo != null) {
+                Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                String accessToken = userInfoMap['access_token'];
 
-                        if (response.statusCode == 201) {
-                        // Profile updated successfully
-                        print('upvote added successfully');
-                        // listFeed.isupvote =true;
-                        
-                        } else {
-                        // Handle other status codes or errors
-                        print('Failed to update profile');
-                        }
-                    } catch (e) {
-                        // Handle network errors or exceptions
-                        print('Error: $e');
-                    }
+                var headers = {
+                  "Authorization": "Bearer ${accessToken}",
+                };
+                final String apiUrl = '$backendUrl/api/upvote';
+
+                try {
+                  print(listFeed.id);
+                  print(userInfoMap['id']);
+                  final response = await http.post(Uri.parse(apiUrl),
+                      body: {
+                        "postId": listFeed.id.toString(),
+                      },
+                      headers: headers);
+                  print('upvote success');
+
+                  if (response.statusCode == 201) {
+                    // Profile updated successfully
+                    print('upvote added successfully');
+                    // listFeed.isupvote =true;
+                  } else if (response.statusCode == 401 ||
+                      response.statusCode == 403) {
+                    final jsonResponse = jsonDecode(response.body);
+                    final content = jsonResponse['content'];
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => LoginScreen(),
+                      ),
+                    );
+                  } else {
+                    // Handle other status codes or errors
+                    print('Failed to update profile');
+                  }
+                } catch (e) {
+                  // Handle network errors or exceptions
+                  print('Error: $e');
                 }
-                
               }
-
+            }
           },
           child: Row(
             children: <Widget>[
               Icon(
                 FontAwesomeIcons.thumbsUp,
                 size: 18,
-                color: listFeed.isupvote ? Colors.blue : Colors.black, // Change color based on upvote status
+                color: listFeed.isupvote
+                    ? Colors.blue
+                    : Colors.black, // Change color based on upvote status
               ),
               SizedBox(width: 5),
               Text('${listFeed.count.upvotes}')
@@ -287,12 +286,10 @@ Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             GestureDetector(
-                onTap: () => 
-                  
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => PostPageDetails(feed: listFeed)))
-                  
-                  ,
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PostPageDetails(feed: listFeed))),
                 child: Row(
                   children: <Widget>[
                     Icon(FontAwesomeIcons.comment, size: 18),
@@ -311,31 +308,23 @@ Widget likeCommentShare(BuildContext context,GptFeed listFeed) {
   );
 }
 
-
-
-
-
-
-
-Widget setLocation(BuildContext context,GptFeed listFeed) {
-  return  GestureDetector(
-            onTap: ()=> Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => RouteServicePage(feed: listFeed))) ,
-            child:
-                Row(
-                  children: <Widget>[
-                    Icon(Icons.location_on, color: Colors.teal),
-                    SizedBox(width: 15),
-                    Text(
-                      listFeed.city,
-                      style: TextStyle(fontSize: 12, color: Colors.teal),
-                    ),
-                  ],
-                ),
-          );
-  
-  
-  
+Widget setLocation(BuildContext context, GptFeed listFeed) {
+  return GestureDetector(
+    onTap: () => Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => RouteServicePage(feed: listFeed))),
+    child: Row(
+      children: <Widget>[
+        Icon(Icons.location_on, color: Colors.teal),
+        SizedBox(width: 15),
+        Text(
+          listFeed.city,
+          style: TextStyle(fontSize: 12, color: Colors.teal),
+        ),
+      ],
+    ),
+  );
 }
 
 Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
@@ -361,7 +350,8 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                       CircleAvatar(
                         backgroundColor: Colors.grey,
                         child: ClipOval(
-                          child: Image.network(snapshot.data!), // Use the public URL here
+                          child: Image.network(
+                              snapshot.data!), // Use the public URL here
                         ),
                         radius: 20,
                       ),
@@ -412,7 +402,6 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
     },
   );
 }
-
 
 Widget moreOptions3Dots(BuildContext context) {
   return GestureDetector(
@@ -489,14 +478,12 @@ Widget getStatusTag(String statusName) {
   );
 }
 
-
 Widget renderCategoryTime(GptFeed listFeed) {
-   final statusTag = getStatusTag(listFeed.status.name);
-  
+  final statusTag = getStatusTag(listFeed.status.name);
+
   final formattedTime = formatTimestamp(listFeed.timestamp);
   print(formattedTime);
-  
-  
+
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
     children: <Widget>[
@@ -508,7 +495,6 @@ Widget renderCategoryTime(GptFeed listFeed) {
 }
 
 _onCenterBottomMenuOn3DotsPressed(BuildContext context) {
-
   showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -520,45 +506,47 @@ _onCenterBottomMenuOn3DotsPressed(BuildContext context) {
 }
 
 Widget _buildBottomNavMenu(BuildContext context) {
-
   List<Menu3DotsModel> listMore = [];
-  listMore.add(Menu3DotsModel('Hide Post', 'See fewer posts like this', Icons.block));
-  listMore.add(Menu3DotsModel('Unfollow <username>', 'See fewer posts like this', Icons.person_add));
-  listMore.add(Menu3DotsModel('Report Post', 'See fewer posts like this', Icons.info));
-  listMore.add(Menu3DotsModel('Copy Post link', 'See fewer posts like this', Icons.insert_link));
-
+  listMore.add(
+      Menu3DotsModel('Hide Post', 'See fewer posts like this', Icons.block));
+  listMore.add(Menu3DotsModel(
+      'Unfollow <username>', 'See fewer posts like this', Icons.person_add));
+  listMore.add(
+      Menu3DotsModel('Report Post', 'See fewer posts like this', Icons.info));
+  listMore.add(Menu3DotsModel(
+      'Copy Post link', 'See fewer posts like this', Icons.insert_link));
 
   return Container(
-    height: 300,
-    decoration: BoxDecoration(
-      color: Theme.of(context).canvasColor,
-      borderRadius: BorderRadius.only(
-        topLeft: const Radius.circular(10),
-        topRight: const Radius.circular(10),
+      height: 300,
+      decoration: BoxDecoration(
+        color: Theme.of(context).canvasColor,
+        borderRadius: BorderRadius.only(
+          topLeft: const Radius.circular(10),
+          topRight: const Radius.circular(10),
+        ),
       ),
-    ),
-
       child: ListView.builder(
-        itemCount: listMore.length,
-          itemBuilder: (BuildContext context, int index){
-        return ListTile(
-          title: Text(listMore[index].title, style: TextStyle(fontSize: 18),),
-          subtitle: Text(listMore[index].subtitle),
-          leading: Icon(listMore[index].icons, size: 20, color: Colors.teal,),
-        );
-      })
-
-
-  );
+          itemCount: listMore.length,
+          itemBuilder: (BuildContext context, int index) {
+            return ListTile(
+              title: Text(
+                listMore[index].title,
+                style: TextStyle(fontSize: 18),
+              ),
+              subtitle: Text(listMore[index].subtitle),
+              leading: Icon(
+                listMore[index].icons,
+                size: 20,
+                color: Colors.teal,
+              ),
+            );
+          }));
 }
 
-
-class Menu3DotsModel{
-
+class Menu3DotsModel {
   String title;
   String subtitle;
   IconData icons;
 
   Menu3DotsModel(this.title, this.subtitle, this.icons);
-
 }

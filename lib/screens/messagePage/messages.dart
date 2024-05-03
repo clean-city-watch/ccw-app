@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -39,36 +40,45 @@ class MessagesPage extends StatefulWidget {
 }
 
 class _MessagesPageState extends State<MessagesPage> {
-Future<List<dynamic>> fetchMessages() async {
-  final prefs = await SharedPreferences.getInstance();
-  String? userInfo = prefs.getString('userinfo');
-  if (userInfo != null) {
-    Map<String, dynamic> userInfoMap = json.decode(userInfo);
-    String accessToken = userInfoMap['access_token'];
-        
-    var headers = {
-      "Authorization": "Bearer ${accessToken}",
-    };
-    final String apiUrl = "$backendUrl/api/user/log";
+  Future<List<dynamic>> fetchMessages() async {
+    final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
 
-    final response = await http.get(Uri.parse(apiUrl),headers: headers);
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final String apiUrl = "$backendUrl/api/user/log";
 
-    if (response.statusCode == 200) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Failed to load messages');
+      final response = await http.get(Uri.parse(apiUrl), headers: headers);
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => LoginScreen(),
+          ),
+        );
+      } else {
+        throw Exception('Failed to load messages');
+      }
     }
-  }
-  
-  // Return an empty list if userInfo is null or other conditions are not met
-  return [];
-}
 
+    // Return an empty list if userInfo is null or other conditions are not met
+    return [];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,

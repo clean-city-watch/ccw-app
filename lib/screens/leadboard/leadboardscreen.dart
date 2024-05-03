@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -15,37 +16,37 @@ class LeaderboardWidget extends StatelessWidget {
     return Column(
       children: [
         Row(
-            children: [
-              // Icon(Icons.monetization_on, color: Colors.green), // Add an icon
-              SizedBox(width: 8), // Add spacing
-              Text(
-                'Leaderboard',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+          children: [
+            // Icon(Icons.monetization_on, color: Colors.green), // Add an icon
+            SizedBox(width: 8), // Add spacing
+            Text(
+              'Leaderboard',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
-            ],
-          ),
+            ),
+          ],
+        ),
         SizedBox(height: 10),
         ListView.builder(
           shrinkWrap: true,
           itemCount: leaderboardData.length,
           itemBuilder: (context, index) {
             final user = leaderboardData[index];
-            final medal = index < 3 ? ['🥇', '🥈', '🥉'][index] : '${index + 1}';
+            final medal =
+                index < 3 ? ['🥇', '🥈', '🥉'][index] : '${index + 1}';
             return ListTile(
               leading: Text(medal), // Display medal or index
-              title: Text('${user['profile']['firstName']} ${user['profile']['LastName']}'),
+              title: Text(
+                  '${user['profile']['firstName']} ${user['profile']['LastName']}'),
             );
           },
         ),
       ],
     );
   }
-
 }
-
 
 class LeaderboardScreen extends StatefulWidget {
   @override
@@ -63,31 +64,41 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
 
   Future<void> fetchData() async {
     try {
-          final prefs = await SharedPreferences.getInstance();
-          String? userInfo = prefs.getString('userinfo');
+      final prefs = await SharedPreferences.getInstance();
+      String? userInfo = prefs.getString('userinfo');
 
-          if(userInfo != null) {
-              Map<String, dynamic> userInfoMap = json.decode(userInfo);
-              String accessToken = userInfoMap['access_token'];
-        
-              var headers = {
-                "Authorization": "Bearer ${accessToken}",
-              };
+      if (userInfo != null) {
+        Map<String, dynamic> userInfoMap = json.decode(userInfo);
+        String accessToken = userInfoMap['access_token'];
 
-              print('$backendUrl/api/leadboard');
-              final response = await http.get(Uri.parse('$backendUrl/api/leadboard'),headers: headers);
-              print(response.body);
-              if (response.statusCode == 200) {
-                final jsonData = json.decode(response.body);
-                setState(() {
-                  leaderboardData = List<Map<String, dynamic>>.from(jsonData);
-                });
-              } else {
-                // Handle error when API request fails
-                print('Failed to fetch data: ${response.statusCode}');
-              }
-          }
-      
+        var headers = {
+          "Authorization": "Bearer ${accessToken}",
+        };
+
+        print('$backendUrl/api/leadboard');
+        final response = await http.get(Uri.parse('$backendUrl/api/leadboard'),
+            headers: headers);
+        print(response.body);
+        if (response.statusCode == 200) {
+          final jsonData = json.decode(response.body);
+          setState(() {
+            leaderboardData = List<Map<String, dynamic>>.from(jsonData);
+          });
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          final jsonResponse = jsonDecode(response.body);
+          final content = jsonResponse['content'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => LoginScreen(),
+            ),
+          );
+        } else {
+          // Handle error when API request fails
+          print('Failed to fetch data: ${response.statusCode}');
+        }
+      }
     } catch (error) {
       // Handle any exceptions that occur
       print('Error fetching data: $error');

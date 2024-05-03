@@ -12,9 +12,6 @@ import 'package:ccw/screens/create_post.dart';
 import 'package:ccw/screens/profile/edit_profile.dart';
 import 'package:ccw/screens/dashboard/dashboardscreen.dart';
 
-
-
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => new _HomePageState();
@@ -65,38 +62,43 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: _selectedTab(_selectedDrawerIndex),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        tooltip: 'Create Post',
-        splashColor: Colors.teal,
-        onPressed: _modalBottomSheetMenu,
-        child: Icon(CupertinoIcons.add),
-        elevation: 0,
-      ),
-      bottomNavigationBar: FABBottomAppBar(
-        centerItemText: '',
-        backgroundColor: (Colors.black54),
-        color: (Color.fromARGB(255, 177, 177, 177))!,
-        selectedColor: Theme.of(context).colorScheme.secondary,
-        notchedShape: CircularNotchedRectangle(),
-        iconSize: 20.0,
-        onTabSelected: _selectedTab,
-        items: [
-          FABBottomAppBarItem(iconData: FontAwesomeIcons.listAlt, text: 'Home'),
-          FABBottomAppBarItem(iconData: FontAwesomeIcons.book, text: 'Activity'),
-          FABBottomAppBarItem(
-              iconData: FontAwesomeIcons.comments, text: 'Updates'),
-          FABBottomAppBarItem(
-              iconData: FontAwesomeIcons.businessTime, text: 'Explore'),
-        ],
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: _selectedTab(_selectedDrawerIndex),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButton: FloatingActionButton(
+          tooltip: 'Create Post',
+          splashColor: Colors.teal,
+          onPressed: _modalBottomSheetMenu,
+          child: Icon(CupertinoIcons.add),
+          elevation: 0,
+        ),
+        bottomNavigationBar: FABBottomAppBar(
+          centerItemText: '',
+          backgroundColor: (Colors.black54),
+          color: (Color.fromARGB(255, 177, 177, 177))!,
+          selectedColor: Theme.of(context).colorScheme.secondary,
+          notchedShape: CircularNotchedRectangle(),
+          iconSize: 20.0,
+          onTabSelected: _selectedTab,
+          items: [
+            FABBottomAppBarItem(
+                iconData: FontAwesomeIcons.listAlt, text: 'Home'),
+            FABBottomAppBarItem(
+                iconData: FontAwesomeIcons.book, text: 'Activity'),
+            FABBottomAppBarItem(
+                iconData: FontAwesomeIcons.comments, text: 'Updates'),
+            FABBottomAppBarItem(
+                iconData: FontAwesomeIcons.businessTime, text: 'Explore'),
+          ],
+        ),
       ),
     );
   }
-
-  
 
   _modalBottomSheetMenu() {
     showModalBottomSheet(
@@ -144,17 +146,16 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             debugPrint('$index');
                             switch (index) {
                               case 0:
-                                 Navigator.pushNamed(context, CreatePost.id);
+                                Navigator.pushNamed(context, CreatePost.id);
                               case 1:
                                 Navigator.pushNamed(context, FirstPage.id);
                               case 2:
-                               debugPrint(bottomMenuItems[index].title);
+                                debugPrint(bottomMenuItems[index].title);
                               case 3:
-                               debugPrint(bottomMenuItems[index].title);
+                                debugPrint(bottomMenuItems[index].title);
                               default:
                                 debugPrint(bottomMenuItems[index].title);
                             }
-                            
                           },
                         );
                       }),
@@ -163,7 +164,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 //SizedBox(height: 10),
 
                 Container(
-                    height: 60, width: 60,
+                    height: 60,
+                    width: 60,
                     decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(30))),

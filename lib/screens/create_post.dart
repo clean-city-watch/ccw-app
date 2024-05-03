@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,8 +14,6 @@ import 'package:ccw/components/components.dart';
 import 'package:ccw/screens/welcome.dart';
 import 'package:latlong2/latlong.dart'; // Use latlong2 package for LatLng
 import 'package:flutter_map/flutter_map.dart';
-
-
 
 // create issue page.
 
@@ -109,7 +108,7 @@ class _CreatePostState extends State<CreatePost> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
@@ -168,9 +167,11 @@ class _CreatePostState extends State<CreatePost> {
                 },
               ),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween, // Distribute evenly
+                mainAxisAlignment:
+                    MainAxisAlignment.spaceBetween, // Distribute evenly
                 children: [
-                  Expanded( // Allow each TextField to expand as needed
+                  Expanded(
+                    // Allow each TextField to expand as needed
                     child: TextFormField(
                       readOnly: true,
                       controller: latitudeController,
@@ -210,58 +211,61 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ],
               ),
-
-              __spanLocationPicker==true? SizedBox(
-                  height: 300,
-                  width: 400,
-                  child: FlutterMap(
-                    options: MapOptions(
-                      center: LatLng( 18.516726, 73.856255),
-                      zoom: 10,
-                      onTap: (point, latlng) {
-                      setState(() {
-                        _selectedLocation = latlng;
-                        latitudeController.text = latlng.latitude.toString();
-                        longitudeController.text = latlng.longitude.toString();
-                      });
-                    },
-                    ),
-                    nonRotatedChildren: [
-                      AttributionWidget.defaultWidget(
-                        source: 'OpenStreetMap contributors',
-                        onSourceTapped: null,
-                      ),
-                    ],
-                    children: [
-                      TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                        userAgentPackageName: 'com.example.app',
-                      ),
-                      MarkerLayer(
-                        markers: [
-                          // Add your dynamic markers here
-                          if (_selectedLocation != null)
-                          Marker(
-                            width: 80.0,
-                            height: 80.0,
-                            point: _selectedLocation!,
-                            builder: (ctx) => Container(
-                              child: Icon(
-                                Icons.location_on,
-                                color: Colors.red, // You can set the marker color here
-                              ), // Customize marker appearance
-                            ),
+              __spanLocationPicker == true
+                  ? SizedBox(
+                      height: 300,
+                      width: 400,
+                      child: FlutterMap(
+                        options: MapOptions(
+                          center: LatLng(18.516726, 73.856255),
+                          zoom: 10,
+                          onTap: (point, latlng) {
+                            setState(() {
+                              _selectedLocation = latlng;
+                              latitudeController.text =
+                                  latlng.latitude.toString();
+                              longitudeController.text =
+                                  latlng.longitude.toString();
+                            });
+                          },
+                        ),
+                        nonRotatedChildren: [
+                          AttributionWidget.defaultWidget(
+                            source: 'OpenStreetMap contributors',
+                            onSourceTapped: null,
+                          ),
+                        ],
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            userAgentPackageName: 'com.example.app',
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              // Add your dynamic markers here
+                              if (_selectedLocation != null)
+                                Marker(
+                                  width: 80.0,
+                                  height: 80.0,
+                                  point: _selectedLocation!,
+                                  builder: (ctx) => Container(
+                                    child: Icon(
+                                      Icons.location_on,
+                                      color: Colors
+                                          .red, // You can set the marker color here
+                                    ), // Customize marker appearance
+                                  ),
+                                ),
+                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ):Container(),
-                
+                    )
+                  : Container(),
               SizedBox(height: 10),
-
               selectedImage != null
-                  ? 
+                  ?
                   // Image.asset(
                   //     'assets/images/garbeg.jpg', // Replace with your image path
                   //     height: 200,
@@ -271,8 +275,7 @@ class _CreatePostState extends State<CreatePost> {
                       height: 200,
                     )
                   : SizedBox(),
-                  
-                  SizedBox(height: 10),
+              SizedBox(height: 10),
               Row(
                 children: <Widget>[
                   ElevatedButton(
@@ -286,37 +289,36 @@ class _CreatePostState extends State<CreatePost> {
                   ),
                 ],
               ),
-
               SizedBox(height: 10),
-
               ElevatedButton(
                 onPressed: () async {
                   bool isValidated = _formKey.currentState!.validate();
                   if (isValidated) {
                     final prefs = await SharedPreferences.getInstance();
                     final userInfo = prefs.getString('userinfo');
-                   
-                    if(userInfo != null) {
+
+                    if (userInfo != null) {
                       Map<String, dynamic> userInfoMap = json.decode(userInfo);
                       String accessToken = userInfoMap['access_token'];
 
                       final url = Uri.parse('$backendUrl/api/post');
 
-                      if(selectedImage==null){
+                      if (selectedImage == null) {
                         return;
                       }
-        
+
                       var request = http.MultipartRequest('POST', url)
-                      ..files.add(await http.MultipartFile.fromPath('file', selectedImage!.path))
-                      ..fields['title'] = _titleController.text
-                      ..fields['content'] = _contentController.text
-                      ..fields['city'] = _cityController.text
-                      ..fields['latitude'] = latitudeController.text
-                      ..fields['longitude'] = longitudeController.text
-                      ..fields['published'] = 'true'
-                      ..fields['type'] = 'ISSUE'
-                      ..fields['authorId'] = userInfoMap['id'].toString()
-                      ..headers.addAll({
+                        ..files.add(await http.MultipartFile.fromPath(
+                            'file', selectedImage!.path))
+                        ..fields['title'] = _titleController.text
+                        ..fields['content'] = _contentController.text
+                        ..fields['city'] = _cityController.text
+                        ..fields['latitude'] = latitudeController.text
+                        ..fields['longitude'] = longitudeController.text
+                        ..fields['published'] = 'true'
+                        ..fields['type'] = 'ISSUE'
+                        ..fields['authorId'] = userInfoMap['id'].toString()
+                        ..headers.addAll({
                           "Authorization": "Bearer $accessToken",
                         });
 
@@ -325,21 +327,39 @@ class _CreatePostState extends State<CreatePost> {
                       print('response time....');
 
                       if (response.statusCode == 201) {
-                      signUpAlert(
+                        signUpAlert(
                           onPressed: () async {
                             print('back to the feeds page');
-                            Navigator.popAndPushNamed(
-                                  context, CreatePost.id);
-                              Navigator.pushNamed(context, WelcomeScreen.id);
+                            Navigator.popAndPushNamed(context, CreatePost.id);
+                            Navigator.pushNamed(context, WelcomeScreen.id);
                           },
                           title: 'Post Upload',
-                          desc:
-                              'Post uploaded successfully!',
+                          desc: 'Post uploaded successfully!',
+                          btnText: 'Feed Now',
+                          context: context,
+                        ).show();
+                      } else if (response.statusCode == 401 ||
+                          response.statusCode == 403) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => LoginScreen(),
+                          ),
+                        );
+                      } else {
+                        signUpAlert(
+                          onPressed: () async {
+                            // print(response.toString());
+                            Navigator.popAndPushNamed(context, CreatePost.id);
+                          },
+                          title: 'Post Upload',
+                          desc: "Please complete your profile first",
                           btnText: 'Feed Now',
                           context: context,
                         ).show();
                       }
-                    };
+                    }
+                    ;
                   }
                 },
                 child: Text('Create Post'),
@@ -351,4 +371,3 @@ class _CreatePostState extends State<CreatePost> {
     );
   }
 }
-

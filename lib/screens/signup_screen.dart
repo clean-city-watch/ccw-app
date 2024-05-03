@@ -9,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'dart:developer';
 
-
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
   static String id = 'signup_screen';
@@ -30,7 +29,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return WillPopScope(
       onWillPop: () async {
         Navigator.popAndPushNamed(context, HomeScreen.id);
-        return true;
+        return false;
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -114,10 +113,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       'password': _password,
                                     },
                                   );
-
-
-
-                                  
 
                                   if (response.statusCode == 201) {
                                     signUpAlert(

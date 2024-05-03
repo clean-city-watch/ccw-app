@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/screens/postpage/postdetail_page.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/category_list.dart';
@@ -105,6 +106,16 @@ class _LibraryPageState extends State<LibraryPage> {
           setState(() {
             countData = jsonData;
           });
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          final jsonResponse = jsonDecode(response.body);
+          final content = jsonResponse['content'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => LoginScreen(),
+            ),
+          );
         } else {
           // Handle error when API request fails
           print('Failed to fetch data: ${response.statusCode}');

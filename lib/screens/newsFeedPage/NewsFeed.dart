@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/screens/postpage/postdetail_page.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/category_list.dart';
@@ -10,20 +11,17 @@ import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class NewsFeed extends StatefulWidget {
-
   @override
   _NewsFeedState createState() => _NewsFeedState();
 }
 
 class _NewsFeedState extends State<NewsFeed> {
-
   List feedList = [];
   bool isVisible = false;
-  List<Widget> newsFeedWidgetList=[];
+  List<Widget> newsFeedWidgetList = [];
   int pageSize = 3; // Set your desired page size
   int pageOffset = 0; // Initialize the page offset
   bool isLoading = false; // Variable to track if new data is loading
-
 
   @override
   void initState() {
@@ -44,54 +42,61 @@ class _NewsFeedState extends State<NewsFeed> {
     final prefs = await SharedPreferences.getInstance();
     String? userInfo = prefs.getString('userinfo');
 
-    if(userInfo != null) {
-        Map<String, dynamic> userInfoMap = json.decode(userInfo);
-    
-        String currentUserId = userInfoMap['id'];
-        String accessToken = userInfoMap['access_token'];
-        
-        var headers = {
-          "Authorization": "Bearer ${accessToken}",
-          "Content-Type": "application/json", // Adjust as per your API requirements
-        };
-    
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
 
-        var url = Uri.parse("$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
+      String currentUserId = userInfoMap['id'];
+      String accessToken = userInfoMap['access_token'];
 
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+        "Content-Type":
+            "application/json", // Adjust as per your API requirements
+      };
 
-        var response = await http.get(url,headers: headers);
+      var url = Uri.parse(
+          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
 
-        if (response.statusCode == 200) {
-          final jsonResponse = jsonDecode(response.body);
-          final content = jsonResponse['content'];
+      var response = await http.get(url, headers: headers);
 
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
 
+        setState(() {
+          feedList.addAll(content.map((json) {
+            if (json['type'] == 'QUESTION') {
+              print("call the Question addition item here...");
+            }
+            if (json['type'] == 'ISSUE') {
+              newsFeedWidgetList
+                  .add(feedNewsCardItem(context, GptFeed.fromJson(json)));
+              newsFeedWidgetList.add(topSpace());
+              return GptFeed.fromJson(json);
+            }
+          }).toList());
 
-          setState(() {
-            feedList.addAll(content.map((json) {
-              if(json['type']=='QUESTION'){
-                print("call the Question addition item here...");
-              }
-              if(json['type']=='ISSUE'){
-                newsFeedWidgetList.add(feedNewsCardItem(context, GptFeed.fromJson(json)));
-                newsFeedWidgetList.add(topSpace());
-                return GptFeed.fromJson(json);
-              }
-             
-            }).toList());
-
-            isVisible = true;
-            isLoading = false;
-            pageOffset += 1; // Increment the page offset for the next page
-          });
-        }
+          isVisible = true;
+          isLoading = false;
+          pageOffset += 1; // Increment the page offset for the next page
+        });
       }
-  }
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
 
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => LoginScreen(),
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -101,7 +106,6 @@ class _NewsFeedState extends State<NewsFeed> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
       ),
-
       body: SafeArea(
         child: Column(
           children: <Widget>[
@@ -130,7 +134,8 @@ class _NewsFeedState extends State<NewsFeed> {
                     return true;
                   },
                   child: ListView.builder(
-                    itemCount: newsFeedWidgetList.length + 1, // +1 for loading indicator
+                    itemCount: newsFeedWidgetList.length +
+                        1, // +1 for loading indicator
                     itemBuilder: (BuildContext context, int index) {
                       if (index < newsFeedWidgetList.length) {
                         return newsFeedWidgetList[index];

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ccw/screens/home.dart';
 import 'package:ccw/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/components/components.dart';
@@ -30,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.popAndPushNamed(context, HomeScreen.id);
+        // Navigator.popAndPushNamed(context, HomeScreen.id);
         return false;
       },
       child: Scaffold(
@@ -100,19 +101,20 @@ class _LoginScreenState extends State<LoginScreen> {
                             });
                             print('$backendUrl/api/auth/signin');
                             try {
-                                final response = await http.post(
-                                      Uri.parse('$backendUrl/api/auth/signin'),
-                                      body: {
-                                        'email': _email,
-                                        'password': _password,
-                                      },
-                                    );
+                              final response = await http.post(
+                                Uri.parse('$backendUrl/api/auth/signin'),
+                                body: {
+                                  'email': _email,
+                                  'password': _password,
+                                },
+                              );
 
                               if (response.statusCode == 201) {
                                 print(response.body);
-                                final prefs = await SharedPreferences.getInstance();
+                                final prefs =
+                                    await SharedPreferences.getInstance();
                                 prefs.setString('userinfo', response.body);
-                                final  data = json.decode(response.body);                                
+                                final data = json.decode(response.body);
                                 // check manager loggin and userloggin...
                                 print(data);
 
@@ -120,15 +122,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 print(data["orgManagerLogin"]);
 
                                 print(data['userLogin'].runtimeType);
-                                
 
-                                Provider.of<UserProvider>(context, listen: false).setLoggedInStatus(data['userLogin'],data["orgManagerLogin"]);
-                                
+                                Provider.of<UserProvider>(context,
+                                        listen: false)
+                                    .setLoggedInStatus(data['userLogin'],
+                                        data["orgManagerLogin"]);
+
                                 setState(() {
                                   _saving = false;
-                                  Navigator.pushReplacementNamed(
+                                  Navigator.pushReplacement(
                                     context,
-                                    WelcomeScreen.id,
+                                    MaterialPageRoute<void>(
+                                      builder: (BuildContext context) =>
+                                          HomePage(),
+                                    ),
                                   );
                                 });
                                 // Navigator.pushNamed(context, WelcomeScreen.id);
@@ -153,7 +160,8 @@ class _LoginScreenState extends State<LoginScreen> {
                           questionPressed: () {
                             signUpAlert(
                               onPressed: () async {
-                               print('This will be logged to the console in the browser.');
+                                print(
+                                    'This will be logged to the console in the browser.');
                               },
                               title: 'RESET YOUR PASSWORD',
                               desc:

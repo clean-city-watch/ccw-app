@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -142,6 +143,16 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
                 'https://www.w3schools.com/w3images/avatar3.png';
           });
         }
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => LoginScreen(),
+          ),
+        );
       } else {
         throw Exception('Failed to load user profile');
       }
@@ -192,6 +203,16 @@ class _EditProfileWidgetState extends State<EditProfileWidget> {
             btnText: 'Feed Now',
             context: context,
           ).show();
+        } else if (response.statusCode == 401 || response.statusCode == 403) {
+          final jsonResponse = jsonDecode(response.body);
+          final content = jsonResponse['content'];
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => LoginScreen(),
+            ),
+          );
         } else {
           // Handle other status codes or errors
           print('Failed to update profile');

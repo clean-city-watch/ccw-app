@@ -16,32 +16,34 @@ Widget linearProgressIndicator() {
 }
 
 Future<String> getPublicUrlForUsersAvatar(String fileName) async {
-   final prefs = await SharedPreferences.getInstance();
-    String? userInfo = prefs.getString('userinfo');
+  final prefs = await SharedPreferences.getInstance();
+  String? userInfo = prefs.getString('userinfo');
 
+  if (userInfo != null) {
+    Map<String, dynamic> userInfoMap = json.decode(userInfo);
+    String accessToken = userInfoMap['access_token'];
 
-    if(userInfo != null) {
-      Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      String accessToken = userInfoMap['access_token'];
-        
-      var headers = {
-        "Authorization": "Bearer ${accessToken}",
-      };
-      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/$fileName'),headers: headers);
-      if (avatarUrl.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
-        return responseData['imageUrl'];
-      }
+    var headers = {
+      "Authorization": "Bearer ${accessToken}",
+    };
+    final avatarUrl = await http.get(
+        Uri.parse('$backendUrl/api/minio/covers/$fileName'),
+        headers: headers);
+    if (avatarUrl.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+      return responseData['imageUrl'];
     }
+  }
 
-    return "https://www.w3schools.com/w3images/avatar3.png";
+  return "https://www.w3schools.com/w3images/avatar3.png";
 }
 
 Widget othersComment(BuildContext context, GptComment comment) {
   return FutureBuilder<String>(
     future: getPublicUrlForUsersAvatar(comment.author.profile.avatar),
     builder: (context, snapshot) {
-      String avatarUrl = snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
+      String avatarUrl =
+          snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
 
       return Container(
         child: Row(
@@ -60,7 +62,8 @@ Widget othersComment(BuildContext context, GptComment comment) {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5),
+                  border: Border.all(
+                      style: BorderStyle.solid, color: Colors.grey, width: 0.5),
                 ),
                 child: Card(
                   elevation: 0,
@@ -89,7 +92,6 @@ Widget othersComment(BuildContext context, GptComment comment) {
   );
 }
 
-
 Widget othersCommentWithImageSlider(BuildContext context, GptComment feed) {
   return Container(
     child: Row(
@@ -115,7 +117,7 @@ Widget othersCommentWithImageSlider(BuildContext context, GptComment feed) {
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: <Widget>[
-                  usernameSectionWithoutAvatar(context,feed),
+                  usernameSectionWithoutAvatar(context, feed),
                   space15(),
                   Text(
                       'Not sure about rights. Looks like its matter of concern that our shool dont take it seriously such matters and trats it like lightly that it is fault of student',
@@ -220,7 +222,7 @@ Widget menuReply(GptFeed listFeed) {
               ]),
           GestureDetector(
               onTap: () {
-               print('share code');
+                print('share code');
               },
               child: Icon(Icons.share, size: 18)),
           Text('Reply',
@@ -240,7 +242,7 @@ Widget menuReply(GptFeed listFeed) {
   );
 }
 
-Widget usernameSectionWithoutAvatar(BuildContext context,GptComment comment) {
+Widget usernameSectionWithoutAvatar(BuildContext context, GptComment comment) {
   return Row(
     children: <Widget>[
       Expanded(
@@ -255,7 +257,10 @@ Widget usernameSectionWithoutAvatar(BuildContext context,GptComment comment) {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Text(comment.author.profile.firstName +" "+comment.author.profile.lastName ,
+                        Text(
+                            comment.author.profile.firstName +
+                                " " +
+                                comment.author.profile.lastName,
                             style: TextStyle(
                                 fontSize: 16, fontWeight: FontWeight.bold)),
                         SizedBox(
@@ -280,34 +285,35 @@ Widget usernameSectionWithoutAvatar(BuildContext context,GptComment comment) {
   );
 }
 
-
 Future<String> getPublicUrlForAvatar() async {
-   final prefs = await SharedPreferences.getInstance();
-    String? userInfo = prefs.getString('userinfo');
+  final prefs = await SharedPreferences.getInstance();
+  String? userInfo = prefs.getString('userinfo');
 
+  if (userInfo != null) {
+    Map<String, dynamic> userInfoMap = json.decode(userInfo);
+    String accessToken = userInfoMap['access_token'];
 
-    if(userInfo != null) {
-      Map<String, dynamic> userInfoMap = json.decode(userInfo);
-      String accessToken = userInfoMap['access_token'];
-        
-      var headers = {
-        "Authorization": "Bearer ${accessToken}",
-      };
-      final avatarUrl = await http.get(Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),headers: headers);
-      if (avatarUrl.statusCode == 200) {
-        final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
-        return responseData['imageUrl'];
-      }
+    var headers = {
+      "Authorization": "Bearer ${accessToken}",
+    };
+    final avatarUrl = await http.get(
+        Uri.parse('$backendUrl/api/minio/covers/${userInfoMap['avatar']}'),
+        headers: headers);
+    if (avatarUrl.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(avatarUrl.body);
+      return responseData['imageUrl'];
     }
+  }
 
-    return "https://www.w3schools.com/w3images/avatar3.png";
+  return "https://www.w3schools.com/w3images/avatar3.png";
 }
 
 Widget commentReply(BuildContext context, GptComment comment) {
   return FutureBuilder<String>(
     future: getPublicUrlForAvatar(),
     builder: (context, snapshot) {
-      String avatarUrl = snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
+      String avatarUrl =
+          snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
 
       return Container(
         child: Row(
@@ -318,7 +324,8 @@ Widget commentReply(BuildContext context, GptComment comment) {
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5),
+                  border: Border.all(
+                      style: BorderStyle.solid, color: Colors.grey, width: 0.5),
                 ),
                 child: Container(
                   color: Colors.grey[300],
@@ -388,7 +395,7 @@ Widget menuCommentReply(GptFeed listFeed) {
                     Icon(FontAwesomeIcons.arrowDown, size: 16),
                     SizedBox(width: 5),
                     Text(
-                       '${listFeed.count.upvotes}',
+                      '${listFeed.count.upvotes}',
                       style:
                           TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     )
@@ -397,7 +404,7 @@ Widget menuCommentReply(GptFeed listFeed) {
           ]),
       GestureDetector(
           onTap: () {
-           print('share code');
+            print('share code');
           },
           child: Icon(Icons.share, size: 18)),
       GestureDetector(onTap: () {}, child: Icon(Icons.linear_scale, size: 18)),

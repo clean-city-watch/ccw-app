@@ -1,3 +1,4 @@
+import 'package:ccw/screens/login_screen.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,71 +16,86 @@ class ServicePage extends StatefulWidget {
 }
 
 class _ServicePageState extends State<ServicePage> {
-  List<LatLng> routePoints = [LatLng( 18.516726, 73.856255)];
+  List<LatLng> routePoints = [LatLng(18.516726, 73.856255)];
   List<dynamic> dynamicMarkers = []; // List to store dynamic markers
-  Map<String, dynamic> countData = {"content": [], "all": 0, "open": 0, "inprogress": 0, "resolved": 0};
+  Map<String, dynamic> countData = {
+    "content": [],
+    "all": 0,
+    "open": 0,
+    "inprogress": 0,
+    "resolved": 0
+  };
   late TextEditingController _searchController;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController(text: 'Pune');
-    fetchLocations('$backendUrl/api/post/all-locations'); // Call the function to fetch locations on init
+    fetchLocations(
+        '$backendUrl/api/post/all-locations'); // Call the function to fetch locations on init
   }
 
   void handleBellIconTap(String city) {
-      // Add your logic here
-      print('Bell icon tapped!');
-      print(city);
-      fetchLocations('$backendUrl/api/post/all-locations?city=$city');
-      // Call any other functions or perform any actions you need
-    }
-
+    // Add your logic here
+    print('Bell icon tapped!');
+    print(city);
+    fetchLocations('$backendUrl/api/post/all-locations?city=$city');
+    // Call any other functions or perform any actions you need
+  }
 
   Future<void> fetchLocations(String url) async {
-     final prefs = await SharedPreferences.getInstance();
-      String? userInfo = prefs.getString('userinfo');
+    final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
 
-      if(userInfo != null) {
-          Map<String, dynamic> userInfoMap = json.decode(userInfo);
-          String accessToken = userInfoMap['access_token'];
-    
-          var headers = {
-            "Authorization": "Bearer ${accessToken}",
-          };
-          final response = await http.get(Uri.parse(url),headers: headers);
-          if (response.statusCode == 200) {
-            final  data = json.decode(response.body);
-            setState(() {
-             countData = data;
-              dynamicMarkers = data['content'].map((location) {
-                final double latitude = location[0];
-                final double longitude = location[1];
-                return Marker(
-                  width: 50.0,
-                  height: 50.0,
-                  point: LatLng(latitude, longitude),
-                  builder: (ctx) => Container(
-                    child: Icon(
-                      Icons.location_on,
-                      color: Colors.blue, // You can set the marker color here
-                    ),
-                  ),
-                );
-              }).toList();
-            });
-          } else {
-            // Handle error
-            print('Failed to fetch locations');
-          }
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+      String accessToken = userInfoMap['access_token'];
+
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+      };
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        setState(() {
+          countData = data;
+          dynamicMarkers = data['content'].map((location) {
+            final double latitude = location[0];
+            final double longitude = location[1];
+            return Marker(
+              width: 50.0,
+              height: 50.0,
+              point: LatLng(latitude, longitude),
+              builder: (ctx) => Container(
+                child: Icon(
+                  Icons.location_on,
+                  color: Colors.blue, // You can set the marker color here
+                ),
+              ),
+            );
+          }).toList();
+        });
+      } else if (response.statusCode == 401 || response.statusCode == 403) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => LoginScreen(),
+          ),
+        );
+      } else {
+        // Handle error
+        print('Failed to fetch locations');
       }
-    
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       backgroundColor: Colors.white,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         title: actionBarRow(context),
         centerTitle: false,
@@ -87,15 +103,15 @@ class _ServicePageState extends State<ServicePage> {
         automaticallyImplyLeading: false,
         backgroundColor: Colors.white,
       ),
-         // Disable the back button
-       
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back),
-        //   onPressed: () {
-        //     Navigator.pop(context);
-        //   },
-        // ),
-      
+      // Disable the back button
+
+      // leading: IconButton(
+      //   icon: Icon(Icons.arrow_back),
+      //   onPressed: () {
+      //     Navigator.pop(context);
+      //   },
+      // ),
+
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(12.0),
@@ -118,7 +134,8 @@ class _ServicePageState extends State<ServicePage> {
                             borderRadius: const BorderRadius.all(
                               Radius.circular(4.0),
                             ),
-                            borderSide:  BorderSide(color: (Colors.grey[300])!, width: 0.5),
+                            borderSide: BorderSide(
+                                color: (Colors.grey[300])!, width: 0.5),
                           ),
                         ),
                       ),
@@ -135,7 +152,6 @@ class _ServicePageState extends State<ServicePage> {
                     ),
                   ],
                 ),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -189,7 +205,8 @@ class _ServicePageState extends State<ServicePage> {
                     ],
                     children: [
                       TileLayer(
-                        urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                         userAgentPackageName: 'com.example.app',
                       ),
                       MarkerLayer(
@@ -209,8 +226,6 @@ class _ServicePageState extends State<ServicePage> {
     );
   }
 }
-
-
 
 class CountCard extends StatelessWidget {
   final String title;
