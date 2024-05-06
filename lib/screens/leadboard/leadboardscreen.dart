@@ -14,35 +14,43 @@ class LeaderboardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            // Icon(Icons.monetization_on, color: Colors.green), // Add an icon
-            SizedBox(width: 8), // Add spacing
-            Text(
-              'Leaderboard',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+        Padding(
+          padding: EdgeInsets.symmetric(vertical: 8.0),
+          child: Text(
+            'Leaderboard',
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
             ),
-          ],
+          ),
         ),
         SizedBox(height: 10),
-        ListView.builder(
-          shrinkWrap: true,
-          itemCount: leaderboardData.length,
-          itemBuilder: (context, index) {
-            final user = leaderboardData[index];
-            final medal =
-                index < 3 ? ['🥇', '🥈', '🥉'][index] : '${index + 1}';
-            return ListTile(
-              leading: Text(medal), // Display medal or index
-              title: Text(
-                  '${user['profile']['firstName']} ${user['profile']['LastName']}'),
-            );
-          },
-        ),
+        leaderboardData.isEmpty
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ListView.separated(
+                shrinkWrap: true,
+                itemCount: leaderboardData.length,
+                separatorBuilder: (context, index) => Divider(),
+                itemBuilder: (context, index) {
+                  final user = leaderboardData[index];
+                  final medal =
+                      index < 3 ? ['🥇', '🥈', '🥉'][index] : '${index + 1}';
+                  return ListTile(
+                    leading: Text(
+                      medal,
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    title: Text(
+                      '${user['profile']['firstName']} ${user['profile']['LastName']}',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  );
+                },
+              ),
       ],
     );
   }

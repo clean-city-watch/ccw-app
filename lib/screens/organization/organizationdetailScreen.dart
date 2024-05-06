@@ -262,7 +262,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                       Container(
                         height: 160,
                         decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 230, 235, 240),
+                          color: Colors.white,
                         ),
                       ),
                       Center(

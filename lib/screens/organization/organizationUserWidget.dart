@@ -250,118 +250,118 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Stack(
-              children: [
-                Container(
-                  height: 160,
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(255, 230, 235, 240),
-                  ),
-                ),
-                Center(
-                  child: Container(
-                    margin: EdgeInsets.symmetric(vertical: 20),
-                    width: 120,
-                    height: 120,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      image: DecorationImage(
-                        image: NetworkImage(organization.logo),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            // Stack(
+            //   children: [
+            //     Container(
+            //       height: 160,
+            //       decoration: BoxDecoration(
+            //         color: Colors.white,
+            //       ),
+            //     ),
+            //     Center(
+            //       child: Container(
+            //         margin: EdgeInsets.symmetric(vertical: 20),
+            //         width: 120,
+            //         height: 120,
+            //         decoration: BoxDecoration(
+            //           shape: BoxShape.circle,
+            //           image: DecorationImage(
+            //             image: NetworkImage(organization.logo),
+            //             fit: BoxFit.cover,
+            //           ),
+            //         ),
+            //       ),
+            //     ),
+            //   ],
+            // ),
             SizedBox(height: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.solidBuilding,
-                                  size: 20,
-                                  color: Colors
-                                      .teal, // Customize the color as needed
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  organization.name,
-                                  style: TextStyle(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(width: 8),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                FaIcon(
-                                  FontAwesomeIcons.solidUser,
-                                  size: 16,
-                                  color: Colors
-                                      .teal, // Customize the color as needed
-                                ),
-                                SizedBox(width: 8),
-                                Text(
-                                  organization.type,
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                SizedBox(width: 8),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.email,
-                                  color: Colors.teal,
-                                ),
-                                SizedBox(width: 8),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      _showContactInfo = !_showContactInfo;
-                                    });
-                                  },
-                                  child: Text(organization.email),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.phone,
-                                  color: Colors.teal,
-                                ),
-                                SizedBox(width: 8),
-                                Text(organization.phoneNumber),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16),
-                  ],
-                ),
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Row(
+                //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //       children: [
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Row(
+                //               children: [
+                //                 FaIcon(
+                //                   FontAwesomeIcons.solidBuilding,
+                //                   size: 20,
+                //                   color: Colors
+                //                       .teal, // Customize the color as needed
+                //                 ),
+                //                 SizedBox(width: 8),
+                //                 Text(
+                //                   organization.name,
+                //                   style: TextStyle(
+                //                     fontSize: 24,
+                //                     fontWeight: FontWeight.bold,
+                //                   ),
+                //                 ),
+                //                 SizedBox(width: 8),
+                //               ],
+                //             ),
+                //             Row(
+                //               children: [
+                //                 FaIcon(
+                //                   FontAwesomeIcons.solidUser,
+                //                   size: 16,
+                //                   color: Colors
+                //                       .teal, // Customize the color as needed
+                //                 ),
+                //                 SizedBox(width: 8),
+                //                 Text(
+                //                   organization.type,
+                //                   style: TextStyle(fontSize: 18),
+                //                 ),
+                //                 SizedBox(width: 8),
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //         Column(
+                //           crossAxisAlignment: CrossAxisAlignment.end,
+                //           children: [
+                //             Row(
+                //               children: [
+                //                 Icon(
+                //                   Icons.email,
+                //                   color: Colors.teal,
+                //                 ),
+                //                 SizedBox(width: 8),
+                //                 InkWell(
+                //                   onTap: () {
+                //                     setState(() {
+                //                       _showContactInfo = !_showContactInfo;
+                //                     });
+                //                   },
+                //                   child: Text(organization.email),
+                //                 ),
+                //               ],
+                //             ),
+                //             SizedBox(height: 8),
+                //             Row(
+                //               children: [
+                //                 Icon(
+                //                   Icons.phone,
+                //                   color: Colors.teal,
+                //                 ),
+                //                 SizedBox(width: 8),
+                //                 Text(organization.phoneNumber),
+                //               ],
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //     SizedBox(height: 16),
+                //   ],
+                // ),
                 Divider(height: 5, thickness: 1, color: Colors.grey),
                 SizedBox(height: 16),
                 Column(

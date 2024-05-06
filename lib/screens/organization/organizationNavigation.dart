@@ -1,3 +1,5 @@
+import 'package:ccw/screens/organization/organizationIssueScreen.dart';
+import 'package:ccw/screens/organization/organizationPostsScreen.dart';
 import 'package:ccw/screens/organization/organizationUserWidget.dart';
 import 'package:ccw/screens/organization/organizationdetailScreen.dart';
 import 'package:flutter/cupertino.dart';
@@ -9,10 +11,6 @@ class OrganizationNavigation extends StatefulWidget {
   final int organizationId;
 
   const OrganizationNavigation({required this.organizationId});
-
-
-
-
 
   @override
   State<OrganizationNavigation> createState() => _OrganizationNavigationState();
@@ -34,14 +32,24 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
       case 0:
         // return DashboardWidget();
         return OrganizationDetailScreen(organizationId: widget.organizationId);
+
       case 1:
+        return OrganizationPosts(
+            organizationId: widget.organizationId, PostType: 'POST');
+
+      case 2:
         return OrganizationUsers(organizationId: widget.organizationId);
+
+      case 3:
+        return OrganizationIssue(
+          organizationId: widget.organizationId,
+          PostType: 'ISSUE',
+        );
 
       default:
         return const Text("Invalid screen requested");
     }
   }
-
 
   @override
   void initState() {
@@ -49,7 +57,6 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
 
     _selectedTab(_selectedDrawerIndex);
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -73,13 +80,21 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
         iconSize: 20.0,
         onTabSelected: _selectedTab,
         items: [
-          FABBottomAppBarItem(iconData: FontAwesomeIcons.listAlt, text: 'Details'),
           FABBottomAppBarItem(
-              iconData: FontAwesomeIcons.book, text: 'Users'),
-          // FABBottomAppBarItem(
-          //     iconData: FontAwesomeIcons.comments, text: 'Updates'),
-          // FABBottomAppBarItem(
-          //     iconData: FontAwesomeIcons.businessTime, text: 'Explore'),
+              iconData: FontAwesomeIcons
+                  .circleInfo, // Use info circle icon for "Details"
+              text: 'Details'),
+          FABBottomAppBarItem(
+              iconData:
+                  FontAwesomeIcons.newspaper, // Use newspaper icon for "Posts"
+              text: 'Posts'),
+          FABBottomAppBarItem(
+              iconData: FontAwesomeIcons.users, // Use users icon for "Users"
+              text: 'Users'),
+          FABBottomAppBarItem(
+              iconData: FontAwesomeIcons
+                  .circleExclamation, // Use exclamation circle icon for "Issues"
+              text: 'Issues'),
         ],
       ),
     );
