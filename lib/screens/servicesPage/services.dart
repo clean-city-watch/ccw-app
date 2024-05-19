@@ -160,7 +160,7 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'All',
                         count: countData['all'] ?? 0,
                         icon: Icons.description,
-                        color: Colors.teal,
+                        color: Colors.blue,
                       ),
                     ),
                     Expanded(
@@ -168,7 +168,7 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'Open',
                         count: countData['open'] ?? 0,
                         icon: Icons.comment,
-                        color: Colors.teal,
+                        color: Colors.blue,
                       ),
                     ),
                     Expanded(
@@ -176,14 +176,14 @@ class _ServicePageState extends State<ServicePage> {
                           title: 'Active',
                           count: countData['inprogress'] ?? 0,
                           icon: Icons.thumb_up,
-                          color: Colors.teal),
+                          color: Colors.blue),
                     ),
                     Expanded(
                       child: CountCard(
                         title: 'Resolved',
                         count: countData['resolved'] ?? 0,
                         icon: Icons.feedback,
-                        color: Colors.teal,
+                        color: Colors.blue,
                       ),
                     ),
                   ],

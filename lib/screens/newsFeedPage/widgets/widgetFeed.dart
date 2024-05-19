@@ -84,11 +84,11 @@ Widget actionBarRow(BuildContext context) {
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.teal)),
+                            color: Colors.blue)),
                     SizedBox(width: 6),
                     // Icon(
                     //   Icons.arrow_drop_down,
-                    //   color: Colors.teal,
+                    //   color: Colors.blue,
                     // )
                   ],
                 )
@@ -151,11 +151,11 @@ _modalSideSheetMenu(BuildContext context) {
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
-                            color: Colors.teal[100],
+                            color: Colors.blue[100],
                           ),
                           child: Icon(
                             bottomMenuItems[index].icon,
-                            color: Colors.teal,
+                            color: Colors.blue,
                           ),
                         ),
                         trailing: Icon(
@@ -164,7 +164,7 @@ _modalSideSheetMenu(BuildContext context) {
                         ),
                         title: Text(
                           bottomMenuItems[index].title,
-                          style: TextStyle(color: Colors.teal, fontSize: 18),
+                          style: TextStyle(color: Colors.blue, fontSize: 18),
                         ),
                         subtitle: Text(bottomMenuItems[index].subtitle),
                         onTap: () async {
@@ -265,15 +265,15 @@ BoxDecoration boxDecoration() {
   return BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(30)),
       border:
-          Border.all(width: 1, style: BorderStyle.solid, color: Colors.teal));
+          Border.all(width: 1, style: BorderStyle.solid, color: Colors.blue));
 }
 
 BoxDecoration selectedBoxDecoration() {
   return BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(30)),
-      color: Colors.teal[200],
+      color: Colors.blue[200],
       border:
-          Border.all(width: 1, style: BorderStyle.solid, color: Colors.teal));
+          Border.all(width: 1, style: BorderStyle.solid, color: Colors.blue));
 }
 
 Widget topSpace() {
@@ -500,7 +500,7 @@ Widget btnDecoration(String btnText) {
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(20)),
-        color: Colors.teal,
+        color: Colors.blue,
       ),
       child: Text(
         btnText,
@@ -512,7 +512,7 @@ Widget questionPallet() {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 20),
     height: 100,
-    decoration: BoxDecoration(color: Colors.teal[100]),
+    decoration: BoxDecoration(color: Colors.blue[100]),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,

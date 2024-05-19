@@ -211,7 +211,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     title: 'Posts',
                     count: countData['_count']['posts'] ?? 0,
                     icon: Icons.description,
-                    color: Colors.teal,
+                    color: Colors.blue,
                   ),
                 ),
                 Expanded(
@@ -219,7 +219,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     title: 'Comments',
                     count: countData['_count']['comments'] ?? 0,
                     icon: Icons.comment,
-                    color: Colors.teal,
+                    color: Colors.blue,
                   ),
                 ),
                 Expanded(
@@ -227,7 +227,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     title: 'Upvotes',
                     count: countData['_count']['upvotes'] ?? 0,
                     icon: Icons.thumb_up,
-                    color: Colors.teal,
+                    color: Colors.blue,
                   ),
                 ),
                 Expanded(
@@ -235,7 +235,7 @@ class _LibraryPageState extends State<LibraryPage> {
                     title: 'Feedback',
                     count: countData['_count']['feedbacks'] ?? 0,
                     icon: Icons.feedback,
-                    color: Colors.teal,
+                    color: Colors.blue,
                   ),
                 ),
               ],

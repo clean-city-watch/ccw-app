@@ -293,7 +293,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //                   FontAwesomeIcons.solidBuilding,
                 //                   size: 20,
                 //                   color: Colors
-                //                       .teal, // Customize the color as needed
+                //                       .blue, // Customize the color as needed
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 Text(
@@ -312,7 +312,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //                   FontAwesomeIcons.solidUser,
                 //                   size: 16,
                 //                   color: Colors
-                //                       .teal, // Customize the color as needed
+                //                       .blue, // Customize the color as needed
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 Text(
@@ -331,7 +331,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //               children: [
                 //                 Icon(
                 //                   Icons.email,
-                //                   color: Colors.teal,
+                //                   color: Colors.blue,
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 InkWell(
@@ -349,7 +349,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //               children: [
                 //                 Icon(
                 //                   Icons.phone,
-                //                   color: Colors.teal,
+                //                   color: Colors.blue,
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 Text(organization.phoneNumber),
@@ -381,7 +381,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                                   FontAwesomeIcons.users,
                                   size: 20,
                                   color: Colors
-                                      .teal, // Customize the color as needed
+                                      .blue, // Customize the color as needed
                                 ),
                                 SizedBox(
                                     width:

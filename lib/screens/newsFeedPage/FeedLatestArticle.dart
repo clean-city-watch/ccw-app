@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 class LatestArticleModel {
-
   String imageIcon;
   String drName;
   String drDescription;
 
-  LatestArticleModel({required this.imageIcon,required this.drName,required this.drDescription});
+  LatestArticleModel(
+      {required this.imageIcon,
+      required this.drName,
+      required this.drDescription});
 }
 
 class LatestArticle extends StatefulWidget {
@@ -16,7 +18,7 @@ class LatestArticle extends StatefulWidget {
 }
 
 class _LatestArticleState extends State<LatestArticle> {
-  List<LatestArticleModel> articleModel =  <LatestArticleModel>[];
+  List<LatestArticleModel> articleModel = <LatestArticleModel>[];
 
   @override
   void initState() {
@@ -49,8 +51,8 @@ class _LatestArticleState extends State<LatestArticle> {
             margin: EdgeInsets.only(left: 20),
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.all(Radius.circular(8)),
-                border: Border.all(style: BorderStyle.solid, color: Colors.grey, width: 0.5)
-            ),
+                border: Border.all(
+                    style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
             child: Card(
               elevation: 0,
               child: Container(
@@ -68,8 +70,8 @@ class _LatestArticleState extends State<LatestArticle> {
                         CircleAvatar(
                             backgroundColor: Colors.grey,
                             child: ClipOval(
-                                child:
-                                    Image.network(articleModel[index].imageIcon)),
+                                child: Image.network(
+                                    articleModel[index].imageIcon)),
                             radius: 20),
                         SizedBox(width: 10),
                         Text(articleModel[index].drName,
@@ -83,7 +85,6 @@ class _LatestArticleState extends State<LatestArticle> {
                       height: 1,
                       color: Colors.blue,
                     ),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
@@ -91,15 +92,14 @@ class _LatestArticleState extends State<LatestArticle> {
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.teal)),
+                                color: Colors.blue)),
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 15,
-                          color: Colors.teal,
+                          color: Colors.blue,
                         )
                       ],
                     ),
-
                   ],
                 ),
               ),

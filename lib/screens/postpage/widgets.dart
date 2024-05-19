@@ -194,13 +194,13 @@ Widget menuReply(GptFeed listFeed) {
                   Icon(
                     FontAwesomeIcons.arrowUp,
                     size: 16,
-                    color: Colors.teal,
+                    color: Colors.blue,
                   ),
                   SizedBox(width: 5),
                   Text(
                     '${listFeed.count.upvotes}',
                     style: TextStyle(
-                        color: Colors.teal,
+                        color: Colors.blue,
                         fontSize: 12,
                         fontWeight: FontWeight.bold),
                   )
@@ -231,7 +231,7 @@ Widget menuReply(GptFeed listFeed) {
               child: Icon(Icons.share, size: 18)),
           Text('Reply',
               style: TextStyle(
-                  color: Colors.teal,
+                  color: Colors.blue,
                   fontSize: 16,
                   fontWeight: FontWeight.bold))
         ],
@@ -240,7 +240,7 @@ Widget menuReply(GptFeed listFeed) {
       Container(
         padding: EdgeInsets.only(left: 20),
         child: Text('2 Replies',
-            style: TextStyle(color: Colors.teal, fontSize: 14)),
+            style: TextStyle(color: Colors.blue, fontSize: 14)),
       )
     ],
   );
@@ -276,7 +276,7 @@ Widget usernameSectionWithoutAvatar(BuildContext context, GptComment comment) {
                     ),
                     SizedBox(height: 4),
                     Text('user description',
-                        style: TextStyle(fontSize: 12, color: Colors.teal)),
+                        style: TextStyle(fontSize: 12, color: Colors.blue)),
                   ],
                 )
               ],
@@ -377,13 +377,13 @@ Widget menuCommentReply(GptFeed listFeed) {
               Icon(
                 FontAwesomeIcons.arrowUp,
                 size: 16,
-                color: Colors.teal,
+                color: Colors.blue,
               ),
               SizedBox(width: 5),
               Text(
                 '${listFeed.count.upvotes}',
                 style: TextStyle(
-                    color: Colors.teal,
+                    color: Colors.blue,
                     fontSize: 12,
                     fontWeight: FontWeight.bold),
               )

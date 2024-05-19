@@ -1,5 +1,5 @@
 import 'package:ccw/screens/custom/fab_bottom_app_bar.dart';
-import 'package:ccw/screens/ask_question.dart';
+import 'package:ccw/screens/web_view_trash_ai.dart';
 import 'package:ccw/screens/libraryPage/library.dart';
 import 'package:ccw/screens/messagePage/messages.dart';
 import 'package:ccw/screens/newsFeedPage/NewsFeed.dart';
@@ -53,11 +53,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     bottomMenuItems.add(new MenuModel('Create a post',
         'share your thoughts with the community', Icons.colorize));
     bottomMenuItems.add(new MenuModel(
-        'Ask a Question', 'Any doubts? As the community', Icons.info));
-    bottomMenuItems.add(new MenuModel(
-        'Start a Poll', 'Need the opiniun of the many', Icons.equalizer));
-    bottomMenuItems.add(new MenuModel('Organise an Event',
-        'Start a meet with people to share your joys', Icons.event));
+        'Trash AI', 'Explore AI solution for Trash.', Icons.info));
+    // bottomMenuItems.add(new MenuModel(
+    //     'Start a Poll', 'Need the opiniun of the many', Icons.equalizer));
+    // bottomMenuItems.add(new MenuModel('Organise an Event',
+    //     'Start a meet with people to share your joys', Icons.event));
   }
 
   @override
@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           tooltip: 'Create Post',
-          splashColor: Colors.teal,
+          splashColor: Colors.blue,
           onPressed: _modalBottomSheetMenu,
           child: Icon(CupertinoIcons.add),
           elevation: 0,
@@ -124,11 +124,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
-                              color: Colors.teal[100],
+                              color: Colors.blue[100],
                             ),
                             child: Icon(
                               bottomMenuItems[index].icon,
-                              color: Colors.teal,
+                              color: Colors.blue,
                             ),
                           ),
                           trailing: Icon(
@@ -137,7 +137,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           title: Text(
                             bottomMenuItems[index].title,
-                            style: TextStyle(color: Colors.teal, fontSize: 18),
+                            style: TextStyle(color: Colors.blue, fontSize: 18),
                           ),
                           subtitle: Text(bottomMenuItems[index].subtitle),
                           onTap: () {
@@ -148,7 +148,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               case 0:
                                 Navigator.pushNamed(context, CreatePost.id);
                               case 1:
-                                Navigator.pushNamed(context, FirstPage.id);
+                                Navigator.pushNamed(context, WebViewTrashAI.id);
                               case 2:
                                 debugPrint(bottomMenuItems[index].title);
                               case 3:

@@ -11,6 +11,8 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ccw/screens/servicesPage/routeservice.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:ccw/consts/env.dart' show backendUrl;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:maps_launcher/maps_launcher.dart';
 
 String formatTimestamp(String timestamp) {
   final DateTime dateTime = DateTime.parse(timestamp);
@@ -339,17 +341,19 @@ Widget likeCommentShare(BuildContext context, GptFeed listFeed) {
 
 Widget setLocation(BuildContext context, GptFeed listFeed) {
   return GestureDetector(
-    onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => RouteServicePage(feed: listFeed))),
+    onTap: () => _onCenterLocationPressed(context, listFeed),
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(
+    //       builder: (context) => RouteServicePage(feed: listFeed)));
+
     child: Row(
       children: <Widget>[
-        Icon(Icons.location_on, color: Colors.teal),
+        Icon(Icons.location_on, color: Colors.blue),
         SizedBox(width: 15),
         Text(
           listFeed.city,
-          style: TextStyle(fontSize: 12, color: Colors.teal),
+          style: TextStyle(fontSize: 12, color: Colors.blue),
         ),
       ],
     ),
@@ -408,7 +412,7 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                           SizedBox(height: 4),
                           Text(
                             'User Description',
-                            style: TextStyle(fontSize: 12, color: Colors.teal),
+                            style: TextStyle(fontSize: 12, color: Colors.blue),
                           ),
                         ],
                       )
@@ -534,6 +538,17 @@ _onCenterBottomMenuOn3DotsPressed(BuildContext context) {
       });
 }
 
+_onCenterLocationPressed(BuildContext context, GptFeed listFeed) {
+  showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return Container(
+          color: Color(0xFF737373),
+          child: _buildLocationNavMenu(context, listFeed),
+        );
+      });
+}
+
 Widget _buildBottomNavMenu(BuildContext context) {
   List<Menu3DotsModel> listMore = [];
   listMore.add(
@@ -566,16 +581,105 @@ Widget _buildBottomNavMenu(BuildContext context) {
               leading: Icon(
                 listMore[index].icons,
                 size: 20,
-                color: Colors.teal,
+                color: Colors.blue,
               ),
             );
           }));
 }
 
 class Menu3DotsModel {
-  String title;
-  String subtitle;
-  IconData icons;
+  final String title;
+  final String subtitle;
+  final IconData icons;
 
   Menu3DotsModel(this.title, this.subtitle, this.icons);
+}
+
+Widget _buildLocationNavMenu(BuildContext context, GptFeed listFeed) {
+  List<Menu3DotsModel> listMore = [
+    Menu3DotsModel('OpenStreetMap View', 'See route on OSM', Icons.map),
+    Menu3DotsModel('Google Maps View', 'See route on Google Maps', Icons.map)
+  ];
+
+  return Container(
+    height: 440.0,
+    color: Color(0xFF737373),
+    child: Column(
+      children: <Widget>[
+        Container(
+          height: 300.0,
+          margin: EdgeInsets.symmetric(horizontal: 15),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          child: ListView.builder(
+            itemCount: listMore.length,
+            itemBuilder: (context, index) {
+              return ListTile(
+                leading: Container(
+                  padding: EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                    color: Colors.blue[100],
+                  ),
+                  child: Icon(
+                    listMore[index].icons,
+                    color: Colors.blue,
+                  ),
+                ),
+                trailing: Icon(
+                  Icons.arrow_forward_ios,
+                  size: 15,
+                ),
+                title: Text(
+                  listMore[index].title,
+                  style: TextStyle(color: Colors.blue, fontSize: 18),
+                ),
+                subtitle: Text(listMore[index].subtitle),
+                onTap: () {
+                  Navigator.pop(context);
+                  debugPrint(listMore[index].title);
+                  debugPrint('$index');
+                  switch (index) {
+                    case 0:
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              RouteServicePage(feed: listFeed),
+                        ),
+                      );
+                      break;
+                    case 1:
+                      _openGoogleMaps(listFeed.latitude, listFeed.longitude);
+                      break;
+                    default:
+                      debugPrint(listMore[index].title);
+                  }
+                },
+              );
+            },
+          ),
+        ),
+        Container(
+          height: 60,
+          width: 60,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(30)),
+          ),
+          margin: EdgeInsets.symmetric(vertical: 30),
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Icon(Icons.close, size: 25, color: Colors.grey[900]),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Future<void> _openGoogleMaps(double latitude, double longitude) async {
+  MapsLauncher.launchCoordinates(latitude, longitude);
 }

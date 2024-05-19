@@ -300,7 +300,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                         FontAwesomeIcons.solidBuilding,
                                         size: 20,
                                         color: Colors
-                                            .teal, // Customize the color as needed
+                                            .blue, // Customize the color as needed
                                       ),
                                       SizedBox(width: 8),
                                       Text(
@@ -319,7 +319,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                         FontAwesomeIcons.solidUser,
                                         size: 16,
                                         color: Colors
-                                            .teal, // Customize the color as needed
+                                            .blue, // Customize the color as needed
                                       ),
                                       SizedBox(width: 8),
                                       Text(
@@ -338,7 +338,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                     children: [
                                       Icon(
                                         Icons.email,
-                                        color: Colors.teal,
+                                        color: Colors.blue,
                                       ),
                                       SizedBox(width: 8),
                                       InkWell(
@@ -357,7 +357,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                     children: [
                                       Icon(
                                         Icons.phone,
-                                        color: Colors.teal,
+                                        color: Colors.blue,
                                       ),
                                       SizedBox(width: 8),
                                       Text(organization.phoneNumber),
@@ -382,7 +382,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on,
-                                    color: Colors.teal,
+                                    color: Colors.blue,
                                   ),
                                   SizedBox(width: 8),
                                   Expanded(
@@ -405,7 +405,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Open',
                                       count: organization.open ?? 0,
                                       icon: Icons.description,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -414,7 +414,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       count: organization.inprogress ?? 0,
                                       icon: Icons
                                           .timer, // Assuming timer icon represents in progress
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -422,7 +422,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'On Hold',
                                       count: organization.onhold ?? 0,
                                       icon: Icons.pause_circle_filled,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -430,7 +430,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Resolved',
                                       count: organization.resolved ?? 0,
                                       icon: Icons.check_circle,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                 ],
@@ -444,7 +444,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'In Review',
                                       count: organization.inreview ?? 0,
                                       icon: Icons.rate_review,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -452,7 +452,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Reopen',
                                       count: organization.reopen ?? 0,
                                       icon: Icons.refresh,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -460,7 +460,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Invalid',
                                       count: organization.invalid ?? 0,
                                       icon: Icons.thumb_down,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                   Expanded(
@@ -468,7 +468,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Blocked',
                                       count: organization.blocked ?? 0,
                                       icon: Icons.block,
-                                      color: Colors.teal,
+                                      color: Colors.blue,
                                     ),
                                   ),
                                 ],
