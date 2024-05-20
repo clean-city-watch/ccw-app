@@ -49,14 +49,15 @@ class CustomButton extends StatelessWidget {
 }
 
 class TopScreenImage extends StatelessWidget {
-  const TopScreenImage({Key? key, required this.screenImageName}) : super(key: key);
+  const TopScreenImage({Key? key, required this.screenImageName})
+      : super(key: key);
   final String screenImageName;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       width: 200.0, // Set your desired fixed width
-      height: 300.0, // Set your desired fixed height
+      height: 200.0, // Set your desired fixed height
       child: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
@@ -68,7 +69,6 @@ class TopScreenImage extends StatelessWidget {
     );
   }
 }
-
 
 class ScreenTitle extends StatelessWidget {
   const ScreenTitle({super.key, required this.title});

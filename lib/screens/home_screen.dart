@@ -15,114 +15,97 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(25),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const TopScreenImage(screenImageName: 'ccw-logo.png'),
-              Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.only(right: 15.0, left: 15, bottom: 15),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      const ScreenTitle(title: 'Hello'),
-                      const Text(
-                        'Welcome to CleanCityWatch, where you manage your city',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 20,
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Hero(
-                        tag: 'login_btn',
-                        child: CustomButton(
-                          buttonText: 'Login',
-                          onPressed: () async {
-                            final prefs = await SharedPreferences.getInstance();
-                            final userInfo = prefs.getString('userinfo');
-
-                            print("printitng user info");
-                            print(userInfo);
-
-                            if (userInfo != null) {
-                              Map<String, dynamic> userInfoMap =
-                                  json.decode(userInfo);
-                              String accessToken = userInfoMap['access_token'];
-                              print(accessToken);
-                            }
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) => HomePage(),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Hero(
-                        tag: 'signup_btn',
-                        child: CustomButton(
-                          buttonText: 'Sign Up',
-                          isOutlined: true,
-                          onPressed: () {
-                            Navigator.pushNamed(context, SignUpScreen.id);
-                          },
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 25,
-                      ),
-                      const Text(
-                        'Sign up using',
-                        style: TextStyle(
-                          color: Colors.grey,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: CircleAvatar(
-                              radius: 25,
-                              child: Image.asset(
-                                  'assets/images/icons/facebook.png'),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: CircleAvatar(
-                              radius: 25,
-                              backgroundColor: Colors.transparent,
-                              child:
-                                  Image.asset('assets/images/icons/google.png'),
-                            ),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: CircleAvatar(
-                              radius: 25,
-                              child: Image.asset(
-                                  'assets/images/icons/linkedin.png'),
-                            ),
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
+              const SizedBox(height: 20),
+              const ScreenTitle(title: 'Hello'),
+              const SizedBox(height: 10),
+              const Text(
+                'Welcome to CleanCityWatch, where you manage your city',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 20,
                 ),
+              ),
+              const SizedBox(height: 20),
+              Hero(
+                tag: 'login_btn',
+                child: CustomButton(
+                  buttonText: 'Login',
+                  onPressed: () async {
+                    final prefs = await SharedPreferences.getInstance();
+                    final userInfo = prefs.getString('userinfo');
+
+                    print("printing user info");
+                    print(userInfo);
+
+                    if (userInfo != null) {
+                      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+                      String accessToken = userInfoMap['access_token'];
+                      print(accessToken);
+                    }
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute<void>(
+                        builder: (BuildContext context) => HomePage(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(height: 10),
+              Hero(
+                tag: 'signup_btn',
+                child: CustomButton(
+                  buttonText: 'Sign Up',
+                  isOutlined: true,
+                  onPressed: () {
+                    Navigator.pushNamed(context, SignUpScreen.id);
+                  },
+                ),
+              ),
+              const SizedBox(height: 30),
+              const Text(
+                'Sign up using',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  IconButton(
+                    onPressed: () {},
+                    icon: CircleAvatar(
+                      radius: 25,
+                      child: Image.asset('assets/images/icons/facebook.png'),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  IconButton(
+                    onPressed: () {},
+                    icon: CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.transparent,
+                      child: Image.asset('assets/images/icons/google.png'),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  IconButton(
+                    onPressed: () {},
+                    icon: CircleAvatar(
+                      radius: 25,
+                      child: Image.asset('assets/images/icons/linkedin.png'),
+                    ),
+                  ),
+                ],
               )
             ],
           ),
