@@ -1,4 +1,5 @@
 import 'package:ccw/screens/custom/fab_bottom_app_bar.dart';
+import 'package:ccw/screens/web_view_Swach_bharat.dart';
 import 'package:ccw/screens/web_view_trash_ai.dart';
 import 'package:ccw/screens/libraryPage/library.dart';
 import 'package:ccw/screens/messagePage/messages.dart';
@@ -54,8 +55,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         'share your thoughts with the community', Icons.colorize));
     bottomMenuItems.add(new MenuModel(
         'Trash AI', 'Explore AI solution for Trash.', Icons.info));
-    // bottomMenuItems.add(new MenuModel(
-    //     'Start a Poll', 'Need the opiniun of the many', Icons.equalizer));
+    bottomMenuItems.add(
+        new MenuModel('Swatch Bharat', 'Major Initiatives', Icons.equalizer));
     // bottomMenuItems.add(new MenuModel('Organise an Event',
     //     'Start a meet with people to share your joys', Icons.event));
   }
@@ -150,7 +151,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                               case 1:
                                 Navigator.pushNamed(context, WebViewTrashAI.id);
                               case 2:
-                                debugPrint(bottomMenuItems[index].title);
+                                Navigator.pushNamed(
+                                    context, WebViewSwatchBharat.id);
                               case 3:
                                 debugPrint(bottomMenuItems[index].title);
                               default:

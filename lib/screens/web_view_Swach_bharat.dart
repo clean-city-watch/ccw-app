@@ -6,16 +6,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
-class WebViewTrashAI extends StatefulWidget {
-  static String id = 'example_screen1';
+class WebViewSwatchBharat extends StatefulWidget {
+  static String id = 'example_screen';
 
-  const WebViewTrashAI({super.key});
+  const WebViewSwatchBharat({super.key});
 
   @override
-  State<WebViewTrashAI> createState() => _WebViewTrashAIState();
+  State<WebViewSwatchBharat> createState() => _WebViewSwatchBharatState();
 }
 
-class _WebViewTrashAIState extends State<WebViewTrashAI> {
+class _WebViewSwatchBharatState extends State<WebViewSwatchBharat> {
   late final WebViewController _controller;
 
   @override
@@ -68,7 +68,8 @@ Page resource error:
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://192.168.29.174:5150'));
+      ..loadRequest(Uri.parse(
+          'https://pmindia.gov.in/en/major_initiatives/swachh-bharat-abhiyan/'));
 
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);
