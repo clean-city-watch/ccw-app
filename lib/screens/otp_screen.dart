@@ -11,18 +11,22 @@ import 'package:ccw/screens/home_screen.dart';
 import 'package:ccw/screens/login_screen.dart';
 import 'dart:developer';
 
-class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
-  static String id = 'signup_screen';
+class OtpScreen extends StatefulWidget {
+  final String token;
+
+  static String id = 'otp_screen';
+
+  OtpScreen({required this.token});
 
   @override
-  State<SignUpScreen> createState() => _SignUpScreenState();
+  State<OtpScreen> createState() => _OtpScreenState();
 }
 
-class _SignUpScreenState extends State<SignUpScreen> {
+class _OtpScreenState extends State<OtpScreen> {
   late String _email;
   late String _password;
   late String _confirmPass;
+  late String _otp;
   bool _saving = false;
 
   @override
@@ -49,7 +53,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                 ),
                 const SizedBox(height: 30),
-                const ScreenTitle(title: 'Sign Up'),
+                const ScreenTitle(title: 'Update Password'),
                 const SizedBox(height: 20),
                 CustomTextField(
                   textField: TextField(
@@ -91,6 +95,22 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
                   ),
                 ),
+                const SizedBox(
+                  height: 15,
+                ),
+                CustomTextField(
+                  textField: TextField(
+                    obscureText: true,
+                    onChanged: (value) {
+                      _otp = value;
+                    },
+                    style: const TextStyle(fontSize: 18),
+                    decoration: kTextInputDecoration.copyWith(
+                      hintText: 'OTP',
+                      prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -108,7 +128,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                     ),
                     CustomBottomScreen(
-                      textButton: 'Sign Up',
+                      textButton: 'Update',
                       heroTag: 'signup_btn',
                       question: '',
                       buttonPressed: () async {
@@ -118,12 +138,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         });
                         if (_confirmPass == _password) {
                           try {
-                            log('$backendUrl/api/user/signup');
-                            final response = await http.post(
-                              Uri.parse('$backendUrl/api/user/signup'),
+                            log('$backendUrl/api/update-password/email/$_email/token/${widget.token}');
+                            final response = await http.put(
+                              Uri.parse(
+                                  '$backendUrl/api/update-password/email/$_email/token/${widget.token}'),
                               body: {
                                 'email': _email,
                                 'password': _password,
+                                'token': widget.token,
+                                'otp': _otp
                               },
                             );
 
@@ -183,7 +206,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   ElevatedButton(
                                     onPressed: () {
                                       Navigator.popAndPushNamed(
-                                          context, SignUpScreen.id);
+                                          context, OtpScreen.id);
                                     },
                                     child: const Text('Cancel'),
                                   ),

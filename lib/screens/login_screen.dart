@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ccw/consts/env.dart';
+import 'package:ccw/screens/otp_screen.dart';
 import 'package:ccw/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,20 @@ import 'package:ccw/components/components.dart';
 import 'package:ccw/constants.dart';
 import 'package:ccw/screens/home.dart';
 import 'package:loading_overlay/loading_overlay.dart';
+
+class OtpResponse {
+  final String email;
+  final String token;
+
+  OtpResponse({required this.email, required this.token});
+
+  factory OtpResponse.fromJson(Map<String, dynamic> json) {
+    // Extract users list from the JSON if it exists
+
+    return OtpResponse(
+        email: json['email'] as String, token: json['token'] as String);
+  }
+}
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -23,6 +38,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late String _email;
   late String _password;
   bool _saving = false;
+  String _enteredEmail = ''; //
 
   @override
   Widget build(BuildContext context) {
@@ -87,18 +103,88 @@ class _LoginScreenState extends State<LoginScreen> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: const Text('Reset Your Password'),
-                              content: const Text(
-                                  'Click the button below to reset your password.'),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () {
-                                    // Add logic to delete the post
-                                    print(
-                                        'This will be logged to the console in the browser.');
-                                  },
-                                  child: const Text('Reset Now'),
-                                ),
-                              ],
+                              content: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  TextField(
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _enteredEmail =
+                                            value; // Update the entered email when changed
+                                      });
+                                    },
+                                    decoration: InputDecoration(
+                                      labelText: 'Email',
+                                      hintText: 'Enter your email',
+                                    ),
+                                  ),
+                                  const SizedBox(height: 20),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      String email =
+                                          ''; // Initialize an empty string to store the entered email.
+                                      // Get the entered email from the TextField.
+                                      email = _enteredEmail;
+                                      // Call your API with the provided email.
+                                      // Replace the API call with your actual API call.
+                                      print('sending email to ');
+                                      print(_enteredEmail);
+                                      var response = await http.post(
+                                        Uri.parse(
+                                            '$backendUrl/api/forgot-password'),
+                                        body: {'email': email},
+                                      );
+
+                                      print(response);
+
+                                      if (response.statusCode == 200) {
+                                        // If API call is successful, show a success popup.
+                                        final data = json.decode(response.body);
+                                        OtpResponse otpres =
+                                            OtpResponse.fromJson(data);
+
+                                        print(otpres);
+                                        print(otpres.token);
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Success'),
+                                              content: const Text(
+                                                  'Password reset instructions sent to your email.'),
+                                              actions: <Widget>[
+                                                ElevatedButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(
+                                                        context); // Close the success dialog.
+                                                    Navigator.push<void>(
+                                                      context,
+                                                      MaterialPageRoute<void>(
+                                                        builder: (BuildContext
+                                                                context) =>
+                                                            OtpScreen(
+                                                          token: otpres.token,
+                                                        ),
+                                                      ),
+                                                    ); // Navigate to OTP screen.
+                                                  },
+                                                  child: const Text('OK'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      } else {
+                                        // Handle API call failure here.
+                                        print(response.statusCode);
+                                        print(response.body);
+                                        print('API call failed');
+                                      }
+                                    },
+                                    child: const Text('Reset Now'),
+                                  ),
+                                ],
+                              ),
                             );
                           },
                         );
