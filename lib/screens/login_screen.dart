@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:ccw/consts/env.dart';
 import 'package:ccw/screens/otp_screen.dart';
+import 'package:ccw/screens/signup_screen.dart';
 import 'package:ccw/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -197,66 +198,79 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                     ),
-                    CustomBottomScreen(
-                      textButton: 'Login',
-                      heroTag: 'login_btn',
-                      question: '',
-                      buttonPressed: () async {
-                        FocusManager.instance.primaryFocus?.unfocus();
-                        setState(() {
-                          _saving = true;
-                        });
-                        try {
-                          final response = await http.post(
-                            Uri.parse('$backendUrl/api/auth/signin'),
-                            body: {
-                              'email': _email,
-                              'password': _password,
-                            },
-                          );
-
-                          if (response.statusCode == 201) {
-                            final prefs = await SharedPreferences.getInstance();
-                            prefs.setString('userinfo', response.body);
-                            final data = json.decode(response.body);
-                            Provider.of<UserProvider>(context, listen: false)
-                                .setLoggedInStatus(
-                                    data['userLogin'], data["orgManagerLogin"]);
-
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (BuildContext context) => HomePage(),
-                              ),
-                            );
-                          }
-                        } catch (e) {
-                          setState(() {
-                            _saving = false;
-                          });
-                          showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: const Text('Login Failed'),
-                                content: const Text(
-                                    'Incorrect Email or Password. Please try again.'),
-                                actions: <Widget>[
-                                  ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: const Text('OK'),
-                                  ),
-                                ],
-                              );
-                            },
-                          );
-                        }
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, SignUpScreen.id);
                       },
-                      questionPressed: () => {print("pressed")},
+                      child: const Text(
+                        "don't have an account?",
+                        style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
+                ),
+                const SizedBox(height: 20),
+                CustomBottomScreen(
+                  textButton: 'Login',
+                  heroTag: 'login_btn',
+                  question: '',
+                  buttonPressed: () async {
+                    FocusManager.instance.primaryFocus?.unfocus();
+                    setState(() {
+                      _saving = true;
+                    });
+                    try {
+                      final response = await http.post(
+                        Uri.parse('$backendUrl/api/auth/signin'),
+                        body: {
+                          'email': _email,
+                          'password': _password,
+                        },
+                      );
+
+                      if (response.statusCode == 201) {
+                        final prefs = await SharedPreferences.getInstance();
+                        prefs.setString('userinfo', response.body);
+                        final data = json.decode(response.body);
+                        Provider.of<UserProvider>(context, listen: false)
+                            .setLoggedInStatus(
+                                data['userLogin'], data["orgManagerLogin"]);
+
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute<void>(
+                            builder: (BuildContext context) => HomePage(),
+                          ),
+                        );
+                      }
+                    } catch (e) {
+                      setState(() {
+                        _saving = false;
+                      });
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Text('Login Failed'),
+                            content: const Text(
+                                'Incorrect Email or Password. Please try again.'),
+                            actions: <Widget>[
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  },
+                  questionPressed: () => {print("pressed")},
                 ),
               ],
             ),

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:ccw/screens/otp_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -10,6 +11,20 @@ import 'package:ccw/constants.dart';
 import 'package:ccw/screens/home_screen.dart';
 import 'package:ccw/screens/login_screen.dart';
 import 'dart:developer';
+
+class OtpResponse {
+  final String email;
+  final String token;
+
+  OtpResponse({required this.email, required this.token});
+
+  factory OtpResponse.fromJson(Map<String, dynamic> json) {
+    // Extract users list from the JSON if it exists
+
+    return OtpResponse(
+        email: json['email'] as String, token: json['token'] as String);
+  }
+}
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -66,28 +81,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 const SizedBox(height: 15),
                 CustomTextField(
                   textField: TextField(
-                    obscureText: true,
+                    obscureText: false,
                     onChanged: (value) {
                       _password = value;
                     },
                     style: const TextStyle(fontSize: 18),
                     decoration: kTextInputDecoration.copyWith(
-                      hintText: 'Password',
-                      prefixIcon: Icon(Icons.lock, color: Colors.grey),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                CustomTextField(
-                  textField: TextField(
-                    obscureText: true,
-                    onChanged: (value) {
-                      _confirmPass = value;
-                    },
-                    style: const TextStyle(fontSize: 18),
-                    decoration: kTextInputDecoration.copyWith(
-                      hintText: 'Confirm Password',
-                      prefixIcon: Icon(Icons.lock, color: Colors.grey),
+                      hintText: 'Full Name',
+                      prefixIcon: Icon(Icons.person, color: Colors.grey),
                     ),
                   ),
                 ),
@@ -116,76 +117,68 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         setState(() {
                           _saving = true;
                         });
-                        if (_confirmPass == _password) {
-                          try {
-                            log('$backendUrl/api/user/signup');
-                            final response = await http.post(
-                              Uri.parse('$backendUrl/api/user/signup'),
-                              body: {
-                                'email': _email,
-                                'password': _password,
-                              },
-                            );
+                        // if (_confirmPass == _password) {
+                        try {
+                          log('$backendUrl/api/user/signup');
+                          print(_password);
+                          final response = await http.post(
+                            Uri.parse('$backendUrl/api/user/signup'),
+                            body: {
+                              'email': _email,
+                              'FullName': _password,
+                            },
+                          );
 
-                            if (response.statusCode == 201) {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Good Job!'),
-                                    content: const Text(
-                                        "You've done a great job! Proceed to login."),
-                                    actions: <Widget>[
-                                      ElevatedButton(
-                                        onPressed: () {
-                                          setState(() {
-                                            _saving = false;
-                                          });
-                                          Navigator.pushNamed(
-                                              context, LoginScreen.id);
-                                        },
-                                        child: const Text('Login Now'),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            }
-                          } catch (e) {
+                          if (response.statusCode == 201) {
+                            final data = json.decode(response.body);
+                            OtpResponse otpres = OtpResponse.fromJson(data);
+
+                            print(otpres);
+                            print(otpres.token);
+
                             showDialog(
                               context: context,
                               builder: (BuildContext context) {
                                 return AlertDialog(
-                                  title: const Text('Something Went Wrong'),
+                                  title: const Text('Success'),
                                   content: const Text(
-                                      "Please close the app and try again."),
+                                      'Password creation instructions sent to your email.'),
                                   actions: <Widget>[
                                     ElevatedButton(
                                       onPressed: () {
-                                        SystemNavigator.pop();
+                                        Navigator.pop(
+                                            context); // Close the success dialog.
+                                        Navigator.push<void>(
+                                          context,
+                                          MaterialPageRoute<void>(
+                                            builder: (BuildContext context) =>
+                                                OtpScreen(
+                                              token: otpres.token,
+                                            ),
+                                          ),
+                                        ); // Navigate to OTP screen.
                                       },
-                                      child: const Text('Close Now'),
+                                      child: const Text('OK'),
                                     ),
                                   ],
                                 );
                               },
                             );
                           }
-                        } else {
+                        } catch (e) {
                           showDialog(
                             context: context,
                             builder: (BuildContext context) {
                               return AlertDialog(
-                                title: const Text('Passwords Do Not Match'),
+                                title: const Text('Something Went Wrong'),
                                 content: const Text(
-                                    "Please make sure that you enter the same password twice."),
+                                    "Please close the app and try again."),
                                 actions: <Widget>[
                                   ElevatedButton(
                                     onPressed: () {
-                                      Navigator.popAndPushNamed(
-                                          context, SignUpScreen.id);
+                                      SystemNavigator.pop();
                                     },
-                                    child: const Text('Cancel'),
+                                    child: const Text('Close Now'),
                                   ),
                                 ],
                               );
