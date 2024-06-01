@@ -131,29 +131,40 @@ class _CreateOrganizationPostsState extends State<CreateOrganizationPosts> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
+              Padding(
+                padding: const EdgeInsets.all(0),
+                child: Column(
+                  children: [
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        labelText: 'Title',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Title is required';
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16.0),
+                    TextFormField(
+                      controller: _contentController,
+                      decoration: InputDecoration(
+                        labelText: 'Content',
+                      ),
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Content is required';
+                        }
+                        return null;
+                      },
+                      maxLines:
+                          null, // Makes the TextFormField height expandable
+                      keyboardType: TextInputType.multiline,
+                    ),
+                  ],
                 ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Title is required';
-                  }
-                  return null;
-                },
-              ),
-              TextFormField(
-                controller: _contentController,
-                decoration: InputDecoration(
-                  labelText: 'Content',
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Content is required';
-                  }
-                  return null;
-                },
               ),
               TextFormField(
                 controller: _cityController,
@@ -274,6 +285,7 @@ class _CreateOrganizationPostsState extends State<CreateOrganizationPosts> {
                   Image.file(
                       selectedImage!,
                       height: 200,
+                      width: MediaQuery.of(context).size.width,
                     )
                   : SizedBox(),
               SizedBox(height: 10),

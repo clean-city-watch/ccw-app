@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:ccw/consts/env.dart';
+import 'package:ccw/screens/newsFeedPage/widgets/feedCard.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:ccw/screens/organization/addUserPopup.dart';
 import 'package:ccw/user_provider.dart';
@@ -266,17 +267,40 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                         ),
                       ),
                       Center(
-                        child: Container(
-                          margin: EdgeInsets.symmetric(vertical: 20),
-                          width: 120,
-                          height: 120,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: NetworkImage(organization.logo),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                        child: FutureBuilder<String>(
+                          future: getPublicUrlForFile(organization.logo),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              // Display a loading indicator while waiting for the result
+                              return CircularProgressIndicator();
+                            } else if (snapshot.hasError) {
+                              // Display an error message if there's an error
+                              return Text('Error: ${snapshot.error}');
+                            } else if (snapshot.hasData) {
+                              // Use the public URL to display the image
+                              return Container(
+                                margin: EdgeInsets.symmetric(vertical: 20),
+                                width: 120,
+                                height: 120,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    image: NetworkImage(snapshot.data!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              );
+                            } else {
+                              // Display a placeholder or default image
+                              return CircleAvatar(
+                                backgroundColor: Colors.grey,
+                                radius: 50.0,
+                                child:
+                                    Icon(Icons.business, color: Colors.white),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ],
@@ -300,7 +324,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                         FontAwesomeIcons.solidBuilding,
                                         size: 20,
                                         color: Colors
-                                            .blue, // Customize the color as needed
+                                            .teal, // Customize the color as needed
                                       ),
                                       SizedBox(width: 8),
                                       Text(
@@ -319,7 +343,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                         FontAwesomeIcons.solidUser,
                                         size: 16,
                                         color: Colors
-                                            .blue, // Customize the color as needed
+                                            .teal, // Customize the color as needed
                                       ),
                                       SizedBox(width: 8),
                                       Text(
@@ -338,7 +362,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                     children: [
                                       Icon(
                                         Icons.email,
-                                        color: Colors.blue,
+                                        color: Colors.teal,
                                       ),
                                       SizedBox(width: 8),
                                       InkWell(
@@ -357,7 +381,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                     children: [
                                       Icon(
                                         Icons.phone,
-                                        color: Colors.blue,
+                                        color: Colors.teal,
                                       ),
                                       SizedBox(width: 8),
                                       Text(organization.phoneNumber),
@@ -382,7 +406,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                 children: [
                                   Icon(
                                     Icons.location_on,
-                                    color: Colors.blue,
+                                    color: Colors.teal,
                                   ),
                                   SizedBox(width: 8),
                                   Expanded(
@@ -405,7 +429,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Open',
                                       count: organization.open ?? 0,
                                       icon: Icons.description,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -414,7 +438,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       count: organization.inprogress ?? 0,
                                       icon: Icons
                                           .timer, // Assuming timer icon represents in progress
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -422,7 +446,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'On Hold',
                                       count: organization.onhold ?? 0,
                                       icon: Icons.pause_circle_filled,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -430,7 +454,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Resolved',
                                       count: organization.resolved ?? 0,
                                       icon: Icons.check_circle,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                 ],
@@ -444,7 +468,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'In Review',
                                       count: organization.inreview ?? 0,
                                       icon: Icons.rate_review,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -452,7 +476,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Reopen',
                                       count: organization.reopen ?? 0,
                                       icon: Icons.refresh,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -460,7 +484,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Invalid',
                                       count: organization.invalid ?? 0,
                                       icon: Icons.thumb_down,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                   Expanded(
@@ -468,7 +492,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       title: 'Blocked',
                                       count: organization.blocked ?? 0,
                                       icon: Icons.block,
-                                      color: Colors.blue,
+                                      color: Colors.teal,
                                     ),
                                   ),
                                 ],

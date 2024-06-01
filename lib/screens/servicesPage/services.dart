@@ -69,7 +69,7 @@ class _ServicePageState extends State<ServicePage> {
               builder: (ctx) => Container(
                 child: Icon(
                   Icons.location_on,
-                  color: Colors.blue, // You can set the marker color here
+                  color: Colors.red, // You can set the marker color here
                 ),
               ),
             );
@@ -160,7 +160,7 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'All',
                         count: countData['all'] ?? 0,
                         icon: Icons.description,
-                        color: Colors.blue,
+                        color: Colors.teal,
                       ),
                     ),
                     Expanded(
@@ -168,7 +168,7 @@ class _ServicePageState extends State<ServicePage> {
                         title: 'Open',
                         count: countData['open'] ?? 0,
                         icon: Icons.comment,
-                        color: Colors.blue,
+                        color: Colors.teal,
                       ),
                     ),
                     Expanded(
@@ -176,14 +176,14 @@ class _ServicePageState extends State<ServicePage> {
                           title: 'Active',
                           count: countData['inprogress'] ?? 0,
                           icon: Icons.thumb_up,
-                          color: Colors.blue),
+                          color: Colors.teal),
                     ),
                     Expanded(
                       child: CountCard(
                         title: 'Resolved',
                         count: countData['resolved'] ?? 0,
                         icon: Icons.feedback,
-                        color: Colors.blue,
+                        color: Colors.teal,
                       ),
                     ),
                   ],

@@ -48,7 +48,7 @@ class _CategoryListState extends State<CategoryList> {
                 child: Text(
                   listCategory[index],
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.blue, fontSize: 14),
+                  style: TextStyle(color: Colors.teal, fontSize: 14),
                 ),
               ),
             );

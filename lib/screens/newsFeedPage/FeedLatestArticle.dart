@@ -68,11 +68,22 @@ class _LatestArticleState extends State<LatestArticle> {
                     Row(
                       children: <Widget>[
                         CircleAvatar(
-                            backgroundColor: Colors.grey,
-                            child: ClipOval(
-                                child: Image.network(
-                                    articleModel[index].imageIcon)),
-                            radius: 20),
+                          radius: 20,
+                          backgroundColor: Colors.grey,
+                          child: ClipOval(
+                            child: Image.network(
+                              articleModel[index].imageIcon,
+                              width: 40,
+                              height: 40,
+                            ),
+                          ),
+                        ),
+                        // CircleAvatar(
+                        //     backgroundColor: Colors.grey,
+                        //     child: ClipOval(
+                        //         child: Image.network(
+                        //             articleModel[index].imageIcon)),
+                        //     radius: 20),
                         SizedBox(width: 10),
                         Text(articleModel[index].drName,
                             style: TextStyle(
@@ -83,7 +94,7 @@ class _LatestArticleState extends State<LatestArticle> {
                         maxLines: 3, style: TextStyle(fontSize: 15)),
                     Divider(
                       height: 1,
-                      color: Colors.blue,
+                      color: Colors.teal,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,11 +103,11 @@ class _LatestArticleState extends State<LatestArticle> {
                             style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.blue)),
+                                color: Colors.teal)),
                         Icon(
                           Icons.arrow_forward_ios,
                           size: 15,
-                          color: Colors.blue,
+                          color: Colors.teal,
                         )
                       ],
                     ),

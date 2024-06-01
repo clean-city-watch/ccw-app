@@ -286,14 +286,26 @@ class _EditPostWidgetState extends State<EditPostWidget> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              TextField(
-                controller: titleController,
-                decoration: InputDecoration(labelText: 'Title'),
+              Container(
+                width: double.infinity,
+                child: TextField(
+                  controller: titleController,
+                  decoration: InputDecoration(labelText: 'Title'),
+                  maxLines: null, // Makes the TextField height expandable
+                  keyboardType: TextInputType.multiline,
+                ),
               ),
               SizedBox(height: 20.0),
-              TextField(
-                controller: contentController,
-                decoration: InputDecoration(labelText: 'Content'),
+              Container(
+                width: double.infinity,
+                child: TextField(
+                  controller: contentController,
+                  decoration: InputDecoration(
+                    labelText: 'Content',
+                  ),
+                  maxLines: null, // Makes the TextField height expandable
+                  keyboardType: TextInputType.multiline,
+                ),
               ),
               SizedBox(height: 20.0),
               Row(

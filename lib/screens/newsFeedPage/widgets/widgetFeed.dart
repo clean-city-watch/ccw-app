@@ -77,18 +77,18 @@ Widget actionBarRow(BuildContext context) {
                     style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.normal,
-                        color: Colors.grey)),
+                        color: Colors.grey.shade700)),
                 Row(
                   children: <Widget>[
                     Text('CCW',
                         style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
-                            color: Colors.blue)),
+                            color: Colors.teal)),
                     SizedBox(width: 6),
                     // Icon(
                     //   Icons.arrow_drop_down,
-                    //   color: Colors.blue,
+                    //   color: Colors.teal,
                     // )
                   ],
                 )
@@ -103,11 +103,16 @@ Widget actionBarRow(BuildContext context) {
                 // );
               },
               child: CircleAvatar(
-                child: ClipOval(
-                  child: Image.network(snapshot.data!),
-                ),
                 radius: 20,
                 backgroundColor: Colors.grey,
+                child: ClipOval(
+                  child: Image.network(
+                    snapshot.data!,
+                    fit: BoxFit.cover,
+                    width: 40,
+                    height: 40,
+                  ),
+                ),
               ),
             )
           ],
@@ -151,11 +156,11 @@ _modalSideSheetMenu(BuildContext context) {
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(30)),
-                            color: Colors.blue[100],
+                            color: Colors.teal[100],
                           ),
                           child: Icon(
                             bottomMenuItems[index].icon,
-                            color: Colors.blue,
+                            color: Colors.teal,
                           ),
                         ),
                         trailing: Icon(
@@ -164,7 +169,7 @@ _modalSideSheetMenu(BuildContext context) {
                         ),
                         title: Text(
                           bottomMenuItems[index].title,
-                          style: TextStyle(color: Colors.blue, fontSize: 18),
+                          style: TextStyle(color: Colors.teal, fontSize: 18),
                         ),
                         subtitle: Text(bottomMenuItems[index].subtitle),
                         onTap: () async {
@@ -245,7 +250,7 @@ Widget searchTextField() {
               borderRadius: const BorderRadius.all(
                 Radius.circular(4.0),
               ),
-              borderSide: BorderSide(color: (Colors.grey[300])!, width: 0.5),
+              borderSide: BorderSide(color: (Colors.grey[700])!, width: 0.5),
             ),
           ),
         ),
@@ -265,15 +270,15 @@ BoxDecoration boxDecoration() {
   return BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(30)),
       border:
-          Border.all(width: 1, style: BorderStyle.solid, color: Colors.blue));
+          Border.all(width: 1, style: BorderStyle.solid, color: Colors.teal));
 }
 
 BoxDecoration selectedBoxDecoration() {
   return BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(30)),
-      color: Colors.blue[200],
-      border:
-          Border.all(width: 1, style: BorderStyle.solid, color: Colors.blue));
+      color: Colors.teal[200],
+      border: Border.all(
+          width: 1, style: BorderStyle.solid, color: Colors.teal.shade50));
 }
 
 Widget topSpace() {
@@ -307,7 +312,8 @@ Widget feedNewsCardItem(BuildContext context, GptFeed feed) {
             Visibility(
                 visible: feed.content.isEmpty == true ? false : true,
                 child: Text(feed.content,
-                    style: TextStyle(fontSize: 14, color: Colors.grey))),
+                    style: TextStyle(
+                        fontSize: 14, color: Theme.of(context).primaryColor))),
             space15(),
             setLocation(context, feed),
             Divider(thickness: 1),
@@ -338,7 +344,7 @@ Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
     decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(8)),
         border: Border.all(
-            style: BorderStyle.solid, color: Colors.grey, width: 0.5)),
+            style: BorderStyle.solid, color: Colors.grey.shade700, width: 0.5)),
     child: Card(
       elevation: 0,
       child: Padding(
@@ -357,10 +363,11 @@ Widget feedLibraryCardItem(BuildContext context, GptFeed feed) {
                     style:
                         TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
             space15(),
-            // Visibility(
-            //     visible: feed.content.isEmpty == true ? false : true,
-            //     child: Text(feed.content,
-            //         style: TextStyle(fontSize: 14, color: Colors.grey))),
+            Visibility(
+                visible: feed.content.isEmpty == true ? false : true,
+                child: Text(feed.content,
+                    style: TextStyle(
+                        fontSize: 14, color: Theme.of(context).primaryColor))),
             space15(),
             setLocation(context, feed),
             Divider(thickness: 1),
@@ -462,7 +469,7 @@ Widget feedNewsCardWithImageItem(BuildContext context, GptFeed feed) {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             space15(),
             Text(feed.content,
-                style: TextStyle(fontSize: 14, color: Colors.blue)),
+                style: TextStyle(fontSize: 14, color: Colors.teal)),
             space15(),
             // show Image Preview
 
@@ -500,7 +507,7 @@ Widget btnDecoration(String btnText) {
       padding: EdgeInsets.symmetric(vertical: 5, horizontal: 20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.all(Radius.circular(20)),
-        color: Colors.blue,
+        color: Colors.teal,
       ),
       child: Text(
         btnText,
@@ -512,7 +519,7 @@ Widget questionPallet() {
   return Container(
     padding: EdgeInsets.symmetric(horizontal: 20),
     height: 100,
-    decoration: BoxDecoration(color: Colors.blue[100]),
+    decoration: BoxDecoration(color: Colors.teal[100]),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,

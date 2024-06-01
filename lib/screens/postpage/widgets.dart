@@ -42,51 +42,61 @@ Future<String> getPublicUrlForUsersAvatar(String fileName) async {
   return "https://www.w3schools.com/w3images/avatar3.png";
 }
 
-Widget othersComment(BuildContext context, GptComment comment) {
+Widget othersComment(BuildContext context, GptComment comment, bool isSelf) {
   return FutureBuilder<String>(
-    future: getPublicUrlForUsersAvatar(comment.author.profile.avatar),
+    future: isSelf == true
+        ? getPublicUrlForAvatar()
+        : getPublicUrlForUsersAvatar(comment.author.profile.avatar),
     builder: (context, snapshot) {
       String avatarUrl =
           snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
 
       return Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        decoration: BoxDecoration(
+          color: Colors.white, // Light gray background
+          borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              // blurRadius: 5.0,
+              spreadRadius: 1.0,
+            ),
+          ],
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             CircleAvatar(
               backgroundColor: Colors.grey,
               child: ClipOval(
-                child: Image.network(avatarUrl),
-              ),
-              radius: 20,
-            ),
-            SizedBox(width: 20),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(
-                      style: BorderStyle.solid, color: Colors.grey, width: 0.5),
+                child: Image.network(
+                  avatarUrl,
+                  fit: BoxFit.cover,
+                  width: 40.0,
+                  height: 40.0,
                 ),
-                child: Card(
-                  elevation: 0,
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: <Widget>[
-                        usernameSectionWithoutAvatar(context, comment),
-                        space15(),
-                        Text(
-                          comment.content,
-                          softWrap: true,
-                          maxLines: 3,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
+              ),
+              radius: 20.0,
+            ),
+            SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  usernameSectionWithoutAvatar(context,
+                      comment), // Assuming this function exists and handles username display
+                  SizedBox(height: 5.0), // Spacing between username and content
+                  Text(
+                    comment.content,
+                    softWrap: true,
+                    maxLines: 3,
+                    style: TextStyle(
+                      fontSize: 14.0,
+                      color: Colors.black87,
                     ),
                   ),
-                ),
+                ],
               ),
             ),
           ],
@@ -106,7 +116,11 @@ Widget othersCommentWithImageSlider(BuildContext context, GptComment feed) {
             backgroundColor: Colors.grey,
             child: ClipOval(
                 child: Image.network(
-                    'https://www.w3schools.com/w3images/avatar4.png')),
+              'https://www.w3schools.com/w3images/avatar4.png',
+              fit: BoxFit.cover,
+              width: 40,
+              height: 40,
+            )),
             radius: 20),
         SizedBox(width: 20),
         Expanded(
@@ -194,13 +208,13 @@ Widget menuReply(GptFeed listFeed) {
                   Icon(
                     FontAwesomeIcons.arrowUp,
                     size: 16,
-                    color: Colors.blue,
+                    color: Colors.teal,
                   ),
                   SizedBox(width: 5),
                   Text(
                     '${listFeed.count.upvotes}',
                     style: TextStyle(
-                        color: Colors.blue,
+                        color: Colors.teal,
                         fontSize: 12,
                         fontWeight: FontWeight.bold),
                   )
@@ -231,7 +245,7 @@ Widget menuReply(GptFeed listFeed) {
               child: Icon(Icons.share, size: 18)),
           Text('Reply',
               style: TextStyle(
-                  color: Colors.blue,
+                  color: Colors.teal,
                   fontSize: 16,
                   fontWeight: FontWeight.bold))
         ],
@@ -240,7 +254,7 @@ Widget menuReply(GptFeed listFeed) {
       Container(
         padding: EdgeInsets.only(left: 20),
         child: Text('2 Replies',
-            style: TextStyle(color: Colors.blue, fontSize: 14)),
+            style: TextStyle(color: Colors.teal, fontSize: 14)),
       )
     ],
   );
@@ -270,13 +284,13 @@ Widget usernameSectionWithoutAvatar(BuildContext context, GptComment comment) {
                         SizedBox(
                           width: 10,
                         ),
-                        Text('1Min',
-                            style: TextStyle(fontSize: 14, color: Colors.grey))
+                        // Text('1Min',
+                        //     style: TextStyle(fontSize: 14, color: Colors.grey))
                       ],
                     ),
-                    SizedBox(height: 4),
-                    Text('user description',
-                        style: TextStyle(fontSize: 12, color: Colors.blue)),
+                    // SizedBox(height: 4),
+                    // Text('user description',
+                    //     style: TextStyle(fontSize: 12, color: Colors.teal)),
                   ],
                 )
               ],
@@ -321,42 +335,55 @@ Widget commentReply(BuildContext context, GptComment comment) {
           snapshot.data ?? "https://www.w3schools.com/w3images/avatar3.png";
 
       return Container(
+        padding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 5.0),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(8.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 5.0,
+              spreadRadius: 1.0,
+            ),
+          ],
+        ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(8)),
-                  border: Border.all(
-                      style: BorderStyle.solid, color: Colors.grey, width: 0.5),
-                ),
-                child: Container(
-                  color: Colors.grey[300],
-                  child: Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          comment.content,
-                          softWrap: true,
-                          maxLines: 3,
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 20),
             CircleAvatar(
               backgroundColor: Colors.grey,
               child: ClipOval(
-                child: Image.network(avatarUrl),
+                child: Image.network(
+                  avatarUrl,
+                  fit: BoxFit.cover,
+                  width: 40.0,
+                  height: 40.0,
+                ),
               ),
-              radius: 20,
+              radius: 20.0,
+            ),
+            SizedBox(width: 10.0),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    comment.author.profile.firstName +
+                            comment.author.profile.lastName ??
+                        "Anonymous", // Display username if available
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  Text(
+                    comment.content,
+                    softWrap: true,
+                    maxLines: 3,
+                    style: TextStyle(fontSize: 14.0),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -377,13 +404,13 @@ Widget menuCommentReply(GptFeed listFeed) {
               Icon(
                 FontAwesomeIcons.arrowUp,
                 size: 16,
-                color: Colors.blue,
+                color: Colors.teal,
               ),
               SizedBox(width: 5),
               Text(
                 '${listFeed.count.upvotes}',
                 style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.teal,
                     fontSize: 12,
                     fontWeight: FontWeight.bold),
               )

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:ccw/screens/newsFeedPage/widgets/feedCard.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:ccw/screens/organization/organizationNavigation.dart';
 import 'package:ccw/user_provider.dart';
@@ -80,9 +81,30 @@ class OrganizationCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(organization.logo),
-              radius: 50.0,
+            FutureBuilder<String>(
+              future: getPublicUrlForFile(organization.logo),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  // Display a loading indicator while waiting for the result
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  // Display an error message if there's an error
+                  return Text('Error: ${snapshot.error}');
+                } else if (snapshot.hasData) {
+                  // Use the public URL to display the image
+                  return CircleAvatar(
+                    backgroundImage: NetworkImage(snapshot.data!),
+                    radius: 50.0,
+                  );
+                } else {
+                  // Display a placeholder or default image
+                  return CircleAvatar(
+                    backgroundColor: Colors.grey,
+                    radius: 50.0,
+                    child: Icon(Icons.business, color: Colors.white),
+                  );
+                }
+              },
             ),
             SizedBox(height: 16.0),
             Text(

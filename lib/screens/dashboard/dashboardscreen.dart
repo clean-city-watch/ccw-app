@@ -208,7 +208,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   margin: EdgeInsets.symmetric(vertical: 10.0, horizontal: 2.0),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _currentIndex == index ? Colors.blue : Colors.grey,
+                    color: _currentIndex == index ? Colors.teal : Colors.grey,
                   ),
                 );
               }).toList(),
@@ -228,7 +228,7 @@ class _DashboardWidgetState extends State<DashboardWidget> {
                   title: 'Posts',
                   count: countData['_count']['posts'] ?? 0,
                   icon: Icons.description,
-                  color: Colors.blue,
+                  color: Colors.teal,
                 ),
                 CountCard(
                   title: 'Comments',

@@ -103,7 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       child: const Text(
                         'Have an account?',
                         style: TextStyle(
-                          color: Colors.blue,
+                          color: Colors.teal,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

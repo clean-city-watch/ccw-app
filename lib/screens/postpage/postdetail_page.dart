@@ -80,14 +80,13 @@ class _PostPageDetailsState extends State<PostPageDetails> {
 
         setState(() {
           commentList.addAll(content.map((json) {
+            newsCommentWidgetList.add(topSpace());
             if (json['user']['id'].toString() == userInfoMap['id'].toString()) {
               newsCommentWidgetList
-                  .add(commentReply(context, GptComment.fromJson(json)));
-              newsCommentWidgetList.add(topSpace());
+                  .add(othersComment(context, GptComment.fromJson(json), true));
             } else {
-              newsCommentWidgetList
-                  .add(othersComment(context, GptComment.fromJson(json)));
-              newsCommentWidgetList.add(topSpace());
+              newsCommentWidgetList.add(
+                  othersComment(context, GptComment.fromJson(json), false));
             }
 
             return GptComment.fromJson(json);
@@ -213,38 +212,61 @@ class _PostPageDetailsState extends State<PostPageDetails> {
       return Container(
         padding: EdgeInsets.symmetric(horizontal: 8.0),
         height: 70.0,
-        color: Colors.white,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(15.0), // Add rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2), // Subtle shadow for depth
+              blurRadius: 5.0,
+              spreadRadius: 1.0,
+            ),
+          ],
+        ),
         child: Row(
           children: <Widget>[
             IconButton(
-              icon: Icon(Icons.photo),
+              icon: Icon(Icons.emoji_people), // More engaging "Add people" icon
               iconSize: 25.0,
               color: Theme.of(context).primaryColor,
-              onPressed: () {},
+              onPressed: () {
+                // Implement functionality to add emojis or stickers (optional)
+              },
             ),
             Expanded(
-                child: TextField(
-              textCapitalization: TextCapitalization.sentences,
-              onChanged: (value) {
-                setState(() {
-                  commentText = value;
-                }); // Update the comment text as the user types
-              },
-              decoration:
-                  InputDecoration.collapsed(hintText: 'Add a cheerful comment'),
-            )),
+              child: TextField(
+                textCapitalization: TextCapitalization.sentences,
+                onChanged: (value) {
+                  setState(() {
+                    commentText = value;
+                  });
+                },
+                decoration: InputDecoration(
+                  hintText:
+                      "Share your thoughts...", // Clearer placeholder text
+                  hintStyle: TextStyle(
+                    color: Colors.grey.withOpacity(0.7), // Faded hint color
+                  ),
+                  border: InputBorder
+                      .none, // Remove default border for cleaner look
+                ),
+                style: TextStyle(
+                  // Customize text style for better readability
+                  fontSize: 16.0,
+                ),
+              ),
+            ),
             IconButton(
               icon: Icon(Icons.send),
               iconSize: 25.0,
               color: Theme.of(context).primaryColor,
               onPressed: () {
-                // Call the postComment method to send the comment text
                 if (commentText.isNotEmpty) {
                   print(commentText);
                   postComment(commentText);
-                  // Clear the text field after posting the comment
-                  print('after the comment textcall ');
-                  commentText = '';
+                  setState(() {
+                    commentText = "";
+                  });
                 }
               },
             ),
@@ -305,7 +327,8 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                                   : true,
                               child: Text(widget.feed.content,
                                   style: TextStyle(
-                                      fontSize: 14, color: Colors.grey))),
+                                      fontSize: 14,
+                                      color: Theme.of(context).primaryColor))),
                           space15(),
                           GestureDetector(
                             onTap: () {
@@ -356,13 +379,15 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                             child: imageUrl != "null"
                                 ? Image.network(
                                     imageUrlResponse,
-                                    height: 100,
-                                    width: 100,
+                                    height: 200,
+                                    width: MediaQuery.of(context).size.width,
                                     fit: BoxFit.cover,
                                   )
                                 : Container(),
                           ),
                           // imageCarouselSlider(),
+
+                          space15(),
                           setLocation(context, widget.feed),
                           Divider(thickness: 1),
                           Row(
@@ -443,9 +468,9 @@ class _PostPageDetailsState extends State<PostPageDetails> {
                   }).toList(),
                 ),
 
-                Divider(thickness: 1),
+                topSpace(),
+
                 _buildMessageComposer(),
-                Divider(thickness: 1),
               ],
             ),
           ),

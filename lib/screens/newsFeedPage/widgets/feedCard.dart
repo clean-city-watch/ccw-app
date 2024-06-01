@@ -381,12 +381,16 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                   Row(
                     children: <Widget>[
                       CircleAvatar(
+                        radius: 20,
                         backgroundColor: Colors.grey,
                         child: ClipOval(
                           child: Image.network(
-                              snapshot.data!), // Use the public URL here
+                            snapshot.data!,
+                            fit: BoxFit.cover,
+                            width: 40,
+                            height: 40,
+                          ),
                         ),
-                        radius: 20,
                       ),
                       SizedBox(width: 10),
                       Column(
@@ -412,7 +416,7 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                           SizedBox(height: 4),
                           Text(
                             listFeed.type,
-                            style: TextStyle(fontSize: 12, color: Colors.blue),
+                            style: TextStyle(fontSize: 12, color: Colors.teal),
                           ),
                         ],
                       )
@@ -465,7 +469,7 @@ Widget getStatusTag(String? statusName) {
       tagLabel = 'Open';
       break;
     case 'In Progress':
-      tagColor = Colors.blue;
+      tagColor = Colors.teal;
       tagLabel = 'In Progress';
       break;
     case 'Review':
@@ -581,7 +585,7 @@ Widget _buildBottomNavMenu(BuildContext context) {
               leading: Icon(
                 listMore[index].icons,
                 size: 20,
-                color: Colors.blue,
+                color: Colors.teal,
               ),
             );
           }));
@@ -621,11 +625,11 @@ Widget _buildLocationNavMenu(BuildContext context, GptFeed listFeed) {
                   padding: EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.all(Radius.circular(30)),
-                    color: Colors.blue[100],
+                    color: Colors.teal[100],
                   ),
                   child: Icon(
                     listMore[index].icons,
-                    color: Colors.blue,
+                    color: Colors.teal,
                   ),
                 ),
                 trailing: Icon(
@@ -634,7 +638,7 @@ Widget _buildLocationNavMenu(BuildContext context, GptFeed listFeed) {
                 ),
                 title: Text(
                   listMore[index].title,
-                  style: TextStyle(color: Colors.blue, fontSize: 18),
+                  style: TextStyle(color: Colors.teal, fontSize: 18),
                 ),
                 subtitle: Text(listMore[index].subtitle),
                 onTap: () {

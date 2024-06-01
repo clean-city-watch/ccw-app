@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: FloatingActionButton(
           tooltip: 'Create Post',
-          splashColor: Colors.blue,
+          splashColor: Colors.teal,
           onPressed: _modalBottomSheetMenu,
           child: Icon(CupertinoIcons.add),
           elevation: 0,
@@ -84,8 +84,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         bottomNavigationBar: FABBottomAppBar(
           centerItemText: '',
           backgroundColor: (Colors.white),
-          color: Colors.blue,
-          selectedColor: Theme.of(context).colorScheme.secondary,
+          color: Colors.grey.shade700,
+          selectedColor: Colors.teal,
           notchedShape: CircularNotchedRectangle(),
           iconSize: 20.0,
           onTabSelected: _selectedTab,
@@ -128,11 +128,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
-                              color: Colors.blue[100],
+                              color: Colors.teal[100],
                             ),
                             child: Icon(
                               bottomMenuItems[index].icon,
-                              color: Colors.blue,
+                              color: Colors.teal,
                             ),
                           ),
                           trailing: Icon(
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           ),
                           title: Text(
                             bottomMenuItems[index].title,
-                            style: TextStyle(color: Colors.blue, fontSize: 18),
+                            style: TextStyle(color: Colors.teal, fontSize: 18),
                           ),
                           subtitle: Text(bottomMenuItems[index].subtitle),
                           onTap: () {

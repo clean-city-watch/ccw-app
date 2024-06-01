@@ -152,7 +152,7 @@ class _RouteServicePageState extends State<RouteServicePage> {
                           polylines: [
                             Polyline(
                                 points: routpoints,
-                                color: Colors.blue,
+                                color: Colors.teal,
                                 strokeWidth: 9),
                           ],
                         ),

@@ -331,7 +331,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //               children: [
                 //                 Icon(
                 //                   Icons.email,
-                //                   color: Colors.blue,
+                //                   color: Colors.teal,
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 InkWell(
@@ -349,7 +349,7 @@ class _OrganizationUsersState extends State<OrganizationUsers> {
                 //               children: [
                 //                 Icon(
                 //                   Icons.phone,
-                //                   color: Colors.blue,
+                //                   color: Colors.teal,
                 //                 ),
                 //                 SizedBox(width: 8),
                 //                 Text(organization.phoneNumber),

@@ -71,7 +71,7 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
         tooltip: 'Create Post',
-        splashColor: Colors.blue,
+        splashColor: Colors.teal,
         onPressed: _modalBottomSheetMenu,
         child: Icon(CupertinoIcons.add),
         elevation: 0,
@@ -80,8 +80,8 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
       bottomNavigationBar: FABBottomAppBar(
         centerItemText: '',
         backgroundColor: (Colors.white),
-        color: Colors.blue,
-        selectedColor: Theme.of(context).colorScheme.secondary,
+        color: Theme.of(context).primaryColor,
+        selectedColor: Colors.teal,
         notchedShape: CircularNotchedRectangle(),
         iconSize: 20.0,
         onTabSelected: _selectedTab,
@@ -112,7 +112,7 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
         builder: (BuildContext context) {
           return Container(
             height: 440.0,
-            color: Color(0xFF737373),
+            color: Theme.of(context).primaryColor,
             child: Column(
               children: <Widget>[
                 Container(
@@ -130,11 +130,11 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
                             decoration: BoxDecoration(
                               borderRadius:
                                   BorderRadius.all(Radius.circular(30)),
-                              color: Colors.blue[100],
+                              color: Colors.teal[100],
                             ),
                             child: Icon(
                               bottomMenuItems[index].icon,
-                              color: Colors.blue,
+                              color: Colors.teal,
                             ),
                           ),
                           trailing: Icon(
@@ -143,7 +143,7 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
                           ),
                           title: Text(
                             bottomMenuItems[index].title,
-                            style: TextStyle(color: Colors.blue, fontSize: 18),
+                            style: TextStyle(color: Colors.teal, fontSize: 18),
                           ),
                           subtitle: Text(bottomMenuItems[index].subtitle),
                           onTap: () {

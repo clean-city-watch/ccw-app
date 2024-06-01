@@ -1,3 +1,4 @@
+import 'package:ccw/screens/organization/createOrganization.dart';
 import 'package:ccw/screens/organization/createPostScreen.dart';
 import 'package:ccw/screens/web_view_Swach_bharat.dart';
 import 'package:ccw/screens/web_view_trash_ai.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
       title: 'CCW',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-          primaryColor: Colors.grey,
+          primaryColor: Colors.grey.shade600,
           fontFamily: 'nunito',
           textTheme: const TextTheme(
             bodyMedium: TextStyle(
@@ -53,7 +54,8 @@ class MyApp extends StatelessWidget {
         WebViewSwatchBharat.id: (context) => const WebViewSwatchBharat(),
         EditProfileWidget.id: (context) => EditProfileWidget(),
         HelpAndSupport.id: (context) => HelpAndSupport(),
-        CreateOrganizationPosts.id: (context) => CreateOrganizationPosts()
+        CreateOrganizationPosts.id: (context) => CreateOrganizationPosts(),
+        CreateOrganization.id: (context) => CreateOrganization()
       },
     );
   }
