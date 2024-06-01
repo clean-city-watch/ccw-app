@@ -52,7 +52,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
     _selectedTab(_selectedDrawerIndex);
     bottomMenuItems.add(new MenuModel('Create a post',
-        'share your thoughts with the community', Icons.colorize));
+        'Share your thoughts with the community', Icons.colorize));
+    bottomMenuItems.add(new MenuModel('Register an issue',
+        'Register issue with the community', Icons.colorize));
     bottomMenuItems.add(new MenuModel(
         'Trash AI', 'Explore AI solution for Trash.', Icons.info));
     bottomMenuItems.add(
@@ -77,11 +79,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           onPressed: _modalBottomSheetMenu,
           child: Icon(CupertinoIcons.add),
           elevation: 0,
+          shape: CircleBorder(),
         ),
         bottomNavigationBar: FABBottomAppBar(
           centerItemText: '',
-          backgroundColor: (Colors.black54),
-          color: (Color.fromARGB(255, 177, 177, 177))!,
+          backgroundColor: (Colors.white),
+          color: Colors.blue,
           selectedColor: Theme.of(context).colorScheme.secondary,
           notchedShape: CircularNotchedRectangle(),
           iconSize: 20.0,
@@ -147,13 +150,31 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                             debugPrint('$index');
                             switch (index) {
                               case 0:
-                                Navigator.pushNamed(context, CreatePost.id);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        CreatePost(
+                                      type: "POST",
+                                    ),
+                                  ),
+                                );
                               case 1:
-                                Navigator.pushNamed(context, WebViewTrashAI.id);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (BuildContext context) =>
+                                        CreatePost(
+                                      type: "ISSUE",
+                                    ),
+                                  ),
+                                );
                               case 2:
+                                Navigator.pushNamed(context, WebViewTrashAI.id);
+                              case 3:
                                 Navigator.pushNamed(
                                     context, WebViewSwatchBharat.id);
-                              case 3:
+                              case 4:
                                 debugPrint(bottomMenuItems[index].title);
                               default:
                                 debugPrint(bottomMenuItems[index].title);

@@ -10,12 +10,12 @@ class FABBottomAppBar extends StatefulWidget {
   FABBottomAppBar({
     required this.items,
     required this.centerItemText,
-   this.height = 60.0,
-    this.iconSize= 20.0,
+    this.height = 60.0,
+    this.iconSize = 20.0,
     required this.backgroundColor,
-   required  this.color,
-   required  this.selectedColor,
-   required  this.notchedShape,
+    required this.color,
+    required this.selectedColor,
+    required this.notchedShape,
     required this.onTabSelected,
   }) {
     assert(this.items.length == 2 || this.items.length == 4);

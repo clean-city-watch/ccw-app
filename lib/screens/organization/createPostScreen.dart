@@ -17,18 +17,14 @@ import 'package:flutter_map/flutter_map.dart';
 
 // create issue page.
 
-class CreatePost extends StatefulWidget {
-  final String? type;
-
-  static String id = 'create_post_screen';
-
-  CreatePost({this.type});
-
+class CreateOrganizationPosts extends StatefulWidget {
+  static String id = 'create_organization_screen';
   @override
-  _CreatePostState createState() => _CreatePostState();
+  _CreateOrganizationPostsState createState() =>
+      _CreateOrganizationPostsState();
 }
 
-class _CreatePostState extends State<CreatePost> {
+class _CreateOrganizationPostsState extends State<CreateOrganizationPosts> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _contentController = TextEditingController();
@@ -129,7 +125,7 @@ class _CreatePostState extends State<CreatePost> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                'Create ${widget.type == 'ISSUE' ? 'Issue' : 'Post'}',
+                'Create Post',
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -321,7 +317,7 @@ class _CreatePostState extends State<CreatePost> {
                         ..fields['latitude'] = latitudeController.text
                         ..fields['longitude'] = longitudeController.text
                         ..fields['published'] = 'true'
-                        ..fields['type'] = widget.type!
+                        ..fields['type'] = 'POST'
                         ..fields['authorId'] = userInfoMap['id'].toString()
                         ..headers.addAll({
                           "Authorization": "Bearer $accessToken",
@@ -344,7 +340,7 @@ class _CreatePostState extends State<CreatePost> {
                                   onPressed: () {
                                     // Add logic to delete the post
                                     Navigator.popAndPushNamed(
-                                        context, CreatePost.id);
+                                        context, CreateOrganizationPosts.id);
                                     Navigator.pushNamed(
                                         context, WelcomeScreen.id);
                                   },
@@ -375,7 +371,7 @@ class _CreatePostState extends State<CreatePost> {
                                   onPressed: () {
                                     // Add logic to delete the post
                                     Navigator.popAndPushNamed(
-                                        context, CreatePost.id);
+                                        context, CreateOrganizationPosts.id);
                                   },
                                   child: Text('View Feed'),
                                 ),

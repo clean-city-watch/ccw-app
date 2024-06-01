@@ -12,18 +12,13 @@ import 'dart:async';
 
 class Status {
   final String name;
-  
 
   Status({required this.name});
 
   factory Status.fromJson(Map<String, dynamic> json) {
-    return Status(
-      name: json['name']
-    );
+    return Status(name: json['name']);
   }
 }
-
-
 
 class Author {
   final Profile profile;
@@ -49,7 +44,7 @@ class Profile {
   });
 
   factory Profile.fromJson(Map<String, dynamic> json) {
-    if(json['avatar']==null){
+    if (json['avatar'] == null) {
       json['avatar'] = 'https://www.w3schools.com/w3images/avatar1.png';
     }
     return Profile(
@@ -74,8 +69,6 @@ class Count {
   }
 }
 
-
-
 class GptFeed {
   final int id;
   final String title;
@@ -89,7 +82,8 @@ class GptFeed {
   final bool published;
   final String timestamp;
   bool isupvote;
-  final Status status;
+  final String type;
+  final Status? status; // Make status optional;
 
   GptFeed({
     required this.id,
@@ -104,78 +98,85 @@ class GptFeed {
     required this.published,
     required this.timestamp,
     required this.isupvote,
-    required this.status,
+    required this.type,
+    this.status, // Allow status to be optional
   });
   factory GptFeed.fromJson(Map<String, dynamic> json) {
     return GptFeed(
-     id: json['id'],
-    title: json['title'],
-    content: json['content'],
-    imageUrl: json['imageUrl'],
-    city: json['city'],
-    latitude: json['latitude'],
-    longitude: json['longitude'],
-    status: Status.fromJson(json['status']),
-    published: json['published'],
-    timestamp: json['timestamp'],
-    isupvote: json['upvotes'].length>0? true:false,
-    author: Author.fromJson(json['author']), // Parse Author
-    count: Count.fromJson(json['_count']),      // Parse Count
-    );
+        id: json['id'],
+        title: json['title'],
+        content: json['content'],
+        imageUrl: json['imageUrl'],
+        city: json['city'],
+        latitude: json['latitude'],
+        longitude: json['longitude'],
+        status: json['status'] != null
+            ? Status.fromJson(json['status'])
+            : null, // Handle optional status
+        published: json['published'],
+        timestamp: json['timestamp'],
+        isupvote: json['upvotes'].length > 0 ? true : false,
+        author: Author.fromJson(json['author']), // Parse Author
+        count: Count.fromJson(json['_count']), // Parse Count
+        type: json['type']);
   }
 }
 
-
-
-
 class GptComment {
- 
   final String content;
-  
+
   final Author author;
-  
+
   final String createdAt;
 
   GptComment({
-    
     required this.content,
-    
     required this.author,
-    
     required this.createdAt,
   });
   factory GptComment.fromJson(Map<String, dynamic> json) {
     return GptComment(
-    
-    content: json['content'],
-   
-    createdAt: json['createdAt'],
-    author: Author.fromJson(json['user']), // Parse Author
+      content: json['content'],
+
+      createdAt: json['createdAt'],
+      author: Author.fromJson(json['user']), // Parse Author
     );
   }
 }
 
-
-
-
-
 class Feed {
-
   int id, type, likes;
-  String username, content,  timestamp, title, avatarImg, bannerImg, city, comments, members;
+  String username,
+      content,
+      timestamp,
+      title,
+      avatarImg,
+      bannerImg,
+      city,
+      comments,
+      members;
 
-  Feed({required this.id,required  this.type,required  this.username,required  this.content,required, required this.timestamp,required  this.title,required  this.avatarImg,required  this.bannerImg,required  this.city,required  this.likes,required  this.comments,required  this.members});
+  Feed(
+      {required this.id,
+      required this.type,
+      required this.username,
+      required this.content,
+      required,
+      required this.timestamp,
+      required this.title,
+      required this.avatarImg,
+      required this.bannerImg,
+      required this.city,
+      required this.likes,
+      required this.comments,
+      required this.members});
 }
 
-
 class QuestionModel {
-
   String question;
 
   QuestionModel({required this.question});
 }
-
-
 
 class Category {
   bool isSelected = false;
@@ -185,33 +186,27 @@ class Category {
 }
 
 class FeedBloc {
-
-
   List<Feed> feedList = [
-
-
     Feed(
         id: 1,
         type: 0,
         username: 'rohit.shetty12',
         content:
-        'I have been facing a few possible symptoms of skin cancer. I have googled the possibilities but i can thought i did asked the community instead...',
+            'I have been facing a few possible symptoms of skin cancer. I have googled the possibilities but i can thought i did asked the community instead...',
         timestamp: '1 min', // need to convert in min from backend
-        title: 'What Are The Sign And Symptoms Of Skin Cancer?',//title 
+        title: 'What Are The Sign And Symptoms Of Skin Cancer?', //title
         avatarImg: 'https://www.w3schools.com/w3images/avatar1.png',
         bannerImg: 'https://www.w3schools.com/w3images/avatar1.png', // no need
         city: 'Peninsula park Andheri, Mumbai', // city
         likes: 24,
         comments: '24',
-        members: '24'
-        ),
-
+        members: '24'),
     Feed(
         id: 2,
         type: 0,
         username: 'rohit.shetty02',
         content:
-        'My husband has his 3 days transpalnt assessment in Newcastle next month, strange mix of emotions. for those that have been thought this how long did it take following assessment was it intil you were t...',
+            'My husband has his 3 days transpalnt assessment in Newcastle next month, strange mix of emotions. for those that have been thought this how long did it take following assessment was it intil you were t...',
         timestamp: '10 min',
         title: '',
         avatarImg: 'https://www.w3schools.com/w3images/avatar1.png',
@@ -220,12 +215,11 @@ class FeedBloc {
         likes: 23,
         comments: '2',
         members: '12'),
-
     Feed(
         id: 3,
         type: 0,
         username: 'username1275',
-        content: '',   
+        content: '',
         timestamp: '10 min',
         title: 'Cancer Meet At Rajiv Gandhi National Park',
         avatarImg: 'https://www.w3schools.com/w3images/avatar1.png',
@@ -234,12 +228,11 @@ class FeedBloc {
         likes: 23,
         comments: '2',
         members: '12'),
-
     Feed(
         id: 4,
         type: 0,
         username: 'super987',
-        content: '#itsokeyto #cancerserviver',  
+        content: '#itsokeyto #cancerserviver',
         timestamp: '10 min',
         title: 'Something To Motivate You',
         avatarImg: 'https://www.w3schools.com/w3images/avatar4.png',
@@ -248,7 +241,6 @@ class FeedBloc {
         likes: 25,
         comments: '24',
         members: '18'),
-
     Feed(
         id: 5,
         type: 0,
@@ -264,7 +256,6 @@ class FeedBloc {
         members: '18'),
   ];
 
-
   // 2. Stream controller
   final _feedListStreamController = StreamController<List<Feed>>();
   final _feedLikeIncrementController = StreamController<Feed>();
@@ -279,34 +270,27 @@ class FeedBloc {
 
   // Constructor
 
-
-
-
-  FeedBloc()
-  {
+  FeedBloc() {
     _feedListStreamController.add(feedList);
     _feedLikeIncrementController.stream.listen(_incrementLike);
     _feedLikeDecrementController.stream.listen(_decrementLike);
   }
 
-  _incrementLike(Feed feed)
-  {
+  _incrementLike(Feed feed) {
     int like = feed.likes;
     int incrementLike = like + 1;
     feedList[feed.id - 1].likes = like + incrementLike;
     feedListSink.add(feedList);
   }
 
-  _decrementLike(Feed feed)
-  {
+  _decrementLike(Feed feed) {
     int like = feed.likes;
     int decrementLike = like - 1;
     feedList[feed.id - 1].likes = like - decrementLike;
     feedListSink.add(feedList);
   }
 
-  dispose()
-  {
+  dispose() {
     _feedLikeDecrementController.close();
     _feedLikeIncrementController.close();
     _feedListStreamController.close();

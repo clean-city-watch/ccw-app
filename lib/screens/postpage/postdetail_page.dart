@@ -55,7 +55,7 @@ class _PostPageDetailsState extends State<PostPageDetails> {
     });
 
     print('before comment status for request is ');
-    print(widget.feed.status.name);
+    // print(widget.feed.status.name);
     if (userInfo != null) {
       Map<String, dynamic> userInfoMap = json.decode(userInfo);
       String accessToken = userInfoMap['access_token'];

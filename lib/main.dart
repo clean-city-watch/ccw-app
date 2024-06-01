@@ -1,3 +1,4 @@
+import 'package:ccw/screens/organization/createPostScreen.dart';
 import 'package:ccw/screens/web_view_Swach_bharat.dart';
 import 'package:ccw/screens/web_view_trash_ai.dart';
 import 'package:flutter/material.dart';
@@ -52,6 +53,7 @@ class MyApp extends StatelessWidget {
         WebViewSwatchBharat.id: (context) => const WebViewSwatchBharat(),
         EditProfileWidget.id: (context) => EditProfileWidget(),
         HelpAndSupport.id: (context) => HelpAndSupport(),
+        CreateOrganizationPosts.id: (context) => CreateOrganizationPosts()
       },
     );
   }

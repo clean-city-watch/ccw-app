@@ -1,10 +1,9 @@
-import 'dart:async';
-
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
+import 'package:ccw/consts/env.dart' show trashAIUrl;
 
 class WebViewTrashAI extends StatefulWidget {
   static String id = 'example_screen1';
@@ -68,7 +67,7 @@ Page resource error:
           },
         ),
       )
-      ..loadRequest(Uri.parse('http://192.168.29.174:5150'));
+      ..loadRequest(Uri.parse(trashAIUrl));
 
     if (controller.platform is AndroidWebViewController) {
       AndroidWebViewController.enableDebugging(true);

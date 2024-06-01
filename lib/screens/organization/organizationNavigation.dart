@@ -1,3 +1,4 @@
+import 'package:ccw/screens/organization/createPostScreen.dart';
 import 'package:ccw/screens/organization/organizationIssueScreen.dart';
 import 'package:ccw/screens/organization/organizationPostsScreen.dart';
 import 'package:ccw/screens/organization/organizationUserWidget.dart';
@@ -18,6 +19,10 @@ class OrganizationNavigation extends StatefulWidget {
 
 class _OrganizationNavigationState extends State<OrganizationNavigation> {
   int _selectedDrawerIndex = 0;
+  List<MenuModel> bottomMenuItems = <MenuModel>[
+    new MenuModel(
+        'Create Post', 'share your thoughts with the community', Icons.colorize)
+  ];
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
@@ -64,17 +69,18 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
       backgroundColor: Colors.white,
       body: _selectedTab(_selectedDrawerIndex),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      // floatingActionButton: FloatingActionButton(
-      //   tooltip: 'Create Post',
-      //   splashColor: Colors.blue,
-      //   onPressed: _modalBottomSheetMenu,
-      //   child: Icon(CupertinoIcons.add),
-      //   elevation: 0,
-      // ),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Create Post',
+        splashColor: Colors.blue,
+        onPressed: _modalBottomSheetMenu,
+        child: Icon(CupertinoIcons.add),
+        elevation: 0,
+        shape: CircleBorder(),
+      ),
       bottomNavigationBar: FABBottomAppBar(
         centerItemText: '',
-        backgroundColor: (Colors.black54),
-        color: (Color.fromARGB(255, 177, 177, 177))!,
+        backgroundColor: (Colors.white),
+        color: Colors.blue,
         selectedColor: Theme.of(context).colorScheme.secondary,
         notchedShape: CircularNotchedRectangle(),
         iconSize: 20.0,
@@ -99,4 +105,87 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
       ),
     );
   }
+
+  _modalBottomSheetMenu() {
+    showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 440.0,
+            color: Color(0xFF737373),
+            child: Column(
+              children: <Widget>[
+                Container(
+                  height: 300.0,
+                  margin: EdgeInsets.symmetric(horizontal: 15),
+                  decoration: new BoxDecoration(
+                      color: Colors.white, //Color(0xFF737373),
+                      borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                  child: ListView.builder(
+                      itemCount: bottomMenuItems.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(30)),
+                              color: Colors.blue[100],
+                            ),
+                            child: Icon(
+                              bottomMenuItems[index].icon,
+                              color: Colors.blue,
+                            ),
+                          ),
+                          trailing: Icon(
+                            Icons.arrow_forward_ios,
+                            size: 15,
+                          ),
+                          title: Text(
+                            bottomMenuItems[index].title,
+                            style: TextStyle(color: Colors.blue, fontSize: 18),
+                          ),
+                          subtitle: Text(bottomMenuItems[index].subtitle),
+                          onTap: () {
+                            Navigator.pop(context);
+                            debugPrint(bottomMenuItems[index].title);
+                            debugPrint('$index');
+                            switch (index) {
+                              case 0:
+                                Navigator.pushNamed(
+                                    context, CreateOrganizationPosts.id);
+                              default:
+                                debugPrint(bottomMenuItems[index].title);
+                            }
+                          },
+                        );
+                      }),
+                ),
+
+                //SizedBox(height: 10),
+
+                Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(30))),
+                    margin: EdgeInsets.symmetric(vertical: 30),
+                    child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Icon(Icons.close,
+                            size: 25, color: Colors.grey[900]))),
+              ],
+            ),
+          );
+        });
+  }
+}
+
+class MenuModel {
+  String title;
+  String subtitle;
+  IconData icon;
+
+  MenuModel(this.title, this.subtitle, this.icon);
 }

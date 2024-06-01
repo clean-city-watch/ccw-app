@@ -411,7 +411,7 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            'User Description',
+                            listFeed.type,
                             style: TextStyle(fontSize: 12, color: Colors.blue),
                           ),
                         ],
@@ -455,7 +455,7 @@ Widget space15() {
   return SizedBox(height: 10);
 }
 
-Widget getStatusTag(String statusName) {
+Widget getStatusTag(String? statusName) {
   Color tagColor;
   String tagLabel;
 
@@ -493,7 +493,7 @@ Widget getStatusTag(String statusName) {
       tagLabel = 'Blocked';
       break;
     default:
-      tagColor = Colors.grey;
+      tagColor = Colors.white;
       tagLabel = 'Unknown';
       break;
   }
@@ -512,7 +512,7 @@ Widget getStatusTag(String statusName) {
 }
 
 Widget renderCategoryTime(GptFeed listFeed) {
-  final statusTag = getStatusTag(listFeed.status.name);
+  final statusTag = getStatusTag(listFeed.status?.name);
 
   final formattedTime = formatTimestamp(listFeed.timestamp);
   print(formattedTime);

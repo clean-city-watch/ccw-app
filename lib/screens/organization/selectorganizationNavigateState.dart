@@ -58,8 +58,8 @@ class _OrganizationStateState extends State<OrganizationState>
       // ),
       bottomNavigationBar: FABBottomAppBar(
         centerItemText: '',
-        backgroundColor: (Colors.black54),
-        color: (Color.fromARGB(255, 177, 177, 177))!,
+        backgroundColor: (Colors.white),
+        color: Colors.blue,
         selectedColor: Theme.of(context).colorScheme.secondary,
         notchedShape: CircularNotchedRectangle(),
         iconSize: 20.0,

@@ -55,7 +55,7 @@ class _NewsFeedState extends State<NewsFeed> {
       };
 
       var url = Uri.parse(
-          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&type=ISSUE");
+          "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId");
 
       var response = await http.get(url, headers: headers);
 
@@ -68,7 +68,7 @@ class _NewsFeedState extends State<NewsFeed> {
             if (json['type'] == 'QUESTION') {
               print("call the Question addition item here...");
             }
-            if (json['type'] == 'ISSUE') {
+            if (json['type'] == 'ISSUE' || json['type'] == 'POST') {
               newsFeedWidgetList
                   .add(feedNewsCardItem(context, GptFeed.fromJson(json)));
               newsFeedWidgetList.add(topSpace());
