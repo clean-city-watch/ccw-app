@@ -415,7 +415,7 @@ Widget userAvatarSection(BuildContext context, GptFeed listFeed) {
                           ),
                           SizedBox(height: 4),
                           Text(
-                            listFeed.type,
+                            listFeed.type + " " + listFeed.id.toString(),
                             style: TextStyle(fontSize: 12, color: Colors.teal),
                           ),
                         ],

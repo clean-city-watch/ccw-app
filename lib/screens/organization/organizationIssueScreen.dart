@@ -5,6 +5,7 @@ import 'package:ccw/screens/newsFeedPage/widgets/category_list.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/feedBloc.dart';
 import 'package:ccw/screens/newsFeedPage/widgets/widgetFeed.dart';
 import 'package:ccw/screens/newsFeedPage/FeedLatestArticle.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:ccw/consts/env.dart' show backendUrl;
 import 'dart:convert';
@@ -27,6 +28,8 @@ class _OrganizationIssueState extends State<OrganizationIssue> {
   int pageSize = 3; // Set your desired page size
   int pageOffset = 0; // Initialize the page offset
   bool isLoading = false; // Variable to track if new data is loading
+
+  int issueCount = 0;
 
   @override
   void initState() {
@@ -63,6 +66,20 @@ class _OrganizationIssueState extends State<OrganizationIssue> {
       print("with post type");
       print(widget.PostType);
       print(widget.organizationId);
+
+      var url1 = Uri.parse(
+          "$backendUrl/api/organization/${widget.organizationId}/issues");
+
+      var response1 = await http.get(url1, headers: headers);
+
+      if (response1.statusCode == 200) {
+        final jsonResponse = jsonDecode(response1.body);
+        final content = jsonResponse;
+
+        setState(() {
+          issueCount = content; // Increment the page offset for the next page
+        });
+      }
 
       var url = Uri.parse(
           "$backendUrl/api/post/filtered-posts?pageSize=$pageSize&pageOffset=$pageOffset&userId=$currentUserId&type=${widget.PostType}&organizationId=${widget.organizationId}");
@@ -129,6 +146,53 @@ class _OrganizationIssueState extends State<OrganizationIssue> {
       body: SafeArea(
         child: Column(
           children: <Widget>[
+            // add issue button
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      FontAwesomeIcons.users,
+                      size: 20,
+                      color: Colors.blue, // Customize the color as needed
+                    ),
+                    SizedBox(width: 8), // Add spacing between icon and text
+                    Text(
+                      'Issues: $issueCount',
+                      style: TextStyle(
+                        fontSize: 18,
+                        // fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+                // organization.isOrganizationUser
+                //     ? ElevatedButton(
+                //         onPressed: () async {
+                //           print('add issue clicked..!');
+                //           final result = await showDialog(
+                //             context: context,
+                //             builder: (BuildContext context) {
+                //               return AddUserPopup(
+                //                   organizationId: widget.organizationId);
+                //             },
+                //           );
+
+                //           // Perform the refresh logic here
+                //           organizationFuture =
+                //               fetchOrganization(widget.organizationId);
+                //           setState(() {
+                //             organizationFuture = organizationFuture;
+                //           });
+                //           print('Refreshing...');
+                //         },
+                //         child: Text('Add User'),
+                //       )
+                //     : Container(),
+              ],
+            ),
+
             Expanded(
               child: Container(
                 color: Colors.white,

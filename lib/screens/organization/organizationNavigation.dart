@@ -1,4 +1,10 @@
+import 'dart:convert';
+
+import 'package:ccw/consts/env.dart';
+import 'package:ccw/screens/login_screen.dart';
+import 'package:ccw/screens/organization/changeIssueStatus.dart';
 import 'package:ccw/screens/organization/createPostScreen.dart';
+import 'package:ccw/screens/organization/onboardIssuePopup.dart';
 import 'package:ccw/screens/organization/organizationIssueScreen.dart';
 import 'package:ccw/screens/organization/organizationPostsScreen.dart';
 import 'package:ccw/screens/organization/organizationUserWidget.dart';
@@ -7,6 +13,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ccw/screens/custom/fab_bottom_app_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class OrganizationNavigation extends StatefulWidget {
   final int organizationId;
@@ -19,13 +27,73 @@ class OrganizationNavigation extends StatefulWidget {
 
 class _OrganizationNavigationState extends State<OrganizationNavigation> {
   int _selectedDrawerIndex = 0;
+  bool isLoading = false;
+  bool isPermission = false;
+
   List<MenuModel> bottomMenuItems = <MenuModel>[
     new MenuModel(
-        'Create Post', 'share your thoughts with the community', Icons.colorize)
+        'Create Post', 'Share thoughts with the community', Icons.colorize),
+    new MenuModel(
+        'Onboard Issue', 'Add new issue into organization', Icons.colorize),
+    new MenuModel('Change Status', 'Change status for issue', Icons.colorize)
   ];
 
   _onSelectItem(int index) {
     setState(() => _selectedDrawerIndex = index);
+  }
+
+  _getUserPermission() async {
+    if (isLoading) {
+      return; // Prevent multiple simultaneous requests
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+
+    final prefs = await SharedPreferences.getInstance();
+    String? userInfo = prefs.getString('userinfo');
+
+    if (userInfo != null) {
+      Map<String, dynamic> userInfoMap = json.decode(userInfo);
+
+      String currentUserId = userInfoMap['id'];
+      String accessToken = userInfoMap['access_token'];
+
+      var headers = {
+        "Authorization": "Bearer ${accessToken}",
+        "Content-Type":
+            "application/json", // Adjust as per your API requirements
+      };
+
+      var url = Uri.parse(
+          "$backendUrl/api/organization/${widget.organizationId}/users/$currentUserId/permission");
+
+      var response = await http.get(url, headers: headers);
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse;
+
+        print("is user permisiosn");
+        print(content);
+
+        setState(() {
+          isPermission = content;
+        });
+      }
+      if (response.statusCode == 401 || response.statusCode == 403) {
+        final jsonResponse = jsonDecode(response.body);
+        final content = jsonResponse['content'];
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute<void>(
+            builder: (BuildContext context) => LoginScreen(),
+          ),
+        );
+      }
+    }
   }
 
   _selectedTab(int pos) {
@@ -60,6 +128,7 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
   void initState() {
     super.initState();
 
+    _getUserPermission();
     _selectedTab(_selectedDrawerIndex);
   }
 
@@ -154,6 +223,23 @@ class _OrganizationNavigationState extends State<OrganizationNavigation> {
                               case 0:
                                 Navigator.pushNamed(
                                     context, CreateOrganizationPosts.id);
+                              case 1:
+                                final result = showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return OnboardIssuePopup(
+                                        organizationId: widget.organizationId);
+                                  },
+                                );
+
+                              case 2:
+                                final result = showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return ChangeIssueStatus(
+                                        organizationId: widget.organizationId);
+                                  },
+                                );
                               default:
                                 debugPrint(bottomMenuItems[index].title);
                             }
