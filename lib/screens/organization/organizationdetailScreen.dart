@@ -79,6 +79,7 @@ class Organization {
   final int blocked;
   final bool isOrganizationUser;
   final List<User>? users; // Make the List of users optional
+  int? otp;
 
   Organization({
     required this.id,
@@ -103,6 +104,7 @@ class Organization {
     required this.blocked,
     required this.isOrganizationUser,
     this.users, // Mark the List of users as optional
+    this.otp,
   });
 
   factory Organization.fromJson(Map<String, dynamic> json) {
@@ -136,6 +138,7 @@ class Organization {
       blocked: json['blocked'] as int,
       isOrganizationUser: json['isOrganizationUser'] as bool,
       users: usersList, // Assign the extracted users list
+      otp: json['otp'] as int?,
     );
   }
 }
